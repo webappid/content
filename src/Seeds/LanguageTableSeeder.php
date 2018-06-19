@@ -38,7 +38,8 @@ class LanguageTableSeeder extends Seeder
             $request->image_id = 1;
 
             $languages = new Language;
-            if(count($languages->getLanguageByName($request->name))==0){
+            $resultLanguage = $languages->getLanguageByName($request->name);
+            if($resultLanguage!=null){
                 $languages->addLanguage($request);
             }
         }
