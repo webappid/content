@@ -1,0 +1,30 @@
+{
+    "name": "webappid/content",
+    "description": "Core content for multipurpose such as blog etc",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Dyan Galih",
+            "email": "dyan.galih@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "WebAppId\\Content\\": "src"
+        }
+    },
+   "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        },
+       "laravel": {
+           "providers": [
+               "WebAppId\\Content\\ServiceProvider"
+           ],
+           "aliases": {
+               "Content" : "WebAppId\\Content\\Facade"
+           }
+       }
+   }
+}
