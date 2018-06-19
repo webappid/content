@@ -19,7 +19,7 @@ class Language extends Model
             $this->image_id = $request->image_id;
             $this->user_id = $request->user_id;
             $this->save();
-            return true;
+            return $this;
         }catch(QueryException $e){
             report($e);
             return false;
@@ -32,6 +32,6 @@ class Language extends Model
     }
 
     public function getLanguageByName($name){
-        return $this->where('name',$name)->get();
+        return $this->where('name',$name)->first();
     }
 }
