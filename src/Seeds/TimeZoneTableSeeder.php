@@ -4,6 +4,7 @@ namespace WebAppId\Content\Seeds;
 
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Models\TimeZone;
+use Illuminate\Support\Facades\DB;
 
 class TimeZoneTableSeeder extends Seeder
 {
@@ -2988,6 +2989,7 @@ class TimeZoneTableSeeder extends Seeder
                 $result = $timezone->addTimeZone($request);
                 if ($result == false) {
                     $return = $result;
+                    break;
                 }
             }
         }

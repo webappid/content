@@ -3,6 +3,7 @@
 namespace WebAppId\Content\Seeds;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use WebAppId\Content\Models\MimeType;
 
 class MimeTypeTableSeeder extends Seeder
@@ -18,193 +19,194 @@ class MimeTypeTableSeeder extends Seeder
 
         $data = [
             [
-                'name' => 'audio/aac'
+                'name' => 'audio/aac',
             ],
             [
-                'name' => 'application/x-abiword'
+                'name' => 'application/x-abiword',
             ],
             [
-                'name' => 'application/octet-stream'
+                'name' => 'application/octet-stream',
             ],
             [
-                'name' => 'video/x-msvideo'
+                'name' => 'video/x-msvideo',
             ],
             [
-                'name' => 'application/vnd.amazon.ebook'
+                'name' => 'application/vnd.amazon.ebook',
             ],
             [
-                'name' => 'application/octet-stream'
+                'name' => 'application/octet-stream',
             ],
             [
-                'name' => 'application/x-bzip'
+                'name' => 'application/x-bzip',
             ],
             [
-                'name' => 'application/x-bzip2'
+                'name' => 'application/x-bzip2',
             ],
             [
-                'name' => 'application/x-csh'
+                'name' => 'application/x-csh',
             ],
             [
-                'name' => 'text/css'
+                'name' => 'text/css',
             ],
             [
-                'name' => 'text/csv'
+                'name' => 'text/csv',
             ],
             [
-                'name' => 'application/msword'
+                'name' => 'application/msword',
             ],
             [
-                'name' => 'application/vnd.ms-fontobject'
+                'name' => 'application/vnd.ms-fontobject',
             ],
             [
-                'name' => 'application/epub+zip'
+                'name' => 'application/epub+zip',
             ],
             [
-                'name' => 'image/gif'
+                'name' => 'image/gif',
             ],
             [
-                'name' => 'text/html'
+                'name' => 'text/html',
             ],
             [
-                'name' => 'image/x-icon'
+                'name' => 'image/x-icon',
             ],
             [
-                'name' => 'text/calendar'
+                'name' => 'text/calendar',
             ],
             [
-                'name' => 'application/java-archive'
+                'name' => 'application/java-archive',
             ],
             [
-                'name' => 'image/jpeg'
+                'name' => 'image/jpeg',
             ],
             [
-                'name' => 'application/javascript'
+                'name' => 'application/javascript',
             ],
             [
-                'name' => 'application/json'
+                'name' => 'application/json',
             ],
             [
-                'name' => 'audio/midi'
+                'name' => 'audio/midi',
             ],
             [
-                'name' => 'video/mpeg'
+                'name' => 'video/mpeg',
             ],
             [
-                'name' => 'application/vnd.apple.installer+xml'
+                'name' => 'application/vnd.apple.installer+xml',
             ],
             [
-                'name' => 'application/vnd.oasis.opendocument.presentation'
+                'name' => 'application/vnd.oasis.opendocument.presentation',
             ],
             [
-                'name' => 'application/vnd.oasis.opendocument.spreadsheet'
+                'name' => 'application/vnd.oasis.opendocument.spreadsheet',
             ],
             [
-                'name' => 'application/vnd.oasis.opendocument.text'
+                'name' => 'application/vnd.oasis.opendocument.text',
             ],
             [
-                'name' => 'audio/ogg'
+                'name' => 'audio/ogg',
             ],
             [
-                'name' => 'video/ogg'
+                'name' => 'video/ogg',
             ],
             [
-                'name' => 'application/ogg'
+                'name' => 'application/ogg',
             ],
             [
-                'name' => 'font/otf'
+                'name' => 'font/otf',
             ],
             [
-                'name' => 'image/png'
+                'name' => 'image/png',
             ],
             [
-                'name' => 'application/pdf'
+                'name' => 'application/pdf',
             ],
             [
-                'name' => 'application/vnd.ms-powerpoint'
+                'name' => 'application/vnd.ms-powerpoint',
             ],
             [
-                'name' => 'application/x-rar-compressed'
+                'name' => 'application/x-rar-compressed',
             ],
             [
-                'name' => 'application/rtf'
+                'name' => 'application/rtf',
             ],
             [
-                'name' => 'application/x-sh'
+                'name' => 'application/x-sh',
             ],
             [
-                'name' => 'image/svg+xml'
+                'name' => 'image/svg+xml',
             ],
             [
-                'name' => 'application/x-shockwave-flash'
+                'name' => 'application/x-shockwave-flash',
             ],
             [
-                'name' => 'application/x-tar'
+                'name' => 'application/x-tar',
             ],
             [
-                'name' => 'image/tiff'
+                'name' => 'image/tiff',
             ],
             [
-                'name' => 'application/typescript'
+                'name' => 'application/typescript',
             ],
             [
-                'name' => 'font/ttf'
+                'name' => 'font/ttf',
             ],
             [
-                'name' => 'application/vnd.visio'
+                'name' => 'application/vnd.visio',
             ],
             [
-                'name' => 'audio/x-wav'
+                'name' => 'audio/x-wav',
             ],
             [
-                'name' => 'audio/webm'
+                'name' => 'audio/webm',
             ],
             [
-                'name' => 'video/webm'
+                'name' => 'video/webm',
             ],
             [
-                'name' => 'image/webp'
+                'name' => 'image/webp',
             ],
             [
-                'name' => 'font/woff'
+                'name' => 'font/woff',
             ],
             [
-                'name' => 'font/woff2'
+                'name' => 'font/woff2',
             ],
             [
-                'name' => 'application/xhtml+xml'
+                'name' => 'application/xhtml+xml',
             ],
             [
-                'name' => 'application/vnd.ms-excel'
+                'name' => 'application/vnd.ms-excel',
             ],
             [
-                'name' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                'name' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ],
             [
-                'name' => 'application/xml'
+                'name' => 'application/xml',
             ],
             [
-                'name' => 'application/vnd.mozilla.xul+xml'
+                'name' => 'application/vnd.mozilla.xul+xml',
             ],
             [
-                'name' => 'application/zip'
+                'name' => 'application/zip',
             ],
             [
-                'name' => 'video/3gpp'
+                'name' => 'video/3gpp',
             ],
             [
-                'name' => 'audio/3gpp'
+                'name' => 'audio/3gpp',
             ],
             [
-                'name' => 'video/3gpp2'
+                'name' => 'video/3gpp2',
             ],
             [
-                'name' => 'audio/3gpp2'
+                'name' => 'audio/3gpp2',
             ],
             [
-                'name' => 'application/x-7z-compressed'
+                'name' => 'application/x-7z-compressed',
             ],
         ];
-
+        DB::beginTransaction();
+        $return = true;
         foreach ($data as $key) {
             $request = new \stdClass;
             $request->name = $key['name'];
@@ -212,8 +214,18 @@ class MimeTypeTableSeeder extends Seeder
 
             $mime_type = new MimeType;
             if (count($mime_type->getMimeByName($request->name)) == 0) {
-                $mime_type->addMimeType($request);
+                $result = $mime_type->addMimeType($request);
+                if (!$result) {
+                    $return = $result;
+                    break;
+                }
             }
+        }
+
+        if ($return) {
+            DB::commit();
+        } else {
+            DB::rollBack();
         }
     }
 }

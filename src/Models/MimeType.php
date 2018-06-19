@@ -17,7 +17,7 @@ class MimeType extends Model
             $this->name = $request->name;
             $this->user_id = $request->user_id;
             $this->save();
-            return true;
+            return $this;
         }catch(QueryException $e){
             report($e);
             return false;
