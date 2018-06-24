@@ -18,11 +18,12 @@ class CategoryTableSeeder extends Seeder
         $objCategory = new Category;
         $objNewCategory = new \StdClass;
 
-        $categories[] = array('name'=>'page', 'code'=>'page', 'user_id'=>'1');
+        $categories[] = array('name' => 'page', 'code' => 'page', 'user_id' => '1');
 
-        for ($i=0; $i < count($categories) ; $i++) {
+        for ($i = 0; $i < count($categories); $i++) {
             $result = $objCategory->getCategoryByCode($categories[$i]['code']);
-            if($result!=null){ 
+
+            if ($result === null) {
                 $objCategory->addCategory((Object)$categories[$i]);
             }
         }
