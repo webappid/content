@@ -15,21 +15,22 @@ class CreateTimeZonesTable extends Migration
     {
         Schema::create('time_zones', function (Blueprint $table) {
             $table->increments('id');
-           $table->string('code',2)
-                 ->nullable(false);
-           $table->string('name')
-                 ->nullable(false);
-           $table->integer('minute')
-                 ->nullable(false);
-           $table->integer('user_id')
-                 ->unsigned()
-                 ->nullable(false);
-           $table->timestamps();
+            $table->string('code')
+                ->nullable(false)
+                ->index();
+            $table->string('name')
+                ->nullable(false);
+            $table->integer('minute')
+                ->nullable(false);
+            $table->integer('user_id')
+                ->unsigned()
+                ->nullable(false);
+            $table->timestamps();
 
-           $table->foreign('user_id')
-                 ->references('id')
-                 ->on('users')
-                 ->onUpdate('cascade');
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onUpdate('cascade');
         });
     }
 
