@@ -28,18 +28,18 @@ class LanguageTableSeeder extends Seeder
             ]
         ];
 
-        foreach ($data as $key)
-        {
-            $request = new \stdClass;
-            $request->code = $key['code'];
-            $request->name = $key['name'];
+        foreach ($data as $key) {
+            $request           = new \stdClass;
+            $request->code     = $key['code'];
+            $request->name     = $key['name'];
             $request->image_id = $key['image_id'];
-            $request->user_id = '1';
+            $request->user_id  = '1';
             $request->image_id = 1;
 
-            $languages = new Language;
+            $languages      = new Language;
             $resultLanguage = $languages->getLanguageByName($request->name);
-            if($resultLanguage!=null){
+
+            if ($resultLanguage === null) {
                 $languages->addLanguage($request);
             }
         }
