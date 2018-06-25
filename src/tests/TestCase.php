@@ -2,17 +2,12 @@
 
 namespace WebAppId\Content\Tests;
 
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Orchestra\Testbench\TestCase as BaseTestCase;
+
 use Faker\Factory as Faker;
-use Test\CreateApplication;
 
 abstract class TestCase extends BaseTestCase
 {
-    use DatabaseMigrations, DatabaseTransactions;
-
-
     protected $faker;
     /**
      * Set up the test
@@ -21,29 +16,33 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
         $this->faker = Faker::create();
-        $this->artisan('migrate');
-        $this->artisan('db:seed');
+
+        $this->loadMigrationsFrom([
+            '--realpath' => realpath(__DIR__.'/../src/migrations'),
+        ]);
+        $this->artisan('webappid:content:seed');
+
     }
 
-    /**
-     * Create Aplication set for fake connection
-     *
-     * @return void
-     */
-    public function createApplication(){
-        putenv('DB_CONNECTION=sqlite');
-        putenv('DB_DATABASE=:memory:');
-        $app = require __DIR__ . '/../../../../../bootstrap/app.php';
-        $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
-        return $app;
-    }
-
-    /**
-     * Reset the migrations
-     */
-    public function tearDown()
+    protected function getPackageProviders($app)
     {
-        $this->artisan('migrate:reset');
-        parent::tearDown();
+        return [
+            \WebAppId\Content\ServiceProvider::class
+        ];
+    }
+    protected function getPackageAliases($app)
+    {
+        return [
+            'Content' => \WebAppId\Content\Facade::class
+        ];
+    }
+
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:'
+        ]);
     }
 }
