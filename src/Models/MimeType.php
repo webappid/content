@@ -14,10 +14,12 @@ class MimeType extends Model
     public function addMimeType($request)
     {
         try{
-            $this->name = $request->name;
-            $this->user_id = $request->user_id;
-            $this->save();
-            return $this;
+            $result          = new self();
+            $result->name    = $request->name;
+            $result->user_id = $request->user_id;
+            $result->save();
+
+            return $result;
         }catch(QueryException $e){
             report($e);
             return false;
