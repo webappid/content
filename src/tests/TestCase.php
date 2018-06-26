@@ -15,7 +15,7 @@ abstract class TestCase extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->faker = Faker::create();
+        $this->faker = Faker::create('id_ID');
 
         $this->loadMigrationsFrom([
             '--realpath' => realpath(__DIR__.'/../src/migrations'),
