@@ -16,11 +16,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-<<<<<<< HEAD
             "WebAppId\\Content\\": "src/tests"
-=======
-            "WebAppId\\Content\\": "src/tests/"
->>>>>>> release/0.1
         }
     },
     "require": {
