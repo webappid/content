@@ -1,6 +1,6 @@
 {
     "name": "webappid/content",
-    "description": "Core content for multipurpose such as blog etc",
+    "description": "Core content for multipurpose such as blog etc, if the web need more detail content info please create child table from content",
     "license": "MIT",
     "authors": [
         {
