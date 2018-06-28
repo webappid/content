@@ -23,23 +23,25 @@ class Content extends Model
     public function addContent($data)
     {
         try {
-            $this->title = $data->title;
-            $this->code = $data->code;
-            $this->description = $data->description;
-            $this->keyword = $data->keyword;
-            $this->og_title = $data->og_title;
-            $this->og_description = $data->og_description;
-            $this->default_image = $data->default_image;
-            $this->status_id = $data->status_id;
-            $this->language_id = $data->language_id;
-            $this->publish_date = $data->publish_date;
-            $this->additional_info = $data->additional_info;
-            $this->content = $data->content;
-            $this->time_zone_id = $data->time_zone_id;
-            $this->owner_id = $data->owner_id;
-            $this->user_id = $data->user_id;
-            $this->save();
-            return $this;
+            $result                  = new self();
+            $result->title           = $data->title;
+            $result->code            = $data->code;
+            $result->description     = $data->description;
+            $result->keyword         = $data->keyword;
+            $result->og_title        = $data->og_title;
+            $result->og_description  = $data->og_description;
+            $result->default_image   = $data->default_image;
+            $result->status_id       = $data->status_id;
+            $result->language_id     = $data->language_id;
+            $result->publish_date    = $data->publish_date;
+            $result->additional_info = $data->additional_info;
+            $result->content         = $data->content;
+            $result->time_zone_id    = $data->time_zone_id;
+            $result->owner_id        = $data->owner_id;
+            $result->user_id         = $data->user_id;
+            $result->save();
+
+            return $result;
         } catch (QueryException $e) {
             report($e);
             return false;

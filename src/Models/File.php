@@ -15,15 +15,17 @@ class File extends Model
 
     public function addFile($request){
         try{
-            $this->name = $request->name;
-            $this->description = $request->description;
-            $this->alt = $request->alt;
-            $this->path = $request->path;
-            $this->mime_type_id = $request->mime_type_id;
-            $this->owner_id = $request->owner_id;
-            $this->user_id = $request->user_id;
-            $this->save();
-            return $this;
+            $result               = new self();
+            $result->name         = $request->name;
+            $result->description  = $request->description;
+            $result->alt          = $request->alt;
+            $result->path         = $request->path;
+            $result->mime_type_id = $request->mime_type_id;
+            $result->owner_id     = $request->owner_id;
+            $result->user_id      = $request->user_id;
+            $result->save();
+            
+            return $result;
         }catch(QueryException $e){
             report($e);
             return false;
