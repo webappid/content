@@ -23,11 +23,13 @@ class ContentCategory extends Model
     public function addContentCategory($data)
     {
         try {
-            $this->content_id = $data->content_id;
-            $this->categories_id = $data->categories_id;
-            $this->user_id = $data->user_id;
-            $this->save();
-            return $this;
+            $result                = new self();
+            $result->content_id    = $data->content_id;
+            $result->categories_id = $data->categories_id;
+            $result->user_id       = $data->user_id;
+            $result->save();
+
+            return $result;
         } catch(QueryException $e){
             report($e);
             return false;

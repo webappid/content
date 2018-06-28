@@ -21,11 +21,13 @@ class Category extends Model
      */
     public function addCategory($data){
         try{
-            $this->code = $data->code;
-            $this->name = $data->name;
-            $this->user_id = $data->user_id;
-            $this->save();
-            return $this;
+            $result          = new self();
+            $result->code    = $data->code;
+            $result->name    = $data->name;
+            $result->user_id = $data->user_id;
+
+            $result->save();
+            return $result;
         }catch(QueryException $e){
             report($e);
             return false;

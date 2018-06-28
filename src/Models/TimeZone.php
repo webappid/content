@@ -18,12 +18,14 @@ class TimeZone extends Model
     public function addTimeZone($data)
     {
         try {
-            $this->code = $data->code;
-            $this->name = $data->name;
-            $this->minute = $data->minute;
-            $this->user_id = $data->user_id;
-            $this->save();
-            return true;
+            $result          = new self();
+            $result->code    = $data->code;
+            $result->name    = $data->name;
+            $result->minute  = $data->minute;
+            $result->user_id = $data->user_id;
+            $result->save();
+
+            return $result;
         } catch (QueryException $e) {
             report($e);
             return false;

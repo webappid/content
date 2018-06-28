@@ -14,12 +14,14 @@ class Language extends Model
     public function addLanguage($request)
     {
         try{
-            $this->code = $request->code;
-            $this->name = $request->name;
-            $this->image_id = $request->image_id;
-            $this->user_id = $request->user_id;
-            $this->save();
-            return $this;
+            $result           = new self();
+            $result->code     = $request->code;
+            $result->name     = $request->name;
+            $result->image_id = $request->image_id;
+            $result->user_id  = $request->user_id;
+            $result->save();
+
+            return $result;
         }catch(QueryException $e){
             report($e);
             return false;
