@@ -67,7 +67,7 @@ class ContentTest extends TestCase
 
     public function testBulkAddContentCount()
     {
-        for ($n = 0; $n <= 10; $n++) {
+        for ($n = 0; $n < 10; $n++) {
             $dummyData          = $this->createDummy();
             $dummyData->keyword = 'bulk';
 
