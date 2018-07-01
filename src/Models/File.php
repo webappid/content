@@ -37,7 +37,7 @@ class File extends Model
     }
 
     public function getFileByName($name){
-        return $this->where('name',$name)->get();
+        return $this->where('name',$name)->first();
     }
 
     public function mime(){
