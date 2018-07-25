@@ -6,7 +6,7 @@ use WebAppId\Content\Models\ContentGallery;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Tests\Unit\Models\ContentTest;
 
-class ContentCategoryTest extends TestCase
+class ContentGalleryTest extends TestCase
 {
 
     private $objContentGallery;
