@@ -2,6 +2,7 @@
 
 namespace WebAppId\Content\Models;
 
+use WebAppId\Content\Models\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
@@ -44,6 +45,6 @@ class MimeType extends Model
 
     public function file()
     {
-        return $this->hasOne('Loketics\Models\File');
+        return $this->hasOne(File::class);
     }
 }

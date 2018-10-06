@@ -2,6 +2,8 @@
 
 namespace WebAppId\Content\Models;
 
+use WebAppId\Content\Models\Content;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -114,10 +116,10 @@ class Content extends Model
     }
 
     public function child(){
-        return $this->belongsToMany('WebAppId\Content\Models\Content', 'content_childs', 'content_parent_id','content_child_id');
+        return $this->belongsToMany(Content::class, 'content_childs', 'content_parent_id','content_child_id');
     }
 
     public function parent(){
-        return $this->belongsToMany('WebAppId\Content\Models\Content', 'content_childs', 'content_child_id','content_parent_id');
+        return $this->belongsToMany(Content::class, 'content_childs', 'content_child_id','content_parent_id');
     }
 }
