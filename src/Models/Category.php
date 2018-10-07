@@ -137,4 +137,8 @@ class Category extends Model
     public function getCategoryByCode($code){
         return $this->where('code', $code)->first();
     }
+
+    public function content(){
+        return $this->belongsToMany(ContentCategory::class, 'content_categories', 'id','categories_id');
+    }
 }

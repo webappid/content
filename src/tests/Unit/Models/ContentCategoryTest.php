@@ -129,4 +129,14 @@ class ContentCategoryTest extends TestCase
             }
         }
     }
+
+    public function testContentCategories(){
+        $result = $this->createContentCategory();
+        if (!$result) {
+            $this->assertTrue(false);
+        } else {
+            $contentData = $this->contentTest->getContent()->find(1);
+            $this->assertEquals($contentData->category[0]->name, $this->resultCategory->name);
+        }
+    }
 }

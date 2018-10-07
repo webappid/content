@@ -2,6 +2,8 @@
 
 namespace WebAppId\Content\Models;
 
+use WebAppId\Content\Models\Content;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
@@ -38,7 +40,7 @@ class ContentStatus extends Model
                 $result->name = $request->name;
                 $result->user_id = $request->user_id;
                 $result->save();
-                return true;
+                return $result;
             } else {
                 return false;
             }
@@ -55,5 +57,9 @@ class ContentStatus extends Model
 
     public function getContentStatusesByName($name){
         return $this->where('name', $name)->get();
+    }
+
+    public function content(){
+        return $this->hasMany(Content::class);
     }
 }
