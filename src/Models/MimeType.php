@@ -3,6 +3,7 @@
 namespace WebAppId\Content\Models;
 
 use WebAppId\Content\Models\File;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
