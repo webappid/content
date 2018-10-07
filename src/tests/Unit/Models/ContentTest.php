@@ -122,4 +122,8 @@ class ContentTest extends TestCase
             }
         }
     }
+
+    public function getContent(){
+        return $this->content;
+    }
 }
