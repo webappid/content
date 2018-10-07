@@ -12,6 +12,7 @@ class ContentTagTest extends TestCase
     private $contentTest;
     private $tagTest;
     private $contentTag;
+    private $resultTagTest;
 
     private $objContentTag;
 
@@ -39,10 +40,10 @@ class ContentTagTest extends TestCase
 
     public function createDummy(){
         $resultContentTest = $this->createDummyContent();
-        $resultTagTest = $this->createDummyTag();
+        $this->resultTagTest = $this->createDummyTag();
 
         $this->objContentTag->content_id = $resultContentTest->id;
-        $this->objContentTag->tag_id = $resultTagTest->id;
+        $this->objContentTag->tag_id = $this->resultTagTest->id;
         $this->objContentTag->user_id = '1';
         return $this->objContentTag;
     }
@@ -61,6 +62,15 @@ class ContentTagTest extends TestCase
         $resultContentTag = $this->createContentTag();
         if($resultContentTag!=false){
             $this->assertTrue(true);
+        }
+    }
+
+    public function testCheckContentTag(){
+        $resultContentTag = $this->createContentTag();
+        if($resultContentTag!=false){
+            $this->assertTrue(true);
+            $contentData = $this->contentTest->getContent()->find(1);
+            $this->assertEquals($contentData->tag[0]->name, $this->resultTagTest->name);
         }
     }
 }

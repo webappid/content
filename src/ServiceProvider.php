@@ -11,6 +11,9 @@ class ServiceProvider extends BaseServiceProvider
             return new Content;
         });
         $this->commands(\WebAppId\Content\Commands\SeedCommand::class);
+
+        $this->app->make(\WebAppId\Content\Controllers\FileController::class);
+
     }
     public function boot()
     {
@@ -21,6 +24,8 @@ class ServiceProvider extends BaseServiceProvider
                 __DIR__ . '/migrations' => $this->app->databasePath() . '/migrations'
             ], 'migrations');
         }
+
+        include __DIR__.'/content_routes.php';
     }
     protected function isLaravel53AndUp()
     {
