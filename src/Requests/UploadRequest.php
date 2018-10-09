@@ -1,6 +1,6 @@
 <?php
 
-namespace WebApId\Content\Requests\UploadRequest;
+namespace WebAppId\Content\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
