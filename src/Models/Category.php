@@ -126,12 +126,17 @@ class Category extends Model
         return $result; 
     }
 
+    private function getQueryCategory($search){
+       return $this->where('code','LIKE','%'.$search.'%')
+            ->orWhere('name','LIKE','%'.$search.'%');
+    }
+
     public function getSearch($search=""){
-        $result = $this
-            ->where('code','LIKE','%'.$search.'%')
-            ->orWhere('name','LIKE','%'.$search.'%')
-            ->get();
-        return $result;
+        return $this->getQueryCategory($search)->get();
+    }
+
+    public function getSearchCount($search=""){
+        return $this->getQueryCategory($search)->count();
     }
 
     public function getCategoryByCode($code){

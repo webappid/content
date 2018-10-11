@@ -40,6 +40,7 @@ class ContentTest extends TestCase
         $this->objContent->time_zone_id = '1';
         $this->objContent->owner_id = '1';
         $this->objContent->user_id = '1';
+        $this->objContent->creator_id = '1';
 
         return $this->objContent;
     }

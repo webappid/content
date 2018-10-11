@@ -1,12 +1,10 @@
 <?php
 
-namespace WebAppId\Content\Controllers\References;
+namespace WebAppId\Content\Controllers;
 
 use WebAppId\Content\Controllers\Controller;
 use WebAppId\Content\Models\Category AS CategoryModel;
 use WebAppId\Content\Requests\CategoryRequests;
-
-use App\Http\Controllers\Category;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,14 +12,21 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
+	private $category;
+
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index(Category $category)
+	public function index()
 	{
-		$category->indexResult();
+		if(session('content_test')==null){
+			$category = new \App\Http\Controllers\Category;
+			$category->indexResult();
+		}else{
+			return true;
+		}
 	}
 
 	/**
@@ -29,9 +34,14 @@ class CategoryController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function create(Category $category)
+	public function create()
 	{
-		$category->createResult();
+		if(session('content_test')==null){
+			$category = new \App\Http\Controllers\Category;
+			$category->createResult();
+		}else{
+			return true;
+		}
 	}
 
 	/**
@@ -40,7 +50,7 @@ class CategoryController extends Controller
 	 * @param  \Illuminate\Http\Request  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(CategoryRequest $request, CategoryModel $categoryModel, Category $category)
+	public function store(CategoryRequest $request, CategoryModel $categoryModel)
 	{
 		$request->user_id = Auth::id();
 
@@ -48,7 +58,12 @@ class CategoryController extends Controller
 
 		$result['data'] = $categoryModel->addCategoryData($request);
 
-		$category->storeResult($result);
+		if(session('content_test')==null){
+			$category = new \App\Http\Controllers\Category;
+			$category->storeResult($result);
+		}else{
+			return $result;
+		}
 	}
 
 	/**
@@ -57,7 +72,7 @@ class CategoryController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show(Request $request, CategoryModel $categoryModel, Category $category)
+	public function show(Request $request, CategoryModel $categoryModel)
 	{
 		$column = array(
 			0 => 'id',
@@ -83,7 +98,12 @@ class CategoryController extends Controller
 		$result['recordsTotal'] = $categoryModel->count();
 		$result['recordsFiltered'] = $categoryModel->getSearchCount($request->search['value']);
 
-		$category->showResult($result);
+		if(session('content_test')==null){
+			$category = new \App\Http\Controllers\Category;
+			$category->showResult($result);
+		}else{
+			return $result;
+		}
 	}
 
 	/**
@@ -92,7 +112,7 @@ class CategoryController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit($id, CategoryModel $categoryModel, Category $category)
+	public function edit($id, CategoryModel $categoryModel)
 	{
 		if ($id <= 30) {
 			abort(403);
@@ -100,7 +120,12 @@ class CategoryController extends Controller
 
 		$result['category'] = $categoryModel->getOne($id);	
 
-		$category->editResult($result);
+		if(session('content_test')==null){
+			$category = new \App\Http\Controllers\Category;
+			$category->editResult($result);
+		}else{
+			return $result;
+		}
 	}
 
 	/**
@@ -110,7 +135,7 @@ class CategoryController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update($id, CategoryRequest $request, CategoryModel $categoryModel, Category $category)
+	public function update($id, CategoryRequest $request, CategoryModel $categoryModel)
 	{
 		if ($id <= 30) {
 			abort(403);
@@ -122,7 +147,12 @@ class CategoryController extends Controller
 
 		$result['data'] = $categoryModel->updateCategory($request, $id);
 
-		$category->updateResult($result);
+		if(session('content_test')==null){
+			$category = new \App\Http\Controllers\Category;
+			$category->updateResult($result);
+		}else{
+			return $result;
+		}
 		
 	}
 
@@ -132,7 +162,7 @@ class CategoryController extends Controller
 	 * @param  int  $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy($id, CategoryModel $categoryModel, Category $category)
+	public function destroy($id, CategoryModel $categoryModel)
 	{
 		if ($id <= 30) {
 			abort(403);
@@ -140,6 +170,11 @@ class CategoryController extends Controller
 
 		$result['data'] = $categoryModel->deleteCategory($id);
 		
-		$category->destroyResult($result);
+		if(session('content_test')==null){
+			$category = new \App\Http\Controllers\Category;
+			$category->destroyResult($result);
+		}else{
+			return $result;
+		}
 	}
 }

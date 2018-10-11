@@ -9,6 +9,9 @@ use Faker\Factory as Faker;
 abstract class TestCase extends BaseTestCase
 {
     protected $faker;
+
+    protected $prefix_route = "/test";
+
     /**
      * Set up the test
      */
