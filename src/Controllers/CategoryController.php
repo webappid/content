@@ -10,9 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class CategoryController extends Controller
+abstract class CategoryController extends Controller
 {
-	private $category;
+	
+	protected abstract function indexResult();
+	protected abstract function showResult($result);
+	protected abstract function createResult();
+	protected abstract function storeResult($result);
+	protected abstract function editResult($result);
+	protected abstract function updateResult($result);
+	protected abstract function destroyResult($result);
 
 	/**
 	 * Display a listing of the resource.
@@ -21,12 +28,7 @@ class CategoryController extends Controller
 	 */
 	public function index()
 	{
-		if(session('content_test')==null){
-			$category = new \App\Http\Controllers\Category;
-			$category->indexResult();
-		}else{
-			return true;
-		}
+		return $this->indexResult();
 	}
 
 	/**
@@ -36,12 +38,7 @@ class CategoryController extends Controller
 	 */
 	public function create()
 	{
-		if(session('content_test')==null){
-			$category = new \App\Http\Controllers\Category;
-			$category->createResult();
-		}else{
-			return true;
-		}
+		return $this->createResult();
 	}
 
 	/**
@@ -58,12 +55,7 @@ class CategoryController extends Controller
 
 		$result['data'] = $categoryModel->addCategoryData($request);
 
-		if(session('content_test')==null){
-			$category = new \App\Http\Controllers\Category;
-			$category->storeResult($result);
-		}else{
-			return $result;
-		}
+		return $this->storeResult($result);
 	}
 
 	/**
@@ -98,13 +90,10 @@ class CategoryController extends Controller
 		$result['recordsTotal'] = $categoryModel->count();
 		$result['recordsFiltered'] = $categoryModel->getSearchCount($request->search['value']);
 
-		if(session('content_test')==null){
-			$category = new \App\Http\Controllers\Category;
-			$category->showResult($result);
-		}else{
-			return $result;
-		}
+		return $this->showResult($result);
 	}
+
+	
 
 	/**
 	 * Show the form for editing the specified resource.
@@ -120,12 +109,7 @@ class CategoryController extends Controller
 
 		$result['category'] = $categoryModel->getOne($id);	
 
-		if(session('content_test')==null){
-			$category = new \App\Http\Controllers\Category;
-			$category->editResult($result);
-		}else{
-			return $result;
-		}
+		return $this->editResult($result);
 	}
 
 	/**
@@ -147,12 +131,7 @@ class CategoryController extends Controller
 
 		$result['data'] = $categoryModel->updateCategory($request, $id);
 
-		if(session('content_test')==null){
-			$category = new \App\Http\Controllers\Category;
-			$category->updateResult($result);
-		}else{
-			return $result;
-		}
+		return $this->updateResult($result);
 		
 	}
 
@@ -170,11 +149,6 @@ class CategoryController extends Controller
 
 		$result['data'] = $categoryModel->deleteCategory($id);
 		
-		if(session('content_test')==null){
-			$category = new \App\Http\Controllers\Category;
-			$category->destroyResult($result);
-		}else{
-			return $result;
-		}
+		return $this->destroyResult($result);
 	}
 }

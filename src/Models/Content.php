@@ -76,7 +76,7 @@ class Content extends Model
                 $result->owner_id = $request->owner_id;
                 $result->user_id = $request->user_id;
                 $result->save();
-                return true;
+                return $result;
             } catch (QueryException $e) {
                 report($e);
                 return false;
@@ -86,7 +86,7 @@ class Content extends Model
         }
     }
 
-    private function getQueryAllByCategory(){
+    private function getQueryAllByCategory($category_id){
         return $this
         ->leftJoin('content_categories AS cc','contents.id','=','cc.content_id')
         ->when($category_id != null, function ($query) use ($category_id) {
@@ -150,7 +150,6 @@ class Content extends Model
                     ->orWhere('contents.language_id','LIKE','%'.$search.'%')
                     ->orWhere('contents.status_id','LIKE','%'.$search.'%')
                     ->orWhere('contents.publish_date','LIKE','%'.$search.'%')
-                    ->orWhere('contents.venue','LIKE','%'.$search.'%')
                     ->orWhere('contents.additional_info','LIKE','%'.$search.'%')
                     ->orWhere('contents.content','LIKE','%'.$search.'%')
                     ->orWhere('contents.owner_id','LIKE','%'.$search.'%')

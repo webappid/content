@@ -135,6 +135,10 @@ class Category extends Model
         return $this->getQueryCategory($search)->get();
     }
 
+    public function getSearchOne($search=""){
+        return $this->getQueryCategory($search)->first();
+    }
+
     public function getSearchCount($search=""){
         return $this->getQueryCategory($search)->count();
     }

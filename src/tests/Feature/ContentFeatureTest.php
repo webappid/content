@@ -3,6 +3,7 @@
 namespace WebAppId\Content\Tests;
 
 use WebAppId\Content\Tests\Unit\Models\ContentTest;
+use WebAppId\Content\Models\Category;
 use Illuminate\Support\Facades\Session;
 use WebAppId\Content\Tests\TestCase;
 
@@ -10,13 +11,27 @@ class ContentFeatureTest extends TestCase
 {
 
     private $contentDummy;
+    private $categoryData;
+
+    private function createContentDummy(){
+        $contentTest = new ContentTest();
+        $contentTest->setup();
+        $this->contentDummy = $contentTest->createDummy();
+    }
 
     public function setUp()
     {
         parent::setUp();
-        $contentTest = new ContentTest();
-        $contentTest->setup();
-        $contentDummy = $contentTest->createDummy();
+        $this->createContentDummy();
+        $category = new Category;
+        $this->categoryData = $category->getOne(1);
+        $this->contentDummy->category_id = $this->categoryData->id;
+        
+    }
+
+    public function testAddContent(){
+        $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array)$this->contentDummy);
+        $this->assertEquals(200, $response->status());
     }
 
     /**
@@ -24,10 +39,46 @@ class ContentFeatureTest extends TestCase
      *
      * @return void
      */
-    public function testCategory()
+    public function testGetContent()
     {
-        $response = $this->withSession(['content_test' => 'true'])->get($this->prefix_route . '/category');
-        dd($response);
+        $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array)$this->contentDummy);
+        $response = $this->get($this->prefix_route . '/content?category='.$this->categoryData->name);
+        $this->assertEquals(200, $response->status());
+    }
+
+    public function testGetEditContent()
+    {
+        $resultContent = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array)$this->contentDummy);
+        $content = json_decode($resultContent->baseResponse->getContent(), true);
+        $response = $this->get($this->prefix_route . '/content/edit/'.$content['content']['code']);
+        $this->assertEquals(200, $response->status());
+    }
+
+    public function testUpdateContent()
+    {
+        $originalContent = $this->contentDummy;
+        $this->createContentDummy();
+        $resultContent = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array)$originalContent);
+        $content = json_decode($resultContent->baseResponse->getContent(), true);
+        $response = $this->get($this->prefix_route . '/content/edit/'.$content['content']['code']);
+        
+        $content = json_decode($response->baseResponse->getContent(), true);
+        
+        $content = (Object)$content;
+
+        $this->contentDummy->code = $content->code;
+
+        $response = $this->get($this->prefix_route . '/content/edit/'.$content->code);
+        
+        $response = $this->post($this->prefix_route . '/content/update/'.$content->code,(Array)$this->contentDummy);
+        
+        $this->assertEquals(200, $response->status());
+    }
+
+    public function testDeleteContent(){
+        $resultContent = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array)$this->contentDummy);
+        $content = json_decode($resultContent->baseResponse->getContent(), true);
+        $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->get($this->prefix_route . '/content/delete/'.$content['content']['code']);
         $this->assertEquals(200, $response->status());
     }
 }

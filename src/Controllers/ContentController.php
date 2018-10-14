@@ -1,12 +1,15 @@
 <?php
 
-namespace WebAppId\Content\Controllers\References;
+namespace WebAppId\Content\Controllers;
 
 use WebAppId\Content\Controllers\Controller;
 use WebAppId\Content\Models\Content AS ContentModel;
-use WebAppId\Content\Requests\ContentRequest;
+use WebAppId\Content\Models\ContentCategory AS ContentCategoryModel;
+use WebAppId\Content\Models\Category AS CategoryModel;
+use WebAppId\Content\Models\TimeZone AS TimeZoneModel;
+use WebAppId\Content\Models\ContentChild AS ContentChildModel;
 
-use App\Http\Controllers\Content;
+use WebAppId\Content\Requests\ContentRequest;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,14 +18,30 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 
-class ContentController extends Controller{
+abstract class ContentController extends Controller{
+
+    protected abstract function indexResult();
+	protected abstract function showResult($result);
+	protected abstract function createResult();
+	protected abstract function storeResult($result);
+	protected abstract function editResult($result);
+	protected abstract function updateResult($result);
+	protected abstract function destroyResult($result);
 
     /*
         set default for request
     */
 
-    private function getDefault(){
-        $timeZoneData = $timeZone->getOneTimeZoneByName(session('timezone'));
+    private function getDefault($timeZoneModel, $request){
+
+        $user_id = Auth::id()==null?session('user_id'):Auth::id();
+
+        if(session('timezone')==null){
+            $zone = "Asia/Jakarta";
+        }else{
+            $zone = session('timezone');
+        }
+        $timeZoneData = $timeZoneModel->getOneTimeZoneByName($zone);
 
         $request->code = str::slug($request->title);
 
@@ -46,9 +65,11 @@ class ContentController extends Controller{
 
         $request->time_zone_id = isset($timeZoneData)?$timeZoneData->id:1;
         
-        $request->user_id = Auth::id();
+        $request->creator_id = $user_id;
 
-        $request->owner_id = Auth::id();
+        $request->user_id = $user_id;
+
+        $request->owner_id = $user_id;
 
         return $request;
     }
@@ -58,9 +79,9 @@ class ContentController extends Controller{
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Content $content)
+    public function index()
     {
-        $content->indexResult();
+        $this->indexResult();
     }
 
     /**
@@ -68,9 +89,9 @@ class ContentController extends Controller{
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Content $content)
+    public function create()
     {
-        $content->createResult();
+        $this->createResult();
     }
 
     /**
@@ -79,16 +100,28 @@ class ContentController extends Controller{
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ContentRequest $request, ContentModel $contentModel, Content $content, Timezone $timeZone)
+    public function store(ContentRequest $request, ContentModel $contentModel, TimeZoneModel $timeZoneModel, ContentCategoryModel $contentCategoryModel, ContentChildModel $contentChildModel)
     {
 
-        $request = $this->getDefault();
+        $request = $this->getDefault($timeZoneModel, $request);
 
-        $request->creator_id = Auth::id();
+        $result['content'] = $contentModel->addContent($request);
 
-        $result = $contentModel->addContent($request);
+        if(isset($request->parent_id)){
+            $contentChildRequest = new \StdClass;
+            $contentChildRequest->user_id = $request->user_id;
+            $contentChildRequest->content_parent_id = $request->parent_id;
+            $contentChildRequest->content_child_id = $result['content']->id;
+            $result['content_child'] = $contentChildModel->addContentChild($contentChildRequest);
+        }
 
-        $content->storeResult($result);
+        $contentCategoryData = new \StdClass;
+        $contentCategoryData->user_id = $request->user_id;
+        $contentCategoryData->content_id = $result['content']->id;
+        $contentCategoryData->categories_id = $request->category_id;
+        $result['content_category'] = $contentCategoryModel->addContentCategory($contentCategoryData);
+        return $this->storeResult($result);
+        
     }
 
     /**
@@ -97,13 +130,16 @@ class ContentController extends Controller{
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, ContentModel $contentModel, Content $content)
+    public function show(Request $request, ContentModel $contentModel, CategoryModel $categoryModel)
     {
-        $result['data']['data'] = $data;
-		$result['data']['recordsTotal'] = $content->getAll($category_id)->count();
-        $result['data']['recordsFiltered'] = $content->getSearch($request->search['value'], $category_id);
         
-        $content->showResult($result);
+        $categoryName = isset($request->category)?$request->category:$request->search['category'];
+        $categoryData = $categoryModel->getSearchOne($categoryName);
+        $search = isset($request->q)?$request->q:$request->search['value'];
+        $result['data'] = $contentModel->getAll($categoryData->id);
+		$result['recordsTotal'] = $contentModel->getAllCount($categoryData->id);
+        $result['recordsFiltered'] = $contentModel->getSearch($search, $categoryData->id);
+        return $this->showResult($result);
     }
 
     /**
@@ -112,9 +148,10 @@ class ContentController extends Controller{
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, ContentModel $contentModel, Content $content)
+    public function edit($code, ContentModel $contentModel)
     {
-        $content->editResult();
+        $contentData = $contentModel->getContentByCode($code);
+        return $this->editResult($contentData);
     }
 
     /**
@@ -124,13 +161,14 @@ class ContentController extends Controller{
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ContentRequest $request, $code, ContentModule $contentModule, Content $content)
+    public function update(ContentRequest $request, $code, ContentModel $contentModel, TimeZoneModel $timeZoneModel)
     {
-        $request = $this->getDefault();
 
-        $result = $contentModule->updateContentByCode($request, $code);
+        $request = $this->getDefault($timeZoneModel, $request);
+        
+        $result = $contentModel->updateContentByCode($request, $code);
 
-        $content->updateResult($result);
+        return $this->updateResult($result);
     }
 
     /**
@@ -139,8 +177,9 @@ class ContentController extends Controller{
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id, ContentModel $contentModel, Content $content)
+    public function destroy($code, ContentModel $contentModel)
     {
-        $content->destroyResult();
+        $result = $contentModel->deleteContentByCode($code);   
+        return $this->destroyResult($result);
     }
 }

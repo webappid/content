@@ -24,7 +24,7 @@ class ContentRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string|max:191|unique:contents,title' . ($id != null ? ",$id" : ''),
+            'title' => 'required|string|max:191|unique:contents,title',
             'description' => 'required|string|max:191',
             'content' => 'required|string'
         ];
