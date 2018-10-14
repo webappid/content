@@ -38,4 +38,8 @@ class ContentTest extends ContentController
             return "Delete Failed";
         }
     }
+
+    protected function detail($result){
+        return $result;
+    }
 }

@@ -8,6 +8,7 @@ use WebAppId\Content\Models\ContentCategory AS ContentCategoryModel;
 use WebAppId\Content\Models\Category AS CategoryModel;
 use WebAppId\Content\Models\TimeZone AS TimeZoneModel;
 use WebAppId\Content\Models\ContentChild AS ContentChildModel;
+use WebAppId\Contents\Models\ContentGallery AS ContentGalleryModel;
 
 use WebAppId\Content\Requests\ContentRequest;
 
@@ -26,7 +27,8 @@ abstract class ContentController extends Controller{
 	protected abstract function storeResult($result);
 	protected abstract function editResult($result);
 	protected abstract function updateResult($result);
-	protected abstract function destroyResult($result);
+    protected abstract function destroyResult($result);
+    protected abstract function detailResult($result);
 
     /*
         set default for request
@@ -104,7 +106,7 @@ abstract class ContentController extends Controller{
     {
 
         $request = $this->getDefault($timeZoneModel, $request);
-
+        
         $result['content'] = $contentModel->addContent($request);
 
         if(isset($request->parent_id)){
@@ -136,7 +138,7 @@ abstract class ContentController extends Controller{
         $categoryName = isset($request->category)?$request->category:$request->search['category'];
         $categoryData = $categoryModel->getSearchOne($categoryName);
         $search = isset($request->q)?$request->q:$request->search['value'];
-        $result['data'] = $contentModel->getAll($categoryData->id);
+        $result['content'] = $contentModel->getAll($categoryData->id);
 		$result['recordsTotal'] = $contentModel->getAllCount($categoryData->id);
         $result['recordsFiltered'] = $contentModel->getSearch($search, $categoryData->id);
         return $this->showResult($result);
@@ -150,8 +152,8 @@ abstract class ContentController extends Controller{
      */
     public function edit($code, ContentModel $contentModel)
     {
-        $contentData = $contentModel->getContentByCode($code);
-        return $this->editResult($contentData);
+        $result['content'] = $contentModel->getContentByCode($code);
+        return $this->editResult($result);
     }
 
     /**
@@ -166,7 +168,7 @@ abstract class ContentController extends Controller{
 
         $request = $this->getDefault($timeZoneModel, $request);
         
-        $result = $contentModel->updateContentByCode($request, $code);
+        $result['content'] = $contentModel->updateContentByCode($request, $code);
 
         return $this->updateResult($result);
     }
@@ -182,4 +184,12 @@ abstract class ContentController extends Controller{
         $result = $contentModel->deleteContentByCode($code);   
         return $this->destroyResult($result);
     }
+
+    public function detail($code, ContentModel $contentModel, ContentGalleryModel $contentGallery){
+        
+        $result['content'] = $contentModel->getContentByCode($code);
+
+        return $this->detailResult($result);
+    }
+
 }

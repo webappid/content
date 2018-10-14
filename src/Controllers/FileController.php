@@ -3,7 +3,7 @@
 namespace WebAppId\Content\Controllers;
 
 use WebAppId\Content\Models\File;
-use WebAppId\Content\Models\MimeType;
+use WebAppId\Content\Models\MimeType AS MimeTypeModel;
 use WebAppId\Content\Controllers\Controller;
 use WebAppId\Content\Requests\UploadRequest;
 
@@ -24,41 +24,55 @@ class FileController extends Controller
         return $this->loadFile($name, '0', $file);
     }
 
+    private function saveFile($path, $file, $upload, $mimeTypeModel){
+        $user_id = Auth::id()==null?session('user_id'):Auth::id();
+
+        $path = str_replace('../','',$path);
+        $filename = $file->store($path);
+        $fileData = explode('/',$filename);
+
+        $resultMimeType = $mimeTypeModel->getMimeByName($file->getMimeType());
+        
+        $objFile = new \StdClass;
+        $objFile->name          = $fileData[1];
+        $objFile->description   = $upload->description;
+        $objFile->alt           = $upload->alt;
+        $objFile->path          = $path;
+        $objFile->mime_type_id  = $resultMimeType[0]->id;
+        $objFile->user_id       = $user_id;
+        $objFile->owner_id      = $user_id;
+
+        $file = new File;
+        $status = $file->addFile($objFile);
+        return $status;
+    }
+
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($path, UploadRequest $upload)
+    public function create($path, UploadRequest $upload, MimeTypeModel $mimeTypeModel)
     {
         $status = array();
-        for ($i=0; $i < count($upload->photos); $i++) { 
-            $path = str_replace('../','',$path);
-            $filename = $upload->photos[$i]->store($path);
-            $fileData = explode('/',$filename);
-
-            $mimeType = new MimeType;
-            $resultMimeType = $mimeType->getMimeByName($upload->photos[$i]->getMimeType());
-
-            $objFile = new \StdClass;
-            $objFile->name          = $fileData[1];
-            $objFile->description   = $upload->description;
-            $objFile->alt           = $upload->alt;
-            $objFile->path          = $path;
-            $objFile->mime_type_id  = $resultMimeType[0]->id;
-            $objFile->user_id       = Auth::id();
-            $objFile->owner_id      = Auth::id();
-
-            $file = new File;
-            $status[] = $file->addFile($objFile);
+        if($upload->photos == (Array)$upload->photos){
+            for ($i=0; $i < count($upload->photos); $i++) { 
+                $status[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeModel);
+            }
+        }else{
+            $status[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeModel);
         }
-        if($status!==false){
+        
+        if(count($status)>0){
             $result['code'] = '201';
             $result['message'] = 'Upload File Success';
             $result['data']['images'] = $status;
-            return json_encode($result);
+            return $result;
         }else{
-            return response_failed($result);
+            $result['code'] = '406';
+            $result['message'] = 'Save Data Failed';
+            $result['data']['images'] = $status;
+            return $result;
         }
     }
     

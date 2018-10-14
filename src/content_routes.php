@@ -32,6 +32,7 @@ if($_SERVER["PHP_SELF"]=="vendor/phpunit/phpunit/phpunit"){
             Route::get('/edit/{code}', 'WebAppId\Content\Controllers\ContentTest@edit')->name($routeCode . '_edit');
             Route::post('/update/{code}', 'WebAppId\Content\Controllers\ContentTest@update')->name($routeCode . '_update');
             Route::get('/delete/{code}', 'WebAppId\Content\Controllers\ContentTest@destroy')->name($routeCode . '_delete');
+            Route::get('/detail/{code}', 'WebAppId\Content\Controllers\ContentTest@detail')->name($routeCode . '_detail');
         });
     });
 }
