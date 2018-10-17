@@ -5,7 +5,10 @@ namespace WebAppId\Content\Controllers;
 use WebAppId\Content\Controllers\Controller;
 use WebAppId\Content\Controllers\FileController;
 use WebAppId\Content\Models\ContentGallery AS ContentGalleryModel;
+use WebAppId\Content\Models\TimeZone AS TimeZoneModel;
+use WebAppId\Content\Requests\ContentGalleryRequest;
 
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -23,6 +26,6 @@ abstract class ContentGalleryController extends Controller{
      */
     public function store(ContentGalleryRequest $request, ContentGalleryModel $contentModel, TimeZoneModel $timeZoneModel)
     {
-
+        return $this->storeResult();
     }
 }

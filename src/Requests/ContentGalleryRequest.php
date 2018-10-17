@@ -4,7 +4,7 @@ namespace WebAppId\Content\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CategoryRequest extends FormRequest{
+class ContentGalleryRequest extends FormRequest{
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -24,7 +24,7 @@ class CategoryRequest extends FormRequest{
     public function rules()
     {
         return [
-            'name' => 'required|unique:categories|191'
+            'content_id' => 'required'
         ];
     }
 
@@ -37,8 +37,7 @@ class CategoryRequest extends FormRequest{
     public function messages()
     {
         return [
-            'name.required' => 'Cateogory name required',
-            'name.unique' => 'Cateogory name should unique'
+            'content_id.required' => 'Content Id required'
         ];
     }
 
@@ -50,7 +49,7 @@ class CategoryRequest extends FormRequest{
     public function filters()
     {
         return [
-            'name' => 'trim|escape'
+            
         ];
     }
 }
