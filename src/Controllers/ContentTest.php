@@ -4,7 +4,9 @@ namespace WebAppId\Content\Controllers;
 
 use WebAppId\Content\Controllers\ContentController;
 
-class ContentTest extends ContentController
+use Illuminate\Container\Container;
+
+class ContentTest extends Controller
 {
     protected function indexResult()
     {
@@ -39,7 +41,13 @@ class ContentTest extends ContentController
         }
     }
 
-    protected function detail($result){
+    protected function detailResult($result){
+        return $result;
+    }
+
+    public function presenter(Container $container){
+        $result =  $container->make(ContentController::class);
+        dd('test');
         return $result;
     }
 }

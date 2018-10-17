@@ -19,16 +19,13 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 
-abstract class ContentController extends Controller{
+class ContentController extends Controller{
 
-    protected abstract function indexResult();
-	protected abstract function showResult($result);
-	protected abstract function createResult();
-	protected abstract function storeResult($result);
-	protected abstract function editResult($result);
-	protected abstract function updateResult($result);
-    protected abstract function destroyResult($result);
-    protected abstract function detailResult($result);
+
+    public function __construct(TimeZoneModel $timeZoneModel){
+        $timeZoneData = $timeZoneModel->getOneTimeZoneByName('Asia/Jakarta');
+        dd($timeZoneData);
+    }
 
     /*
         set default for request

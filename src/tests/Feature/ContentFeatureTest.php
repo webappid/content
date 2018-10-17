@@ -32,6 +32,7 @@ class ContentFeatureTest extends TestCase
     public function testAddContent()
     {
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $this->contentDummy);
+        dd($response);
         $this->assertEquals(200, $response->status());
     }
 
