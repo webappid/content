@@ -28,7 +28,7 @@ if($_SERVER["PHP_SELF"]=="vendor/phpunit/phpunit/phpunit"){
             $routeCode = 'content';
             Route::get('/', 'WebAppId\Content\Controllers\ContentTest@show')->name($routeCode . '_list');
             Route::get('/create', 'WebAppId\Content\Controllers\ContentTest@create')->name($routeCode . '_create');
-            Route::post('/store', 'WebAppId\Content\Controllers\ContentTest@store')->name($routeCode . '_store');
+            Route::post('/store', 'WebAppId\Content\Controllers\ContentTest@presenter')->name($routeCode . '_store');
             Route::get('/edit/{code}', 'WebAppId\Content\Controllers\ContentTest@edit')->name($routeCode . '_edit');
             Route::post('/update/{code}', 'WebAppId\Content\Controllers\ContentTest@update')->name($routeCode . '_update');
             Route::get('/delete/{code}', 'WebAppId\Content\Controllers\ContentTest@destroy')->name($routeCode . '_delete');
