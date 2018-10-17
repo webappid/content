@@ -2,8 +2,7 @@
 
 namespace WebAppId\Content\Controllers;
 
-use WebAppId\Content\Controllers\Controller;
-use WebAppId\Content\Controllers\FileController;
+use WebAppId\Content\Presenters\FilePresenter;
 use WebAppId\Content\Models\ContentGallery AS ContentGalleryModel;
 use WebAppId\Content\Models\TimeZone AS TimeZoneModel;
 use WebAppId\Content\Requests\ContentGalleryRequest;
@@ -15,8 +14,8 @@ use Illuminate\Support\Str;
 
 use Carbon\Carbon;
 
-abstract class ContentGalleryController extends Controller{
-    protected abstract function storeResult($result);
+abstract class ContentGalleryPresenter
+{
 
     /**
      * Store a newly created resource in storage.
@@ -26,6 +25,6 @@ abstract class ContentGalleryController extends Controller{
      */
     public function store(ContentGalleryRequest $request, ContentGalleryModel $contentModel, TimeZoneModel $timeZoneModel)
     {
-        return $this->storeResult();
+        return null;
     }
 }

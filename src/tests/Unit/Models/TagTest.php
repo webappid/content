@@ -2,7 +2,7 @@
 
 namespace WebAppId\Content\Tests\Unit\Models;
 
-use WebAppId\Content\Models\Tag;
+use WebAppId\Content\Repositories\TagRepository;
 use WebAppId\Content\Tests\TestCase;
 
 class TagTest extends TestCase
@@ -29,7 +29,7 @@ class TagTest extends TestCase
 
     public function start()
     {
-        $this->tag = new Tag;
+        $this->tag = new TagRepository;
         $this->objTag = new \StdClass;
     }
 

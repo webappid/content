@@ -6,7 +6,7 @@ use WebAppId\Content\Controllers\ContentController;
 
 use Illuminate\Container\Container;
 
-class ContentTest extends Controller
+class ContentTest
 {
     protected function indexResult()
     {
@@ -46,8 +46,7 @@ class ContentTest extends Controller
     }
 
     public function presenter(Container $container){
-        $result =  $container->make(ContentController::class);
-        dd('test');
+        $result =  $container->call('WebAppId\Content\Presenters\ContentPresenter@store');
         return $result;
     }
 }

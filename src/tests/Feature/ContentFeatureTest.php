@@ -2,7 +2,7 @@
 
 namespace WebAppId\Content\Tests;
 
-use WebAppId\Content\Models\Category;
+use WebAppId\Content\Presenters\CategoryPresenter;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Tests\Unit\Models\ContentTest;
 
@@ -23,13 +23,13 @@ class ContentFeatureTest extends TestCase
     {
         parent::setUp();
         $this->createContentDummy();
-        $category = new Category;
+        $category = new CategoryPresenter;
         $this->categoryData = $category->getOne(1);
         $this->contentDummy->category_id = $this->categoryData->id;
 
     }
 
-    public function testAddContent()
+    public function testAddContentOnly()
     {
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $this->contentDummy);
         dd($response);

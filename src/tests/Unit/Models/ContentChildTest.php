@@ -2,9 +2,9 @@
 
 namespace WebAppId\Content\Tests\Unit\Models;
 
-use WebAppId\Content\Models\ContentChild;
+use WebAppId\Content\Repositories\ContentChildRepository;
 use WebAppId\Content\Tests\TestCase;
-use WebAppId\Content\Models\Content;
+use WebAppId\Content\Repositories\ContentRepository;
 use Illuminate\Support\Facades\DB;
 
 class ContentChildTest extends TestCase
@@ -30,8 +30,8 @@ class ContentChildTest extends TestCase
     public function start()
     {
         $this->objContentChild = new \StdClass;
-        $this->contentChild = new ContentChild;
-        $this->content = new Content;
+        $this->contentChild = new ContentChildRepository;
+        $this->content = new ContentRepository;
         $this->contentTest = new ContentTest;
     }
 

@@ -2,7 +2,7 @@
 
 namespace WebAppId\Content\Tests\Unit\Models;
 
-use WebAppId\Content\Models\ContentCategory;
+use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Tests\Unit\Models\ContentTest;
 
@@ -57,7 +57,7 @@ class ContentCategoryTest extends TestCase
 
     private function start()
     {
-        $this->contentCategory = new ContentCategory;
+        $this->contentCategory = new ContentCategoryRepository;
         $this->objContentCategory = new \StdClass;
         $this->contentTest = new ContentTest;
         $this->contentTest->setUp();

@@ -2,7 +2,7 @@
 
 namespace WebAppId\Content\Tests\Unit\Models;
 
-use WebAppId\Content\Models\Category;
+use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Tests\TestCase;
 
 class CategoryTest extends TestCase
@@ -26,7 +26,7 @@ class CategoryTest extends TestCase
 
     public function start(){
         $this->objCategory = new \StdClass;
-        $this->category = new Category;
+        $this->category = new CategoryRepository;
     }
     
     public function setUp()

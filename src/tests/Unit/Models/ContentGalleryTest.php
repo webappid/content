@@ -2,7 +2,7 @@
 
 namespace WebAppId\Content\Tests\Unit\Models;
 
-use WebAppId\Content\Models\ContentGallery;
+use WebAppId\Content\Repositories\ContentGalleryRepository;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Tests\Unit\Models\ContentTest;
 
@@ -17,7 +17,7 @@ class ContentGalleryTest extends TestCase
 
     public function start()
     {
-        $this->contentGallery = new ContentGallery;
+        $this->contentGallery = new ContentGalleryRepository;
         $this->contentTest = new ContentTest;
         $this->contentTest->setUp();
         $this->fileTest = new FileTest;

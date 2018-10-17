@@ -2,7 +2,7 @@
 
 namespace WebAppId\Content\Tests\Unit\Models;
 
-use WebAppId\Content\Models\File;
+use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Tests\TestCase;
 
 class FileTest extends TestCase
@@ -37,7 +37,7 @@ class FileTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->file = new File;
+        $this->file = new FileRepository;
         $this->objFile = new \StdClass;
     }
 

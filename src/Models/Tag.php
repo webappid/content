@@ -15,22 +15,6 @@ class Tag extends Model
 
     protected $fillable=['id','name'];
 
-    public function addTag($request){
-        try{
-            $this->name = $request->name;
-            $this->user_id = $request->user_id;
-            $this->save();
-            return $this;
-        }catch(QueryException $e){
-            report($e);
-            return false;
-        }
-    }
-
-    public function getTagByName($name){
-        return $this->where('name', $name)->first();
-    }
-
     public function content(){
         return $this->belongsToMany(Content::class, 'content_tags', 'tag_id','content_id');
     }

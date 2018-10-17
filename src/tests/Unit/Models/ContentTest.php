@@ -2,7 +2,7 @@
 
 namespace WebAppId\Content\Tests\Unit\Models;
 
-use WebAppId\Content\Models\Content;
+use WebAppId\Content\Repositories\ContentRepository;
 use WebAppId\Content\Tests\TestCase;
 
 class ContentTest extends TestCase
@@ -14,7 +14,7 @@ class ContentTest extends TestCase
     private function start()
     {
         $this->objContent = new \StdClass;
-        $this->content = new Content;
+        $this->content = new ContentRepository;
     }
 
     public function setUp()

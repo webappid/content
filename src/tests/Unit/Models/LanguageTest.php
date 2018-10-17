@@ -2,7 +2,7 @@
 
 namespace WebAppId\Content\Tests\Unit\Models;
 
-use WebAppId\Content\Models\Language;
+use WebAppId\Content\Repositories\LanguageRepository;
 use WebAppId\Content\Tests\TestCase;
 
 class LanguageTest extends TestCase
@@ -13,7 +13,7 @@ class LanguageTest extends TestCase
 
     public function start()
     {
-        $this->language = new Language;
+        $this->language = new LanguageRepository;
         $this->objLanguage = new \StdClass;
     }
 

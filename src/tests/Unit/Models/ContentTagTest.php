@@ -4,7 +4,7 @@ namespace WebAppId\Content\Tests\Unit\Models;
 
 use WebAppId\Content\Tests\Unit\Models\ContentTest;
 use WebAppId\Content\Tests\Unit\Models\TagTest;
-use WebAppId\Content\Models\ContentTag;
+use WebAppId\Content\Repositories\ContentTagRepository;
 use WebAppId\Content\Tests\TestCase;
 
 class ContentTagTest extends TestCase
@@ -26,7 +26,7 @@ class ContentTagTest extends TestCase
         $this->contentTest->setUp();
         $this->tagTest = new TagTest;
         $this->tagTest->setUp();
-        $this->contentTag = new ContentTag;
+        $this->contentTag = new ContentTagRepository;
         $this->objContentTag = new \StdClass;
     }
 
