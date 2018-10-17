@@ -2,7 +2,7 @@
 
 namespace WebAppId\Content\Seeds;
 
-use WebAppId\Content\Models\Category;
+use WebAppId\Content\Repositories\CategoryRepository;
 use Illuminate\Database\Seeder;
 
 class CategoryTableSeeder extends Seeder
@@ -12,19 +12,18 @@ class CategoryTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(CategoryRepository $category)
     {
         //
-        $objCategory = new Category;
         $objNewCategory = new \StdClass;
 
         $categories[] = array('name' => 'page', 'code' => 'page', 'user_id' => '1');
 
         for ($i = 0; $i < count($categories); $i++) {
-            $result = $objCategory->getCategoryByCode($categories[$i]['code']);
+            $result = $category->getCategoryByCode($categories[$i]['code']);
 
             if ($result === null) {
-                $objCategory->addCategory((Object)$categories[$i]);
+                $category->addCategory((Object)$categories[$i]);
             }
         }
     }

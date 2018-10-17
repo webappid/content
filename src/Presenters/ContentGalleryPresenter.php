@@ -3,8 +3,8 @@
 namespace WebAppId\Content\Controllers;
 
 use WebAppId\Content\Presenters\FilePresenter;
-use WebAppId\Content\Models\ContentGallery AS ContentGalleryModel;
-use WebAppId\Content\Models\TimeZone AS TimeZoneModel;
+use WebAppId\Content\Repositories\ContentGalleryRepository;
+use WebAppId\Content\Repositories\TimeZoneRepository;
 use WebAppId\Content\Requests\ContentGalleryRequest;
 
 use Illuminate\Contracts\Container\Container;
@@ -23,7 +23,7 @@ abstract class ContentGalleryPresenter
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ContentGalleryRequest $request, ContentGalleryModel $contentModel, TimeZoneModel $timeZoneModel)
+    public function store(ContentGalleryRequest $request, ContentGalleryRepository $contentRepository, TimeZoneRepository $timeZoneRepository)
     {
         return null;
     }

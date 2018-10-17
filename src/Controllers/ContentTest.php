@@ -46,7 +46,7 @@ class ContentTest
     }
 
     public function presenter(Container $container){
-        $result =  $container->call('WebAppId\Content\Presenters\ContentPresenter@store');
+        $result = $container->call('WebAppId\Content\Presenters\ContentPresenter@store');
         return $result;
     }
 }

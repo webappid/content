@@ -3,7 +3,7 @@
 namespace WebAppId\Content\Seeds;
 
 use Illuminate\Database\Seeder;
-use WebAppId\Content\Models\TimeZone;
+use WebAppId\Content\Repositories\TimeZoneRepository;
 use Illuminate\Support\Facades\DB;
 
 class TimeZoneTableSeeder extends Seeder
@@ -13,7 +13,7 @@ class TimeZoneTableSeeder extends Seeder
  *
  * @return void
  */
-    public function run()
+    public function run(TimeZoneRepository $timezone)
     {
         $user_id = '1';
 
@@ -2984,7 +2984,6 @@ class TimeZoneTableSeeder extends Seeder
             $request->minute = $data[$i]['minute'];
             $request->user_id = $user_id;
 
-            $timezone = new TimeZone;
             if (count($timezone->getTimeZoneByName($request->name)) == 0) {
                 $result = $timezone->addTimeZone($request);
                 if ($result == false) {

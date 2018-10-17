@@ -23,8 +23,4 @@ class File extends Model
     public function content(){
         return $this->belongsTo(Content::class);
     }
-
-    public function getFileCount(){
-        return $this->count();
-    }
 }

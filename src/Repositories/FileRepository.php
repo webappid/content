@@ -38,4 +38,8 @@ class FileRepository
     public function getFileByName($name){
         return $this->file->where('name',$name)->first();
     }
+
+    public function getFileCount(){
+        return $this->file->count();
+    }
 }

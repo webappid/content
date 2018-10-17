@@ -2,9 +2,10 @@
 
 namespace WebAppId\Content\Tests;
 
-use WebAppId\Content\Presenters\CategoryPresenter;
+use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Tests\TestCase;
-use WebAppId\Content\Tests\Unit\Models\ContentTest;
+use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
+use Illuminate\Container\Container;
 
 class ContentFeatureTest extends TestCase
 {
@@ -23,7 +24,9 @@ class ContentFeatureTest extends TestCase
     {
         parent::setUp();
         $this->createContentDummy();
-        $category = new CategoryPresenter;
+
+        $container = new Container;
+        $category = $container->make(CategoryRepository::class);
         $this->categoryData = $category->getOne(1);
         $this->contentDummy->category_id = $this->categoryData->id;
 
@@ -32,7 +35,6 @@ class ContentFeatureTest extends TestCase
     public function testAddContentOnly()
     {
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $this->contentDummy);
-        dd($response);
         $this->assertEquals(200, $response->status());
     }
 
@@ -45,9 +47,9 @@ class ContentFeatureTest extends TestCase
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $originalContent);
         $content = json_decode($response->baseResponse->getContent(), true);
         $childContent->parent_id = $content["content"]["id"];
-
+        
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $childContent);
-
+        
         $this->assertEquals(200, $response->status());
     }
 

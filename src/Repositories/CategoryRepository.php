@@ -1,11 +1,11 @@
 <?php
 
-namespace WebAppId\Content\Models;
+namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\Category;
 
-class CatgoryRepository
+class CategoryRepository
 {
     private $category;
 

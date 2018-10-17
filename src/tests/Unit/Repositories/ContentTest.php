@@ -1,9 +1,11 @@
 <?php
 
-namespace WebAppId\Content\Tests\Unit\Models;
+namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use WebAppId\Content\Repositories\ContentRepository;
 use WebAppId\Content\Tests\TestCase;
+
+use Illuminate\Container\Container;
 
 class ContentTest extends TestCase
 {
@@ -14,11 +16,12 @@ class ContentTest extends TestCase
     private function start()
     {
         $this->objContent = new \StdClass;
-        $this->content = new ContentRepository;
     }
 
     public function setUp()
     {
+        $container = new Container;
+        $this->content = $container->make(ContentRepository::class);
         parent::setUp();
         $this->start();
     }

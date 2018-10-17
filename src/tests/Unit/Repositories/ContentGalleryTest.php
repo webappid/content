@@ -1,10 +1,10 @@
 <?php
 
-namespace WebAppId\Content\Tests\Unit\Models;
+namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use WebAppId\Content\Repositories\ContentGalleryRepository;
 use WebAppId\Content\Tests\TestCase;
-use WebAppId\Content\Tests\Unit\Models\ContentTest;
+use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
 
 class ContentGalleryTest extends TestCase
 {

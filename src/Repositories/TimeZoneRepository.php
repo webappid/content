@@ -36,7 +36,7 @@ class TimeZoneRepository
 
     public function getOneTimeZoneByName($name)
     {
-        return $this->timeZone->where('name', '=', $name)->firstOrFail();
+        return $this->timeZone->where('name', '=', $name)->first();
     }
 
     public function getAllTimeZone()

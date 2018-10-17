@@ -4,7 +4,7 @@ namespace WebAppId\Content\Seeds;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use WebAppId\Content\Models\MimeType;
+use \WebAppId\Content\Repositories\MimeTypeRepository;
 
 class MimeTypeTableSeeder extends Seeder
 {
@@ -13,7 +13,7 @@ class MimeTypeTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(MimeTypeRepository $mime_type)
     {
         $user_id = '1';
 
@@ -212,7 +212,6 @@ class MimeTypeTableSeeder extends Seeder
             $request->name = $key['name'];
             $request->user_id = $user_id;
 
-            $mime_type = new MimeType;
             if (count($mime_type->getMimeByName($request->name)) == 0) {
                 $result = $mime_type->addMimeType($request);
                 if (!$result) {

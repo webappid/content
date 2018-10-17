@@ -3,7 +3,7 @@
 namespace WebAppId\Content\Seeds;
 
 use Illuminate\Database\Seeder;
-use WebAppId\Content\Models\Language;
+use \WebAppId\Content\Repositories\LanguageRepository;
 
 class LanguageTableSeeder extends Seeder
 {
@@ -12,7 +12,7 @@ class LanguageTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(LanguageRepository $languages)
     {
         $image_id = 1;
         $data = [
@@ -36,7 +36,6 @@ class LanguageTableSeeder extends Seeder
             $request->user_id  = '1';
             $request->image_id = 1;
 
-            $languages      = new Language;
             $resultLanguage = $languages->getLanguageByName($request->name);
 
             if ($resultLanguage === null) {

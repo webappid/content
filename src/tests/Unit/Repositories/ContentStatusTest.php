@@ -1,6 +1,6 @@
 <?php
 
-namespace WebAppId\Content\Tests\Unit\Models;
+namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use WebAppId\Content\Repositories\ContentStatusRepository;
 use WebAppId\Content\Tests\TestCase;

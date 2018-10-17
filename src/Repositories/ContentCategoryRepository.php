@@ -2,6 +2,8 @@
 
 namespace WebAppId\Content\Repositories;
 
+use WebAppId\Content\Models\ContentCategory;
+
 class ContentCategoryRepository
 {
     private $contentCetgory;
@@ -24,7 +26,6 @@ class ContentCategoryRepository
             $this->contentCetgory->categories_id = $data->categories_id;
             $this->contentCetgory->user_id       = $data->user_id;
             $this->contentCetgory->save();
-
             return $this->contentCetgory;
         } catch(QueryException $e){
             report($e);
@@ -53,14 +54,14 @@ class ContentCategoryRepository
     public function updateContentCategory($data, $id)
     {
         try {
-            $ContentCategory = $this->contentCetgory->getContentCategoryById($id);
+            $contentCategoryResult = $this->contentCetgory->getContentCategoryById($id);
 
-            if(! empty($ContentCategory)){
-                $ContentCategory->content_id = $data->content_id;
-                $ContentCategory->categories_id = $data->categories_id;
-                $ContentCategory->user_id = $data->user_id;
-                $ContentCategory->save();
-                return true;
+            if(! empty($contentCategoryResult)){
+                $contentCategoryResult->content_id = $data->content_id;
+                $contentCategoryResult->categories_id = $data->categories_id;
+                $contentCategoryResult->user_id = $data->user_id;
+                $contentCategoryResult->save();
+                return $contentCategoryResult;
             } else {
                 return false;
             }

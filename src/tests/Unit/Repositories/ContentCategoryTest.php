@@ -1,10 +1,10 @@
 <?php
 
-namespace WebAppId\Content\Tests\Unit\Models;
+namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Tests\TestCase;
-use WebAppId\Content\Tests\Unit\Models\ContentTest;
+use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
 
 class ContentCategoryTest extends TestCase
 {
@@ -57,6 +57,7 @@ class ContentCategoryTest extends TestCase
 
     private function start()
     {
+        
         $this->contentCategory = new ContentCategoryRepository;
         $this->objContentCategory = new \StdClass;
         $this->contentTest = new ContentTest;

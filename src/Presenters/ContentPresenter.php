@@ -3,17 +3,17 @@
 namespace WebAppId\Content\Presenters;
 
 use WebAppId\Content\Requests\ContentRequest;
-use WebAppId\Content\Models\Content AS ContentModel;
-use WebAppId\Content\Models\ContentCategory AS ContentCategoryModel;
-use WebAppId\Content\Models\Category AS CategoryModel;
-use WebAppId\Content\Models\TimeZone AS TimeZoneModel;
-use WebAppId\Content\Models\ContentChild AS ContentChildModel;
+use WebAppId\Content\Repositories\ContentRepository AS ContentRepository;
+use WebAppId\Content\Repositories\ContentCategoryRepository AS ContentCategoryRepository;
+use WebAppId\Content\Repositories\CategoryRepository AS CategoryRepository;
+use WebAppId\Content\Repositories\TimeZoneRepository AS TimeZoneRepository;
+use WebAppId\Content\Repositories\ContentChildRepository AS ContentChildRepository;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class ContentPresenter{
-    private function getDefault($timeZoneModel, $request){
+    private function getDefault($timeZone, $request){
 
         $user_id = Auth::id()==null?session('user_id'):Auth::id();
 
@@ -22,7 +22,8 @@ class ContentPresenter{
         }else{
             $zone = session('timezone');
         }
-        $timeZoneData = $timeZoneModel->getOneTimeZoneByName($zone);
+
+        $timeZoneData = $timeZone->getOneTimeZoneByName($zone);
 
         $request->code = str::slug($request->title);
 
@@ -55,67 +56,68 @@ class ContentPresenter{
         return $request;
     }
 
-    public function store(ContentRequest $request, ContentModel $contentModel, TimeZoneModel $timeZoneModel, ContentCategoryModel $contentCategoryModel, ContentChildModel $contentChildModel)
+    public function store(ContentRequest $request, ContentRepository $contentRepository, TimeZoneRepository $timeZoneRepository, ContentCategoryRepository $contentCategoryRepository, ContentChildRepository $contentChildRepository)
     {
 
-        $request = $this->getDefault($timeZoneModel, $request);
+        $request = $this->getDefault($timeZoneRepository, $request);
         
-        $result['content'] = $contentModel->addContent($request);
+        $result['content'] = $contentRepository->addContent($request);
 
         if(isset($request->parent_id)){
             $contentChildRequest = new \StdClass;
             $contentChildRequest->user_id = $request->user_id;
             $contentChildRequest->content_parent_id = $request->parent_id;
             $contentChildRequest->content_child_id = $result['content']->id;
-            $result['content_child'] = $contentChildModel->addContentChild($contentChildRequest);
+            $result['content_child'] = $contentChildRepository->addContentChild($contentChildRequest);
         }
 
         $contentCategoryData = new \StdClass;
         $contentCategoryData->user_id = $request->user_id;
         $contentCategoryData->content_id = $result['content']->id;
         $contentCategoryData->categories_id = $request->category_id;
-        $result['content_category'] = $contentCategoryModel->addContentCategory($contentCategoryData);
+        $result['content_category'] = $contentCategoryRepository->addContentCategory($contentCategoryData);
+        
         return $result;
         
     }
 
-    public function show(Request $request, ContentModel $contentModel, CategoryModel $categoryModel)
+    public function show(Request $request, ContentRepository $contentRepository, CategoryRepository $categoryRepository)
     {
         
         $categoryName = isset($request->category)?$request->category:$request->search['category'];
-        $categoryData = $categoryModel->getSearchOne($categoryName);
+        $categoryData = $categoryRepository->getSearchOne($categoryName);
         $search = isset($request->q)?$request->q:$request->search['value'];
-        $result['content'] = $contentModel->getAll($categoryData->id);
-		$result['recordsTotal'] = $contentModel->getAllCount($categoryData->id);
-        $result['recordsFiltered'] = $contentModel->getSearch($search, $categoryData->id);
+        $result['content'] = $contentRepository->getAll($categoryData->id);
+		$result['recordsTotal'] = $contentRepository->getAllCount($categoryData->id);
+        $result['recordsFiltered'] = $contentRepository->getSearch($search, $categoryData->id);
         return $result;
     }
 
-    public function edit($code, ContentModel $contentModel)
+    public function edit($code, ContentRepository $contentRepository)
     {
-        $result['content'] = $contentModel->getContentByCode($code);
+        $result['content'] = $contentRepository->getContentByCode($code);
         return $result;
     }
 
-    public function update(ContentRequest $request, $code, ContentModel $contentModel, TimeZoneModel $timeZoneModel)
+    public function update(ContentRequest $request, $code, ContentRepository $contentRepository, TimeZoneRepository $timeZoneRepository)
     {
 
-        $request = $this->getDefault($timeZoneModel, $request);
+        $request = $this->getDefault($timeZoneRepository, $request);
         
-        $result['content'] = $contentModel->updateContentByCode($request, $code);
+        $result['content'] = $contentRepository->updateContentByCode($request, $code);
 
         return $result;
     }
 
-    public function destroy($code, ContentModel $contentModel)
+    public function destroy($code, ContentRepository $contentRepository)
     {
-        $result = $contentModel->deleteContentByCode($code);   
+        $result = $contentRepository->deleteContentByCode($code);   
         return $result;
     }
 
-    public function detail($code, ContentModel $contentModel, ContentGalleryModel $contentGallery){
+    public function detail($code, ContentRepository $contentRepository, ContentGalleryRepository $contentGallery){
         
-        $result['content'] = $contentModel->getContentByCode($code);
+        $result['content'] = $contentRepository->getContentByCode($code);
 
         return $result;
     }
