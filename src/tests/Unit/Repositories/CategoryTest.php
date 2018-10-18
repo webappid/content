@@ -20,9 +20,10 @@ class CategoryTest extends TestCase
 
     public function createDummy()
     {
+        $faker = $this->getFaker();
         $this->objCategory = new \StdClass;
-        $this->objCategory->code = $this->faker->word;
-        $this->objCategory->name = $this->faker->word;
+        $this->objCategory->code = $faker->word;
+        $this->objCategory->name = $faker->word;
         $this->objCategory->user_id = '1';
         return $this->objCategory;
     }

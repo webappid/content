@@ -9,44 +9,45 @@ use Illuminate\Container\Container;
 
 class ContentTest extends TestCase
 {
-    private $objContent;
 
     private $content;
 
+    private $container;
+
     public function setUp()
     {
-        $container = new Container;
-        $this->content = $container->make(ContentRepository::class);
+        $this->container = new Container;
+        $this->content = $this->container->make(ContentRepository::class);
         parent::setUp();
     }
 
-    public function createDummy()
+    public function getDummy()
     {
-        $this->objContent = new \StdClass;
-        $this->objContent->title = $this->faker->word;
-        $this->objContent->code = $this->faker->word;
-        $this->objContent->description = $this->faker->text;
-        $this->objContent->keyword = $this->faker->word;
-        $this->objContent->og_title = $this->faker->word;
-        $this->objContent->og_description = $this->faker->text;
-        $this->objContent->default_image = '1';
-        $this->objContent->status_id = '1';
-        $this->objContent->language_id = '1';
-        $this->objContent->publish_date = $this->faker->date($format = 'Y-m-d', $max = 'now');
-        $this->objContent->additional_info = $this->faker->text;
-        $this->objContent->content = $this->faker->text;
-        $this->objContent->time_zone_id = '1';
-        $this->objContent->owner_id = '1';
-        $this->objContent->user_id = '1';
-        $this->objContent->creator_id = '1';
+        $objContent = new \StdClass;
+        $faker = $this->getFaker();
+        $objContent->title = $faker->word;
+        $objContent->code = $faker->word;
+        $objContent->description = $faker->text;
+        $objContent->keyword = $faker->word;
+        $objContent->og_title = $faker->word;
+        $objContent->og_description = $faker->text;
+        $objContent->default_image = '1';
+        $objContent->status_id = '1';
+        $objContent->language_id = '1';
+        $objContent->publish_date = $faker->date($format = 'Y-m-d', $max = 'now');
+        $objContent->additional_info = $faker->text;
+        $objContent->content = $faker->text;
+        $objContent->time_zone_id = '1';
+        $objContent->owner_id = '1';
+        $objContent->user_id = '1';
+        $objContent->creator_id = '1';
 
-        return $this->objContent;
+        return $objContent;
     }
 
-    public function createContent()
+    public function createContent($dummy)
     {
-        $this->createDummy();
-        return $this->content->addContent($this->objContent);
+        return $this->container->call([$this->content,'addContent'],['data'=>$dummy]);
     }
 
     /**
@@ -56,7 +57,7 @@ class ContentTest extends TestCase
      */
     public function testAddContent()
     {
-        $result = $this->createContent();
+        $result = $this->createContent($this->getDummy());
         if (!$result) {
             $this->assertTrue(false);
         } else {
@@ -67,53 +68,56 @@ class ContentTest extends TestCase
     public function testBulkAddContentCount()
     {
         for ($n = 0; $n < 10; $n++) {
-            $dummyData          = $this->createDummy();
+            $dummyData          = $this->getDummy();
             $dummyData->keyword = 'bulk';
 
-            $this->content->addContent($dummyData);
+            $this->container->call([$this->content,'addContent'],['data'=>$dummyData]);
         }
 
-        $this->assertEquals(10, Content::where('keyword', 'bulk')->count());
+        $this->assertEquals(10, 
+        $this->container->call([$this->content,'getContentByKeywordCount'],['keyword'=>$dummyData->keyword]));
     }
 
     public function testGetContentByCode()
     {
-        $result = $this->createContent();
+        $objContent = $this->getDummy();
+        $result = $this->createContent($objContent);
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $result = $this->content->getContentByCode($result->code);
+            $result = $this->container->call([$this->content,'getContentByCode'], ["code"=>$result->code , "request"=>$result]);
             if ($result != null) {
                 $this->assertTrue(true);
-                $this->assertEquals($this->objContent->title,$result->title);
-                $this->assertEquals($this->objContent->code,$result->code);
-                $this->assertEquals($this->objContent->description,$result->description);
-                $this->assertEquals($this->objContent->keyword,$result->keyword);
-                $this->assertEquals($this->objContent->og_title,$result->og_title);
-                $this->assertEquals($this->objContent->og_description,$result->og_description);
-                $this->assertEquals($this->objContent->default_image,$result->default_image);
-                $this->assertEquals($this->objContent->status_id,$result->status_id);
-                $this->assertEquals($this->objContent->language_id,$result->language_id);
-                $this->assertEquals($this->objContent->publish_date,$result->publish_date);
-                $this->assertEquals($this->objContent->additional_info,$result->additional_info);
-                $this->assertEquals($this->objContent->content,$result->content);
-                $this->assertEquals($this->objContent->time_zone_id,$result->time_zone_id);
-                $this->assertEquals($this->objContent->owner_id,$result->owner_id);
-                $this->assertEquals($this->objContent->user_id,$result->user_id);
+                $this->assertEquals($objContent->title,$result->title);
+                $this->assertEquals($objContent->code,$result->code);
+                $this->assertEquals($objContent->description,$result->description);
+                $this->assertEquals($objContent->keyword,$result->keyword);
+                $this->assertEquals($objContent->og_title,$result->og_title);
+                $this->assertEquals($objContent->og_description,$result->og_description);
+                $this->assertEquals($objContent->default_image,$result->default_image);
+                $this->assertEquals($objContent->status_id,$result->status_id);
+                $this->assertEquals($objContent->language_id,$result->language_id);
+                $this->assertEquals($objContent->publish_date,$result->publish_date);
+                $this->assertEquals($objContent->additional_info,$result->additional_info);
+                $this->assertEquals($objContent->content,$result->content);
+                $this->assertEquals($objContent->time_zone_id,$result->time_zone_id);
+                $this->assertEquals($objContent->owner_id,$result->owner_id);
+                $this->assertEquals($objContent->user_id,$result->user_id);
             } else {
                 $this->asserTrue(false);
             }
+            
         }
     }
 
     public function testUpdateContentByCode()
     {
-        $result = $this->createContent();
+        
+        $result = $this->createContent($this->getDummy());
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $this->createDummy();
-            $result = $this->content->updateContentByCode($this->objContent, $result->code);
+            $result = $this->container->call([$this->content,'updateContentByCode'],['request'=>$this->getDummy(), 'code' => $result->code]);
             if ($result) {
                 $this->assertTrue(true);
             } else {

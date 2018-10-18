@@ -6,51 +6,43 @@ use WebAppId\Content\Models\Content;
 
 class ContentRepository
 {
-
-    private $content;
-
-    public function __construct(Content $content)
-    {
-        $this->content = $content;
-    }
-
     /**
      * Method To Add Data Content
      *
      * @param Request $data
      * @return Boolean true/false
      */
-    public function addContent($data)
+    public function addContent($data, Content $content)
     {
         try {
-            $this->content->title           = $data->title;
-            $this->content->code            = $data->code;
-            $this->content->description     = $data->description;
-            $this->content->keyword         = $data->keyword;
-            $this->content->og_title        = $data->og_title;
-            $this->content->og_description  = $data->og_description;
-            $this->content->default_image   = $data->default_image;
-            $this->content->status_id       = $data->status_id;
-            $this->content->language_id     = $data->language_id;
-            $this->content->publish_date    = $data->publish_date;
-            $this->content->additional_info = $data->additional_info;
-            $this->content->content         = $data->content;
-            $this->content->time_zone_id    = $data->time_zone_id;
-            $this->content->owner_id        = $data->owner_id;
-            $this->content->user_id         = $data->user_id;
-            $this->content->creator_id      = $data->creator_id;
-            $this->content->save();
+            $content->title           = $data->title;
+            $content->code            = $data->code;
+            $content->description     = $data->description;
+            $content->keyword         = $data->keyword;
+            $content->og_title        = $data->og_title;
+            $content->og_description  = $data->og_description;
+            $content->default_image   = $data->default_image;
+            $content->status_id       = $data->status_id;
+            $content->language_id     = $data->language_id;
+            $content->publish_date    = $data->publish_date;
+            $content->additional_info = $data->additional_info;
+            $content->content         = $data->content;
+            $content->time_zone_id    = $data->time_zone_id;
+            $content->owner_id        = $data->owner_id;
+            $content->user_id         = $data->user_id;
+            $content->creator_id      = $data->creator_id;
+            $content->save();
 
-            return $this->content;
+            return $content;
         } catch (QueryException $e) {
             report($e);
             return false;
         }
     }
 
-    public function updateContentByCode($request, $code)
+    public function updateContentByCode($request, $code, Content $content)
     {
-        $result = $this->content->getContentByCode($code);
+        $result = $this->getContentByCode($code, $content);
         if ($result != null) {
             try {
                 $result->title = $request->title;
@@ -79,8 +71,8 @@ class ContentRepository
         }
     }
 
-    private function getQueryAllByCategory($category_id){
-        return $this->content
+    private function getQueryAllByCategory($category_id, $content){
+        return $content
         ->leftJoin('content_categories AS cc','contents.id','=','cc.content_id')
         ->when($category_id != null, function ($query) use ($category_id) {
             return $query->where('cc.categories_id','=',$category_id);
@@ -92,21 +84,21 @@ class ContentRepository
      *
      * @return Content $data
      */
-    public function getAll($category_id = null){
-        return $this->content->getQueryAllByCategory($category_id)->get();
+    public function getAll($category_id = null, Content $content){
+        return $content->getQueryAllByCategory($category_id, $content)->get();
     }
 
-    public function getAllCount($category_id = null){
-        return $this->content->getQueryAllByCategory($category_id)->count();
+    public function getAllCount($category_id = null, Content $content){
+        return $content->getQueryAllByCategory($category_id, $content)->count();
     }
 
-    public function getContentByCode($code)
+    public function getContentByCode($code, Content $content)
     {
-        return $this->content->where('code', $code)->first();
+        return $content->where('code', $code)->first();
     }
 
-    public function getDataForSearch($search="", $category_id){
-        $result = $this->content
+    public function getDataForSearch($search="", $category_id, Content $content){
+        $result = $content
             ->select(
                 'contents.id AS id',
                 'contents.code AS code',
@@ -151,22 +143,22 @@ class ContentRepository
         return $result;
     }
 
-    public function getSearch($search="", $category_id)
+    public function getSearch($search="", $category_id, Content $content)
     {
-        return $this->content
+        return $content
             ->getDataForSearch($search="", $category_id)
             ->get();
     }
 
-    public function getSearchCount($search="", $category_id)
+    public function getSearchCount($search="", $category_id, Content $content)
     {
-        return $this->content
+        return $content
             ->getDataForSearch($search="", $category_id)
             ->count();
     }
 
-    public function deleteContentByCode($code){
-        $content = $this->content->getContentByCode($code);
+    public function deleteContentByCode($code, Content $content){
+        $content = $content->getContentByCode($code, $content);
         if($content!=null){
             try{
                 $content->delete();
@@ -180,8 +172,8 @@ class ContentRepository
         }
     }
 
-    public function udpateContentStatusByCode($code, $statusId){
-        $content = $this->content->getContentByCode($code);
+    public function udpateContentStatusByCode($code, $statusId, Content $content){
+        $content = $this->content->getContentByCode($code, $content);
         if($content!=null){
             try{
                 $content->status_id = $statusId;
@@ -191,6 +183,18 @@ class ContentRepository
                 return false;
             }
         }
+    }
+
+    public function getQueryContentByKeyword($keyword, $content){
+        return $content::where('keyword', $keyword);
+    }
+
+    public function getContentByKeyword($keyword, Content $content){
+        return $this->getQueryContentByKeyword($keyword, $content)->get();
+    }
+
+    public function getContentByKeywordCount($keyword, Content $content){
+        return $this->getQueryContentByKeyword($keyword, $content)->count();
     }
 
     public function getCategory(){

@@ -18,13 +18,17 @@ abstract class TestCase extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->faker = Faker::create('id_ID');
 
         $this->loadMigrationsFrom([
             '--realpath' => realpath(__DIR__.'/../src/migrations'),
         ]);
         $this->artisan('webappid:content:seed');
 
+    }
+
+    protected function getFaker(){
+        $faker = new Faker;
+        return $faker->create('id_ID');
     }
 
     protected function getPackageProviders($app)
