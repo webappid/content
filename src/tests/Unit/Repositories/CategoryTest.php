@@ -5,6 +5,8 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Tests\TestCase;
 
+use Illuminate\Container\Container;
+
 class CategoryTest extends TestCase
 {
     private $objCategory;
@@ -18,6 +20,7 @@ class CategoryTest extends TestCase
 
     public function createDummy()
     {
+        $this->objCategory = new \StdClass;
         $this->objCategory->code = $this->faker->word;
         $this->objCategory->name = $this->faker->word;
         $this->objCategory->user_id = '1';
@@ -25,8 +28,8 @@ class CategoryTest extends TestCase
     }
 
     public function start(){
-        $this->objCategory = new \StdClass;
-        $this->category = new CategoryRepository;
+        $container = new Container;
+        $this->category = $container->make(CategoryRepository::class);
     }
     
     public function setUp()

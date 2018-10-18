@@ -12,17 +12,18 @@ class ContentFeatureTest extends TestCase
 
     private $contentDummy;
     private $categoryData;
+    private $contentTest;
 
     private function createContentDummy()
     {
-        $contentTest = new ContentTest();
-        $contentTest->setup();
-        $this->contentDummy = $contentTest->createDummy();
+        $this->contentDummy = $this->contentTest->createDummy();
     }
 
     public function setUp()
     {
         parent::setUp();
+        $this->contentTest = new ContentTest();
+        $this->contentTest->setup();
         $this->createContentDummy();
 
         $container = new Container;
@@ -49,7 +50,7 @@ class ContentFeatureTest extends TestCase
         $childContent->parent_id = $content["content"]["id"];
         
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $childContent);
-        
+        dd($response);
         $this->assertEquals(200, $response->status());
     }
 

@@ -192,4 +192,8 @@ class ContentRepository
             }
         }
     }
+
+    public function getCategory(){
+        return $this->content->category;
+    }
 }

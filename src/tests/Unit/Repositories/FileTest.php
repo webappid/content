@@ -5,6 +5,8 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Tests\TestCase;
 
+use Illuminate\Container\Container;
+
 class FileTest extends TestCase
 {
     private $objFile;
@@ -37,7 +39,8 @@ class FileTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->file = new FileRepository;
+        $container = new Container;
+        $this->file = $container->make(FileRepository::class);
         $this->objFile = new \StdClass;
     }
 

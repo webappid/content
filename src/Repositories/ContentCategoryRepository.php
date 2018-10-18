@@ -54,7 +54,7 @@ class ContentCategoryRepository
     public function updateContentCategory($data, $id)
     {
         try {
-            $contentCategoryResult = $this->contentCetgory->getContentCategoryById($id);
+            $contentCategoryResult = $this->getContentCategoryById($id);
 
             if(! empty($contentCategoryResult)){
                 $contentCategoryResult->content_id = $data->content_id;
@@ -80,7 +80,7 @@ class ContentCategoryRepository
     public function deleteContentCategory($id)
     {
         try {
-            $ContentCategory = $this->contentCetgory->getContentCategoryById($id);
+            $ContentCategory = $this->getContentCategoryById($id);
             if(! empty($ContentCategory)){
                 $ContentCategory->delete();
                 return true;

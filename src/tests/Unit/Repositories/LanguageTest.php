@@ -5,6 +5,8 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use WebAppId\Content\Repositories\LanguageRepository;
 use WebAppId\Content\Tests\TestCase;
 
+use Illuminate\Container\Container;
+
 class LanguageTest extends TestCase
 {
     private $language;
@@ -13,7 +15,8 @@ class LanguageTest extends TestCase
 
     public function start()
     {
-        $this->language = new LanguageRepository;
+        $container = new Container;
+        $this->language = $container->make(LanguageRepository::class);
         $this->objLanguage = new \StdClass;
     }
 

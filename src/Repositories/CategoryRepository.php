@@ -52,7 +52,7 @@ class CategoryRepository
      */
     public function updateCategory($data, $id){
         try{
-            $categoryData = $this->category->getOne($id);
+            $categoryData = $this->getOne($id);
 
             if(!empty($categoryData)){
                 $categoryData->code = $data->code;
@@ -77,7 +77,7 @@ class CategoryRepository
      */
     public function deleteCategory($id){
         try{
-            $categoryData = $this->category->getOne($id);
+            $categoryData = $this->getOne($id);
             if(!empty($categoryData)){
                 $categoryData->delete();
                 return true;

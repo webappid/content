@@ -5,6 +5,8 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use WebAppId\Content\Repositories\TagRepository;
 use WebAppId\Content\Tests\TestCase;
 
+use Illuminate\Container\Container;
+
 class TagTest extends TestCase
 {
     private $objTag;
@@ -29,7 +31,8 @@ class TagTest extends TestCase
 
     public function start()
     {
-        $this->tag = new TagRepository;
+        $container = new Container;
+        $this->tag = $container->make(TagRepository::class);
         $this->objTag = new \StdClass;
     }
 

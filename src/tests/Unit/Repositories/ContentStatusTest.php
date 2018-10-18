@@ -5,6 +5,8 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use WebAppId\Content\Repositories\ContentStatusRepository;
 use WebAppId\Content\Tests\TestCase;
 
+use Illuminate\Container\Container;
+
 class ContentStatusTest extends TestCase
 {
     private $objContentStatus;
@@ -13,7 +15,10 @@ class ContentStatusTest extends TestCase
 
     public function start(){
         $this->objContentStatus = new \StdClass;
-        $this->contentStatus = new ContentStatusRepository;
+        
+        $container = new Container;
+
+        $this->contentStatus = $container->make(ContentStatusRepository::class);
     }
 
     public function setUp()

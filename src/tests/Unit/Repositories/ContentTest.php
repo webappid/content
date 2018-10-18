@@ -13,21 +13,16 @@ class ContentTest extends TestCase
 
     private $content;
 
-    private function start()
-    {
-        $this->objContent = new \StdClass;
-    }
-
     public function setUp()
     {
         $container = new Container;
         $this->content = $container->make(ContentRepository::class);
         parent::setUp();
-        $this->start();
     }
 
     public function createDummy()
     {
+        $this->objContent = new \StdClass;
         $this->objContent->title = $this->faker->word;
         $this->objContent->code = $this->faker->word;
         $this->objContent->description = $this->faker->text;

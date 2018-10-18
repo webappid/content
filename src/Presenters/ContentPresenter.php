@@ -62,13 +62,14 @@ class ContentPresenter{
         $request = $this->getDefault($timeZoneRepository, $request);
         
         $result['content'] = $contentRepository->addContent($request);
-
+        
         if(isset($request->parent_id)){
             $contentChildRequest = new \StdClass;
             $contentChildRequest->user_id = $request->user_id;
             $contentChildRequest->content_parent_id = $request->parent_id;
             $contentChildRequest->content_child_id = $result['content']->id;
             $result['content_child'] = $contentChildRepository->addContentChild($contentChildRequest);
+            
         }
 
         $contentCategoryData = new \StdClass;

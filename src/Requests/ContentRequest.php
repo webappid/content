@@ -26,7 +26,8 @@ class ContentRequest extends FormRequest
         return [
             'title' => 'required|string|max:191|unique:contents,title',
             'description' => 'required|string|max:191',
-            'content' => 'required|string'
+            'content' => 'required|string',
+            'category_id' => 'required|integer'
         ];
     }
 

@@ -6,6 +6,8 @@ use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
 
+use Illuminate\Container\Container;
+
 class ContentCategoryTest extends TestCase
 {
 
@@ -55,10 +57,10 @@ class ContentCategoryTest extends TestCase
         return $this->contentCategory->addContentCategory($this->objContentCategory);
     }
 
-    private function start()
+    public function start()
     {
-        
-        $this->contentCategory = new ContentCategoryRepository;
+        $category = new Container;
+        $this->contentCategory = $category->make(ContentCategoryRepository::class);
         $this->objContentCategory = new \StdClass;
         $this->contentTest = new ContentTest;
         $this->contentTest->setUp();
@@ -136,8 +138,9 @@ class ContentCategoryTest extends TestCase
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $contentData = $this->contentTest->getContent()->find(1);
-            $this->assertEquals($contentData->category[0]->name, $this->resultCategory->name);
+            $contentData = $this->contentTest->getContent()->getCategory();
+            
+            $this->assertEquals($contentData[0]->name, $this->resultCategory->name);
         }
     }
 }
