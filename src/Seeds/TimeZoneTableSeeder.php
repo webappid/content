@@ -6,6 +6,8 @@ use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\TimeZoneRepository;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Container\Container;
+
 class TimeZoneTableSeeder extends Seeder
 {
 /**
@@ -13,7 +15,7 @@ class TimeZoneTableSeeder extends Seeder
  *
  * @return void
  */
-    public function run(TimeZoneRepository $timezone)
+    public function run(TimeZoneRepository $timezone, Container $container)
     {
         $user_id = '1';
 
@@ -2984,8 +2986,8 @@ class TimeZoneTableSeeder extends Seeder
             $request->minute = $data[$i]['minute'];
             $request->user_id = $user_id;
 
-            if (count($timezone->getTimeZoneByName($request->name)) == 0) {
-                $result = $timezone->addTimeZone($request);
+            if (count($container->call([$timezone,'getTimeZoneByName'],['name'=>$request->name])) == 0) {
+                $result = $container->call([$timezone,'addTimeZone'],['data'=>$request]);
                 if ($result == false) {
                     $return = $result;
                     break;

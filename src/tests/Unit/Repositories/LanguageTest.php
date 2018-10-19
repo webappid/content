@@ -11,27 +11,28 @@ class LanguageTest extends TestCase
 {
     private $language;
 
-    private $objLanguage;
+    private $container;
 
     public function start()
     {
-        $container = new Container;
-        $this->language = $container->make(LanguageRepository::class);
-        $this->objLanguage = new \StdClass;
+        $this->container = new Container;
+        $this->language = $this->container->make(LanguageRepository::class);
     }
 
-    public function createDummy()
+    public function getDummy()
     {
-        $this->objLanguage->code = $this->faker->word;
-        $this->objLanguage->name = $this->faker->word;
-        $this->objLanguage->image_id = '1';
-        $this->objLanguage->user_id = '1';
+        $objLanguage = new \StdClass;
+        $faker = $this->getFaker();
+        $objLanguage->code = $faker->word;
+        $objLanguage->name = $faker->word;
+        $objLanguage->image_id = '1';
+        $objLanguage->user_id = '1';
+        return $objLanguage;
     }
 
-    public function createLanguage()
+    public function createLanguage($dummyData)
     {
-        $this->createDummy();
-        return $this->language->addLanguage($this->objLanguage);
+        return $this->container->call([$this->language,'addLanguage'],['request' => $dummyData]);
     }
 
     public function setUp()
@@ -42,22 +43,23 @@ class LanguageTest extends TestCase
 
     public function testAddLanguage()
     {
-        $result = $this->createLanguage();
+        $dummyData = $this->getDummy();
+        $result = $this->createLanguage($dummyData);
         if (!$result) {
             $this->assertTrue(false);
         } else {
             $this->assertTrue(true);
-            $this->assertEquals($this->objLanguage->code, $result->code);
-            $this->assertEquals($this->objLanguage->name, $result->name);
+            $this->assertEquals($dummyData->code, $result->code);
+            $this->assertEquals($dummyData->name, $result->name);
         }
     }
     
     public function testGetAllLanguage(){
-        $result = $this->createLanguage();
+        $result = $this->createLanguage($this->getDummy());
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $resultAllLanguage = $this->language->getLanguage(); 
+            $resultAllLanguage = $this->container->call([$this->language,'getLanguage']); 
             if(count($resultAllLanguage)>0){
                 $this->assertTrue(true);
             }else{
@@ -67,11 +69,12 @@ class LanguageTest extends TestCase
     }
 
     public function testGetLanguageByName(){
-        $result = $this->createLanguage();
+        $dummyData = $this->getDummy();
+        $result = $this->createLanguage($dummyData);
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $resultLanguage = $this->language->getLanguageByName($this->objLanguage->name); 
+            $resultLanguage = $this->container->call([$this->language,'getLanguageByName'],['name'=>$dummyData->name]); 
             if($resultLanguage==null){
                 $this->assertTrue(false);
             }else{

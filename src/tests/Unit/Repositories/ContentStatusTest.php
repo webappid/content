@@ -9,16 +9,15 @@ use Illuminate\Container\Container;
 
 class ContentStatusTest extends TestCase
 {
-    private $objContentStatus;
+    private $container;
 
     private $contentStatus;
 
     public function start(){
-        $this->objContentStatus = new \StdClass;
         
-        $container = new Container;
+        $this->container = new Container;
 
-        $this->contentStatus = $container->make(ContentStatusRepository::class);
+        $this->contentStatus = $this->container->make(ContentStatusRepository::class);
     }
 
     public function setUp()
@@ -27,16 +26,16 @@ class ContentStatusTest extends TestCase
         $this->start();
     }
 
-    private function createDummy()
+    private function getDummy()
     {
-        $this->objContentStatus->name = $this->faker->word;
-        $this->objContentStatus->user_id = '1';
-        return $this->objContentStatus;
+        $dummy = new \StdClass;
+        $dummy->name = $this->getFaker()->word;
+        $dummy->user_id = '1';
+        return $dummy;
     }
 
-    public function createContentStatus(){
-        $this->createDummy();
-        return $this->contentStatus->addContentStatus($this->objContentStatus); 
+    public function createContentStatus($dummy){
+        return $this->container->call([$this->contentStatus,'addContentStatus'],['request'=>$dummy]); 
     }
 
     /**
@@ -46,7 +45,7 @@ class ContentStatusTest extends TestCase
      */
     public function testAddContentStatus()
     {
-        $result = $this->createContentStatus();
+        $result = $this->createContentStatus($this->getDummy());
 
         if (!$result) {
             $this->assertTrue(false);
@@ -54,15 +53,14 @@ class ContentStatusTest extends TestCase
             $this->assertTrue(true);
         }
     }
-    
 
     public function testGetContentStatus(){
-        $result = $this->createContentStatus();
+        $result = $this->createContentStatus($this->getDummy());
 
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $result = $this->contentStatus->getContentStatus();
+            $result = $this->container->call([$this->contentStatus,'getContentStatus']);
             if(count($result)>0){
                 $this->assertTrue(true);
             }else{
@@ -72,13 +70,13 @@ class ContentStatusTest extends TestCase
     }
 
     public function testUpdateContentStatus(){
-        $result = $this->createContentStatus();
+        $result = $this->createContentStatus($this->getDummy());
 
         if (!$result) {
             $this->assertTrue(false);
         }else{
-            $this->createDummy();
-            $result = $this->contentStatus->updateContentStatus($result->id, $this->objContentStatus);
+            
+            $result = $this->container->call([$this->contentStatus,'updateContentStatus'],["id" => $result->id, 'request'=>$this->getDummy()]);
             if($result){
                 $this->assertTrue(true);
             }else{

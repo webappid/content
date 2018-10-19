@@ -6,6 +6,8 @@ use Illuminate\Database\Seeder;
 
 use WebAppId\Content\Repositories\ContentStatusRepository;
 
+use Illuminate\Container\Container;
+
 class ContentStatusTableSeeder extends Seeder
 {
     /**
@@ -13,7 +15,7 @@ class ContentStatusTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run(ContentStatusRepository $contentStatus)
+    public function run(ContentStatusRepository $contentStatus, Container $container)
     {
         $data = [
             [
@@ -38,8 +40,8 @@ class ContentStatusTableSeeder extends Seeder
             $request->name = $key['name'];
             $request->user_id = '1';
 
-            if(count($contentStatus->getContentStatusesByName($request->name))==0){
-                $contentStatus->addContentStatus($request);
+            if(count($container->call([$contentStatus,'getContentStatusesByName'],['name'=>$request->name]))==0){
+                $container->call([$contentStatus,'addContentStatus'],['request'=>$request]);
             }
         }
     }

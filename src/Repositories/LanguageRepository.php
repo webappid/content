@@ -8,33 +8,28 @@ class LanguageRepository
 {
     private $language;
 
-    public function __construct(Language $language)
-    {
-        $this->language = $language;
-    }
-
-    public function addLanguage($request)
+    public function addLanguage($request, Language $language)
     {
         try{
-            $this->language->code     = $request->code;
-            $this->language->name     = $request->name;
-            $this->language->image_id = $request->image_id;
-            $this->language->user_id  = $request->user_id;
-            $this->language->save();
+            $language->code     = $request->code;
+            $language->name     = $request->name;
+            $language->image_id = $request->image_id;
+            $language->user_id  = $request->user_id;
+            $language->save();
 
-            return $this->language;
+            return $language;
         }catch(QueryException $e){
             report($e);
             return false;
         }
     }
 
-    public function getLanguage()
+    public function getLanguage(Language $language)
     {
-        return $this->language->get();
+        return $language->get();
     }
 
-    public function getLanguageByName($name){
-        return $this->language->where('name',$name)->first();
+    public function getLanguageByName($name, Language $language){
+        return $language->where('name',$name)->first();
     }
 }

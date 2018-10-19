@@ -13,13 +13,16 @@ class FileTest extends TestCase
 
     private $file;
 
+    private $container;
+
     public function createDummy()
     {
-        $this->objFile->name = $this->faker->word;
-        $this->objFile->description = $this->faker->text($maxNbChars = 200);
-        $this->objFile->alt = $this->faker->word;
+        $faker = $this->getFaker();
+        $this->objFile->name = $faker->word;
+        $this->objFile->description = $faker->text($maxNbChars = 200);
+        $this->objFile->alt = $faker->word;
         $this->objFile->path = '';
-        $this->objFile->mime_type_id = $this->faker->numberBetween(1, 61);
+        $this->objFile->mime_type_id = $faker->numberBetween(1, 61);
         $this->objFile->owner_id = '1';
         $this->objFile->user_id = '1';
         return $this->objFile;
@@ -28,7 +31,7 @@ class FileTest extends TestCase
     public function createFile()
     {
         $this->createDummy();
-        $result = $this->file->addFile($this->objFile);
+        $result = $this->container->call([$this->file,'addFile'],['request' => $this->objFile]);
         if ($result == false) {
             $this->assertTrue(false);
         } else {
@@ -39,8 +42,8 @@ class FileTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $container = new Container;
-        $this->file = $container->make(FileRepository::class);
+        $this->container = new Container;
+        $this->file = $this->container->make(FileRepository::class);
         $this->objFile = new \StdClass;
     }
 
@@ -60,7 +63,7 @@ class FileTest extends TestCase
     {
         $result = $this->createFile();
         if ($result != false) {
-            $resultFind = $this->file->getFileByName($this->objFile->name);
+            $resultFind = $this->container->call([$this->file,'getFileByName'],['name' => $this->objFile->name]);
             if ($resultFind == null) {
                 $this->assertTrue(false);
             } else {

@@ -6,30 +6,23 @@ use WebAppId\Content\Models\MimeType;
 
 class MimeTypeRepository
 {
-    private $mimeType;
-
-    public function __construct(MimeType $mimeType)
-    {
-        $this->mimeType = $mimeType;
-    }
-
-    public function addMimeType($request)
+    public function addMimeType($request, MimeType $mimeType)
     {
         try{
-            $this->mimeType->name    = $request->name;
-            $this->mimeType->user_id = $request->user_id;
-            $this->mimeType->save();
+            $mimeType->name    = $request->name;
+            $mimeType->user_id = $request->user_id;
+            $mimeType->save();
 
-            return $this->mimeType;
+            return $mimeType;
         }catch(QueryException $e){
             report($e);
             return false;
         }
     }
 
-    public function getOne($id)
+    public function getOne($id, MimeType $mimeType)
     {
-        return $this->mimeType->findOrFail($id);
+        return $mimeType->findOrFail($id);
     }
 
     /**
@@ -38,8 +31,8 @@ class MimeTypeRepository
      * @param String $name
      * @return Object $mimeType
      */
-    public function getMimeByName($name)
+    public function getMimeByName($name, MimeType $mimeType)
     {
-        return $this->mimeType->where('name', $name)->get();
+        return $mimeType->where('name', $name)->get();
     }
 }

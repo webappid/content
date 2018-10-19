@@ -85,11 +85,11 @@ class ContentRepository
      * @return Content $data
      */
     public function getAll($category_id = null, Content $content){
-        return $content->getQueryAllByCategory($category_id, $content)->get();
+        return $this->getQueryAllByCategory($category_id, $content)->get();
     }
 
     public function getAllCount($category_id = null, Content $content){
-        return $content->getQueryAllByCategory($category_id, $content)->count();
+        return $this->getQueryAllByCategory($category_id, $content)->count();
     }
 
     public function getContentByCode($code, Content $content)
@@ -145,20 +145,20 @@ class ContentRepository
 
     public function getSearch($search="", $category_id, Content $content)
     {
-        return $content
+        return $this
             ->getDataForSearch($search="", $category_id)
             ->get();
     }
 
     public function getSearchCount($search="", $category_id, Content $content)
     {
-        return $content
+        return $this
             ->getDataForSearch($search="", $category_id)
             ->count();
     }
 
     public function deleteContentByCode($code, Content $content){
-        $content = $content->getContentByCode($code, $content);
+        $content = $this->getContentByCode($code, $content);
         if($content!=null){
             try{
                 $content->delete();
@@ -173,7 +173,7 @@ class ContentRepository
     }
 
     public function udpateContentStatusByCode($code, $statusId, Content $content){
-        $content = $this->content->getContentByCode($code, $content);
+        $content = $this->getContentByCode($code, $content);
         if($content!=null){
             try{
                 $content->status_id = $statusId;
@@ -197,7 +197,11 @@ class ContentRepository
         return $this->getQueryContentByKeyword($keyword, $content)->count();
     }
 
-    public function getCategory(){
-        return $this->content->category;
+    public function getCategory(Content $content){
+        return $content->category;
+    }
+
+    public function getContent(Content $content){
+        return $content;
     }
 }

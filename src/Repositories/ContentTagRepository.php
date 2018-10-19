@@ -7,19 +7,13 @@ use WebAppId\Content\Models\ContentTag;
 class ContentTagRepository
 {
 
-    private $contentTag;
-
-    public function __construct(ContentTag $contentTag)
-    {
-        $this->contentTag = $contentTag;
-    }
-
-    public function addContentTag($response){
+    public function addContentTag($response, ContentTag $contentTag){
         try{
-            $this->contentTag->content_id = $response->content_id;
-            $this->contentTag->tag_id = $response->tag_id;
-            $this->contentTag->user_id = $response->user_id;
-            return $this->contentTag->save();
+            $contentTag->content_id = $response->content_id;
+            $contentTag->tag_id = $response->tag_id;
+            $contentTag->user_id = $response->user_id;
+            $contentTag->save();
+            return $contentTag;
         }catch(QueryException $e){
             dd($e);
             report($e);
@@ -27,8 +21,8 @@ class ContentTagRepository
         }
     }
 
-    public function deleteContentTagByContentId($contentId){
-        $resultContentTag = $this->contentTag->where('content_id', $contentId)->get();
+    public function deleteContentTagByContentId($contentId, ContentTag $contentTag){
+        $resultContentTag = $contentTag->where('content_id', $contentId)->get();
         DB::beginTransaction();
         $result = true;
         if(count($resultContentTag)>0){

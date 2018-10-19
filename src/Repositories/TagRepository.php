@@ -6,26 +6,19 @@ use WebAppId\Content\Models\Tag;
 
 class TagRepository
 {
-    private $tag;
-
-    public function __construct(Tag $tag)
-    {
-        $this->tag = $tag;
-    }
-
-    public function addTag($request){
+    public function addTag($request, Tag $tag){
         try{
-            $this->tag->name = $request->name;
-            $this->tag->user_id = $request->user_id;
-            $this->tag->save();
-            return $this->tag;
+            $tag->name = $request->name;
+            $tag->user_id = $request->user_id;
+            $tag->save();
+            return $tag;
         }catch(QueryException $e){
             report($e);
             return false;
         }
     }
 
-    public function getTagByName($name){
-        return $this->tag->where('name', $name)->first();
+    public function getTagByName($name, Tag $tag){
+        return $tag->where('name', $name)->first();
     }
 }

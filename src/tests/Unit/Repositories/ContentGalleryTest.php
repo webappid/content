@@ -6,6 +6,8 @@ use WebAppId\Content\Repositories\ContentGalleryRepository;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
 
+use Illuminate\Container\Container;
+
 class ContentGalleryTest extends TestCase
 {
 
@@ -15,6 +17,8 @@ class ContentGalleryTest extends TestCase
     private $contentTest;
     private $fileTest;
 
+    private $container;
+
     public function start()
     {
         $this->contentGallery = new ContentGalleryRepository;
@@ -22,7 +26,7 @@ class ContentGalleryTest extends TestCase
         $this->contentTest->setUp();
         $this->fileTest = new FileTest;
         $this->fileTest->setUp();
-        $this->objContentGallery = new \StdClass;
+        $this->container = new Container;
     }
 
     public function setUp()
@@ -31,17 +35,18 @@ class ContentGalleryTest extends TestCase
         $this->start();
     }
 
-    public function createDummy($content_id, $file_id)
+    public function getDummy($content_id, $file_id)
     {
-        $this->objContentGallery->content_id = $content_id;
-        $this->objContentGallery->file_id = $file_id;
-        $this->objContentGallery->user_id = '1';
-        $this->objContentGallery->description = $this->faker->text($maxNbChars = 200);
-        return $this->objContentGallery;
+        $objContentGallery = new \StdClass;
+        $objContentGallery->content_id = $content_id;
+        $objContentGallery->file_id = $file_id;
+        $objContentGallery->user_id = '1';
+        $objContentGallery->description = $this->getFaker()->text($maxNbChars = 200);
+        return $objContentGallery;
     }
 
     public function createContent(){
-        $contentResult = $this->contentTest->createContent();
+        $contentResult = $this->contentTest->createContent($this->contentTest->getDummy());
         if ($contentResult == false) {
             $this->assertTrue(false);
         }else{
@@ -62,9 +67,9 @@ class ContentGalleryTest extends TestCase
     {
          $contentResult = $this->createContent();
          $fileResult = $this->createFile();
-         $objContentGallery = $this->createDummy($contentResult->id, $fileResult->id);
+         $objContentGallery = $this->getDummy($contentResult->id, $fileResult->id);
          
-         $resultContentGallery = $this->contentGallery->addContentGallery($objContentGallery);
+         $resultContentGallery = $this->container->call([$this->contentGallery,'addContentGallery'],['request'=>$objContentGallery]);
          if($resultContentGallery==false){
              $this->assertTrue(false);
          }else{
@@ -72,9 +77,9 @@ class ContentGalleryTest extends TestCase
          }
 
          $fileResult = $this->createFile();
-         $objContentGallery = $this->createDummy($contentResult->id, $fileResult->id);
+         $objContentGallery = $this->getDummy($contentResult->id, $fileResult->id);
          
-         $resultContentGallery = $this->contentGallery->addContentGallery($objContentGallery);
+         $resultContentGallery = $this->container->call([$this->contentGallery,'addContentGallery'],['request'=>$objContentGallery]);
          if($resultContentGallery==false){
              $this->assertTrue(false);
          }else{
@@ -85,9 +90,9 @@ class ContentGalleryTest extends TestCase
     public function testDeleteFilesByContentId(){
         $contentResult = $this->createContent();
          $fileResult = $this->createFile();
-         $objContentGallery = $this->createDummy($contentResult->id, $fileResult->id);
+         $objContentGallery = $this->getDummy($contentResult->id, $fileResult->id);
          
-         $resultContentGallery = $this->contentGallery->addContentGallery($objContentGallery);
+         $resultContentGallery = $this->container->call([$this->contentGallery,'addContentGallery'],['request'=>$objContentGallery]);
          if($resultContentGallery==false){
              $this->assertTrue(false);
          }else{
@@ -95,16 +100,16 @@ class ContentGalleryTest extends TestCase
          }
 
          $fileResult = $this->createFile();
-         $objContentGallery = $this->createDummy($contentResult->id, $fileResult->id);
+         $objContentGallery = $this->getDummy($contentResult->id, $fileResult->id);
          
-         $resultContentGallery = $this->contentGallery->addContentGallery($objContentGallery);
+         $resultContentGallery = $this->container->call([$this->contentGallery,'addContentGallery'],['request'=>$objContentGallery]);
          if($resultContentGallery==false){
              $this->assertTrue(false);
          }else{
              $this->assertTrue(true);
          }
 
-         $result = $this->contentGallery->deleteContentGalleryByContentId($contentResult->id);
+         $result = $this->container->call([$this->contentGallery,'deleteContentGalleryByContentId'],['content_id'=>$contentResult->id]);
          if($result){
              $this->assertTrue(true);
          }else{

@@ -6,12 +6,6 @@ use WebAppId\Content\Models\ContentCategory;
 
 class ContentCategoryRepository
 {
-    private $contentCetgory;
-
-    public function __construct(ContentCategory $contentCetgory)
-    {
-        $this->contentCetgory = $contentCetgory;
-    }
 
     /**
      * Method To Add Data ContentCategory
@@ -19,14 +13,14 @@ class ContentCategoryRepository
      * @param Request $data
      * @return Boolean true/false
      */
-    public function addContentCategory($data)
+    public function addContentCategory($data, ContentCategory $contentCetgory)
     {
         try {
-            $this->contentCetgory->content_id    = $data->content_id;
-            $this->contentCetgory->categories_id = $data->categories_id;
-            $this->contentCetgory->user_id       = $data->user_id;
-            $this->contentCetgory->save();
-            return $this->contentCetgory;
+            $contentCetgory->content_id    = $data->content_id;
+            $contentCetgory->categories_id = $data->categories_id;
+            $contentCetgory->user_id       = $data->user_id;
+            $contentCetgory->save();
+            return $contentCetgory;
         } catch(QueryException $e){
             report($e);
             return false;
@@ -39,9 +33,9 @@ class ContentCategoryRepository
      * @param Integer $id
      * @return ContentCategory $data
      */
-    public function getContentCategoryById($id)
+    public function getContentCategoryById($id, ContentCategory $contentCetgory)
     {
-        return $this->contentCetgory->findOrFail($id);
+        return $contentCetgory->findOrFail($id);
     }
 
     /**
@@ -51,10 +45,10 @@ class ContentCategoryRepository
      * @param Integer $id
      * @return Boolean true/false
      */
-    public function updateContentCategory($data, $id)
+    public function updateContentCategory($data, $id, ContentCategory $contentCetgory)
     {
         try {
-            $contentCategoryResult = $this->getContentCategoryById($id);
+            $contentCategoryResult = $this->getContentCategoryById($id, $contentCetgory);
 
             if(! empty($contentCategoryResult)){
                 $contentCategoryResult->content_id = $data->content_id;
@@ -77,12 +71,12 @@ class ContentCategoryRepository
      * @param Integer $id
      * @return Boolean true/false
      */
-    public function deleteContentCategory($id)
+    public function deleteContentCategory($id, ContentCategory $contentCategory)
     {
         try {
-            $ContentCategory = $this->getContentCategoryById($id);
-            if(! empty($ContentCategory)){
-                $ContentCategory->delete();
+            $categoryResult = $this->getContentCategoryById($id, $contentCategory);
+            if(! empty($categoryResult)){
+                $categoryResult->delete();
                 return true;
             } else {
                 return false;
@@ -98,13 +92,13 @@ class ContentCategoryRepository
      *
      * @return ContentCategory $data
      */
-    public function getAll()
+    public function getAll(ContentCategory $contentCetgory)
     {
-        return $this->contentCetgory->all();
+        return $contentCetgory->all();
     }
 
-    public function getContentCategoryByContentIdAndCategoryId($contentId, $categoryId){
-        return $this->contentCetgory
+    public function getContentCategoryByContentIdAndCategoryId($contentId, $categoryId, ContentCategory $contentCetgory){
+        return $contentCetgory
             ->where('content_id',$contentId)
             ->where('categories_id', $categoryId)
             ->first();

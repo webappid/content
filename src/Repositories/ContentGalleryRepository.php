@@ -7,34 +7,27 @@ use WebAppId\Content\Models\ContentGallery;
 class ContentGalleryRepository
 {
 
-    private $contentGallery;
-
-    public function __construct(ContentGallery $contentGallery)
-    {
-        $this->contentGallery = $contentGallery;
-    }
-
-    public function addContentGallery($request){
+    public function addContentGallery($request, ContentGallery $contentGallery){
         try{
-            $this->contentGallery->content_id = $request->content_id;
-            $this->contentGallery->file_id = $request->file_id;
-            $this->contentGallery->user_id = $request->user_id;
-            $this->contentGallery->description = $request->description;
-            $this->contentGallery->save();
-            return $this->contentGallery;
+            $contentGallery->content_id = $request->content_id;
+            $contentGallery->file_id = $request->file_id;
+            $contentGallery->user_id = $request->user_id;
+            $contentGallery->description = $request->description;
+            $contentGallery->save();
+            return $contentGallery;
         }catch(QueryException $e){
             report($e);
             return false;
         }
     }
 
-    public function getContentGalleryByContentId($content_id){
-        return $this->contentGallery->where('content_id', $content_id)->get();
+    public function getContentGalleryByContentId($content_id, ContentGallery $contentGallery){
+        return $contentGallery->where('content_id', $content_id)->get();
     }
 
-    public function deleteContentGalleryByContentId($content_id){
+    public function deleteContentGalleryByContentId($content_id, ContentGallery $contentGallery){
         try{
-            $contentGalleries = $this->contentGallery->getContentGalleryByContentId($content_id);
+            $contentGalleries = $this->getContentGalleryByContentId($content_id, $contentGallery);
             for ($i=0; $i < count($contentGalleries); $i++) { 
                 $contentGalleries[0]->delete();
             }

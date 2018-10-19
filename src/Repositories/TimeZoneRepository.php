@@ -6,46 +6,40 @@ use WebAppId\Content\Models\TimeZone;
 
 class TimeZoneRepository
 {
-    private $timeZone;
 
-    public function __construct(TimeZone $timeZone)
-    {
-        $this->timeZone = $timeZone;
-    }
-
-    public function addTimeZone($data)
+    public function addTimeZone($data, TimeZone $timezone)
     {
         try {
-            $this->timeZone->code    = $data->code;
-            $this->timeZone->name    = $data->name;
-            $this->timeZone->minute  = $data->minute;
-            $this->timeZone->user_id = $data->user_id;
-            $this->timeZone->save();
+            $timezone->code    = $data->code;
+            $timezone->name    = $data->name;
+            $timezone->minute  = $data->minute;
+            $timezone->user_id = $data->user_id;
+            $timezone->save();
 
-            return $this->timeZone;
+            return $timezone;
         } catch (QueryException $e) {
             report($e);
             return false;
         }
     }
 
-    public function getTimeZoneByName($name)
+    public function getTimeZoneByName($name, TimeZone $timezone)
     {
-        return $this->timeZone->where('name', $name)->get();
+        return $timezone->where('name', $name)->get();
     }
 
-    public function getOneTimeZoneByName($name)
+    public function getOneTimeZoneByName($name, TimeZone $timezone)
     {
-        return $this->timeZone->where('name', '=', $name)->first();
+        return $timezone->where('name', '=', $name)->first();
     }
 
     public function getAllTimeZone()
     {
-        return $this->timeZone->get();
+        return $timezone->get();
     }
 
-    public function getTimeZoneById($id)
+    public function getTimeZoneById($id, TimeZone $timezone)
     {
-        return $this->timeZone->findOrFail($id);
+        return $timezone->findOrFail($id);
     }
 }

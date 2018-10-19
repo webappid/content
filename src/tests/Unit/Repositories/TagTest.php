@@ -9,19 +9,23 @@ use Illuminate\Container\Container;
 
 class TagTest extends TestCase
 {
-    private $objTag;
     private $tag;
 
-    public function createDummy()
+    private $container;
+
+
+    public function getDummy()
     {
-        $this->objTag->name = $this->faker->word;
-        $this->objTag->user_id = '1';
+        $faker = $this->getFaker();
+        $objDummy = new \StdClass;
+        $objDummy->name = $faker->word;
+        $objDummy->user_id = '1';
+        return $objDummy;
     }
 
-    public function createTag()
+    public function createTag($dummy)
     {
-        $this->createDummy();
-        $resultTag = $this->tag->addTag($this->objTag);
+        $resultTag = $this->container->call([$this->tag,'addTag'],['request'=>$dummy]);
         if (!$resultTag) {
             $this->assertTrue(false);
         } else {
@@ -31,9 +35,8 @@ class TagTest extends TestCase
 
     public function start()
     {
-        $container = new Container;
-        $this->tag = $container->make(TagRepository::class);
-        $this->objTag = new \StdClass;
+        $this->container = new Container;
+        $this->tag = $this->container->make(TagRepository::class);
     }
 
     public function setUp()
@@ -44,25 +47,27 @@ class TagTest extends TestCase
 
     public function testAddTag()
     {
-        $resultTag = $this->createTag();
-        $this->assertEquals($this->objTag->name, $resultTag->name);
+        $dummy = $this->getDummy();
+        $resultTag = $this->createTag($dummy);
+        $this->assertEquals($dummy->name, $resultTag->name);
         
     }
 
     public function testGetTagByName(){
-        $randomNumber = $this->faker->numberBetween(0,9);
+        $randomNumber = $this->getFaker()->numberBetween(0,9);
 
         $name = '';
+        
 
         for ($i=0; $i < 10; $i++) { 
-            $this->start();
-            $this->createTag();
+            $dummy = $this->getDummy();
+            $this->createTag($dummy);
             if($randomNumber==$i){
-                $name = $this->objTag->name;
+                $name = $dummy->name;
             }
         }
         
-        $resultTagSearch = $this->tag->getTagByName($name);
+        $resultTagSearch = $this->container->call([$this->tag,'getTagByName'],['name'=>$name]);
         if($resultTagSearch==null){
             $this->assertTrue(false);
         }else{

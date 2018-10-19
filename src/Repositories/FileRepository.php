@@ -6,40 +6,33 @@ use WebAppId\Content\Models\File;
 
 class FileRepository
 {
-    private $file;
-
-    public function __construct(File $file)
-    {
-        $this->file = $file;
-    }
-
-    public function addFile($request){
+    public function addFile($request, File $file){
         try{
-            $this->file->name         = $request->name;
-            $this->file->description  = $request->description;
-            $this->file->alt          = $request->alt;
-            $this->file->path         = $request->path;
-            $this->file->mime_type_id = $request->mime_type_id;
-            $this->file->owner_id     = $request->owner_id;
-            $this->file->user_id      = $request->user_id;
-            $this->file->save();
+            $file->name         = $request->name;
+            $file->description  = $request->description;
+            $file->alt          = $request->alt;
+            $file->path         = $request->path;
+            $file->mime_type_id = $request->mime_type_id;
+            $file->owner_id     = $request->owner_id;
+            $file->user_id      = $request->user_id;
+            $file->save();
             
-            return $this->file;
+            return $file;
         }catch(QueryException $e){
             report($e);
             return false;
         }
     }
 
-    public function getOne($id){
-        return $this->file->findOrFail($id);
+    public function getOne($id, File $file){
+        return $file->findOrFail($id);
     }
 
-    public function getFileByName($name){
-        return $this->file->where('name',$name)->first();
+    public function getFileByName($name, File $file){
+        return $file->where('name', $name)->first();
     }
 
-    public function getFileCount(){
-        return $this->file->count();
+    public function getFileCount(File $file){
+        return $file->count();
     }
 }

@@ -126,7 +126,7 @@ class ContentTest extends TestCase
         }
     }
 
-    public function getContent(){
-        return $this->content;
+    public function getContent(ContentRepository $content){
+        return $content;
     }
 }

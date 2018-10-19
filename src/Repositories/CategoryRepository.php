@@ -9,24 +9,20 @@ class CategoryRepository
 {
     private $category;
 
-    public function __construct(Category $category)
-    {
-        $this->category = $category;
-    }
     /**
      * Method To Add Data Category
      *
      * @param Request $data
      * @return Boolean true/false
      */
-    public function addCategory($data){
+    public function addCategory($data, Category $category){
         try{
-            $this->category->code    = $data->code;
-            $this->category->name    = $data->name;
-            $this->category->user_id = $data->user_id;
+            $category->code    = $data->code;
+            $category->name    = $data->name;
+            $category->user_id = $data->user_id;
 
-            $this->category->save();
-            return $this->category;
+            $category->save();
+            return $category;
         }catch(QueryException $e){
             report($e);
             return false;
@@ -39,8 +35,8 @@ class CategoryRepository
      * @param Integer $id
      * @return Category $data
      */
-    public function getOne($id){
-        return $this->category->findOrFail($id);
+    public function getOne($id, Category $category){
+        return $category->findOrFail($id);
     }
 
     /**
@@ -50,9 +46,9 @@ class CategoryRepository
      * @param Integer $id
      * @return Boolean true/false
      */
-    public function updateCategory($data, $id){
+    public function updateCategory($data, $id, Category $category){
         try{
-            $categoryData = $this->getOne($id);
+            $categoryData = $this->getOne($id, $category);
 
             if(!empty($categoryData)){
                 $categoryData->code = $data->code;
@@ -75,9 +71,9 @@ class CategoryRepository
      * @param Integer $id
      * @return Boolean true/false
      */
-    public function deleteCategory($id){
+    public function deleteCategory($id, Category $category){
         try{
-            $categoryData = $this->getOne($id);
+            $categoryData = $this->getOne($id, $category);
             if(!empty($categoryData)){
                 $categoryData->delete();
                 return true;
@@ -95,8 +91,8 @@ class CategoryRepository
      *
      * @return Category $data
      */
-    public function getAll(){
-        return $this->category->all();
+    public function getAll(Category $category){
+        return $category->all();
     }
 
     /**
@@ -105,16 +101,16 @@ class CategoryRepository
      * @param Request $request
      * @return object list category / empty object
      */
-    public function getDataWhere($search=""){
-        $result = $this->category->where('code', $search)
+    public function getDataWhere($search="", Category $category){
+        $result = $category->where('code', $search)
             ->orWhere('name','LIKE','%'.$search.'%')
             ->get();
         return $result;
     }
 
 
-    public function getDatatable($search, $order_column, $order_dir, $limit_start, $limit_length){
-        $result = $this->category
+    public function getDatatable(Category $category, $search, $order_column, $order_dir, $limit_start, $limit_length){
+        $result = $category
             ->select('id', 'code', 'name')
             ->where('code','LIKE','%'.$search.'%')
             ->orWhere('name','LIKE','%'.$search.'%')
@@ -125,24 +121,24 @@ class CategoryRepository
         return $result; 
     }
 
-    private function getQueryCategory($search){
-       return $this->category->where('code','LIKE','%'.$search.'%')
+    private function getQueryCategory($search, Category $category){
+       return $category->where('code','LIKE','%'.$search.'%')
             ->orWhere('name','LIKE','%'.$search.'%');
     }
 
-    public function getSearch($search=""){
-        return $this->category->getQueryCategory($search)->get();
+    public function getSearch($search="", Category $category){
+        return $category->getQueryCategory($search)->get();
     }
 
-    public function getSearchOne($search=""){
-        return $this->category->getQueryCategory($search)->first();
+    public function getSearchOne($search="", Category $category){
+        return $category->getQueryCategory($search)->first();
     }
 
-    public function getSearchCount($search=""){
-        return $this->category->getQueryCategory($search)->count();
+    public function getSearchCount($search="", Category $category){
+        return $category->getQueryCategory($search)->count();
     }
 
-    public function getCategoryByCode($code){
-        return $this->category->where('code', $code)->first();
+    public function getCategoryByCode($code, Category $category){
+        return $category->where('code', $code)->first();
     }
 }
