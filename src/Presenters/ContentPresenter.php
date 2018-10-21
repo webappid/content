@@ -8,11 +8,19 @@ use WebAppId\Content\Repositories\ContentCategoryRepository AS ContentCategoryRe
 use WebAppId\Content\Repositories\CategoryRepository AS CategoryRepository;
 use WebAppId\Content\Repositories\TimeZoneRepository AS TimeZoneRepository;
 use WebAppId\Content\Repositories\ContentChildRepository AS ContentChildRepository;
+use Illuminate\Container\Container;
+use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class ContentPresenter{
+    private $container;
+
+    public function __construct(Container $container){
+        $this->container = $container;
+    }
+
     private function getDefault($timeZone, $request){
 
         $user_id = Auth::id()==null?session('user_id'):Auth::id();
@@ -23,7 +31,9 @@ class ContentPresenter{
             $zone = session('timezone');
         }
 
-        $timeZoneData = $timeZone->getOneTimeZoneByName($zone);
+        
+
+        $timeZoneData = $this->container->call([$timeZone,'getOneTimeZoneByName'],['name' => $zone]);
 
         $request->code = str::slug($request->title);
 
@@ -56,19 +66,18 @@ class ContentPresenter{
         return $request;
     }
 
-    public function store(ContentRequest $request, ContentRepository $contentRepository, TimeZoneRepository $timeZoneRepository, ContentCategoryRepository $contentCategoryRepository, ContentChildRepository $contentChildRepository)
+    public function store($request, ContentRepository $contentRepository, TimeZoneRepository $timeZoneRepository, ContentCategoryRepository $contentCategoryRepository, ContentChildRepository $contentChildRepository)
     {
-
         $request = $this->getDefault($timeZoneRepository, $request);
         
-        $result['content'] = $contentRepository->addContent($request);
+        $result['content'] = $this->container->call([$contentRepository,'addContent'],['data' => $request]);
         
         if(isset($request->parent_id)){
             $contentChildRequest = new \StdClass;
             $contentChildRequest->user_id = $request->user_id;
             $contentChildRequest->content_parent_id = $request->parent_id;
             $contentChildRequest->content_child_id = $result['content']->id;
-            $result['content_child'] = $contentChildRepository->addContentChild($contentChildRequest);
+            $result['content_child'] = $this->container->call([$contentChildRepository,'addContentChild'],['request'=>$contentChildRequest]);
             
         }
 
@@ -76,7 +85,7 @@ class ContentPresenter{
         $contentCategoryData->user_id = $request->user_id;
         $contentCategoryData->content_id = $result['content']->id;
         $contentCategoryData->categories_id = $request->category_id;
-        $result['content_category'] = $contentCategoryRepository->addContentCategory($contentCategoryData);
+        $result['content_category'] = $this->container->call([$contentCategoryRepository,'addContentCategory'],['data' => $contentCategoryData]);
         
         return $result;
         
@@ -86,17 +95,17 @@ class ContentPresenter{
     {
         
         $categoryName = isset($request->category)?$request->category:$request->search['category'];
-        $categoryData = $categoryRepository->getSearchOne($categoryName);
+        $categoryData = $this->container->call([$categoryRepository,'getSearchOne'],['search' => $categoryName]);
         $search = isset($request->q)?$request->q:$request->search['value'];
-        $result['content'] = $contentRepository->getAll($categoryData->id);
-		$result['recordsTotal'] = $contentRepository->getAllCount($categoryData->id);
-        $result['recordsFiltered'] = $contentRepository->getSearch($search, $categoryData->id);
+        $result['content'] = $this->container->call([$contentRepository,'getAll'],['category_id' => $categoryData->id]);
+		$result['recordsTotal'] = $this->container->call([$contentRepository,'getAllCount'],['category_id' => $categoryData->id]);
+        $result['recordsFiltered'] = $this->container->call([$contentRepository,'getSearch'],['search' => $search, 'category_id' => $categoryData->id]);
         return $result;
     }
 
     public function edit($code, ContentRepository $contentRepository)
     {
-        $result['content'] = $contentRepository->getContentByCode($code);
+        $result['content'] = $this->container->call([$contentRepository,'getContentByCode'],['code' => $code]);
         return $result;
     }
 

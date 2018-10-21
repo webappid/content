@@ -2,37 +2,38 @@
 
 namespace WebAppId\Content\Controllers;
 
-use WebAppId\Content\Controllers\ContentController;
-
 use Illuminate\Container\Container;
 
-class ContentTest
+use WebAppId\Content\Controllers\ContentController;
+
+use WebAppId\Content\Requests\ContentRequest;
+
+use WebAppId\Content\Presenters\ContentPresenter;
+
+class ContentTest extends Controller
 {
-    protected function indexResult()
+    function index()
     {
 
     }
-    protected function showResult($result)
+    function show(Container $container, ContentPresenter $contentPresenter)
     {
-        return $result;
+        return $container->call([$contentPresenter,'show']);
     }
-    protected function createResult()
+    function create()
     {
         
     }
-    protected function storeResult($result)
+
+    function edit($code, Container $container, ContentPresenter $contentPresenter)
+    {
+        return $container->call([$contentPresenter,'edit'],['code' => $code]);
+    }
+    function update($result)
     {
         return $result;
     }
-    protected function editResult($result)
-    {
-        return $result;
-    }
-    protected function updateResult($result)
-    {
-        return $result;
-    }
-    protected function destroyResult($result)
+    function destroy($result)
     {
         if($result){
             return "Delete Success";
@@ -41,12 +42,11 @@ class ContentTest
         }
     }
 
-    protected function detailResult($result){
+    function detail($result){
         return $result;
     }
 
-    public function presenter(Container $container){
-        $result = $container->call('WebAppId\Content\Presenters\ContentPresenter@store');
-        return $result;
+    public function store(Container $container, ContentPresenter $contentPresenter, ContentRequest $contentRequest){
+        return $container->call([$contentPresenter,'store'],['request'=>$contentRequest]);
     }
 }

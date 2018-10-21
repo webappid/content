@@ -97,7 +97,7 @@ class ContentRepository
         return $content->where('code', $code)->first();
     }
 
-    public function getDataForSearch($search="", $category_id, Content $content){
+    public function getDataForSearch($search="", $category_id, $content){
         $result = $content
             ->select(
                 'contents.id AS id',
@@ -146,14 +146,14 @@ class ContentRepository
     public function getSearch($search="", $category_id, Content $content)
     {
         return $this
-            ->getDataForSearch($search="", $category_id)
+            ->getDataForSearch($search="", $category_id, $content)
             ->get();
     }
 
     public function getSearchCount($search="", $category_id, Content $content)
     {
         return $this
-            ->getDataForSearch($search="", $category_id)
+            ->getDataForSearch($search="", $category_id, $content)
             ->count();
     }
 

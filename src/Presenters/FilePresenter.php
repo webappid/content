@@ -2,17 +2,25 @@
 
 namespace WebAppId\Content\Presenters;
 
-use WebAppId\Content\Models\File;
-use WebAppId\Content\Models\MimeType AS MimeTypeModel;
-use WebAppId\Content\Requests\UploadRequest;
+use WebAppId\Content\Repositories\FileRepository;
+use WebAppId\Content\Repositories\MimeTypeRepository;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Container\Container;
+
 use \Gumlet\ImageResize;
 
-class FileController
+class FilePresenter
 {
+
+    private $container;
+
+    public function __construct(Container $container){
+        $this->container = $container;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -23,14 +31,14 @@ class FileController
         return $this->loadFile($name, '0', $file);
     }
 
-    private function saveFile($path, $file, $upload, $mimeTypeModel){
+    private function saveFile($path, $file, $upload, $mimeTypePresenter, $fileRepository){
         $user_id = Auth::id()==null?session('user_id'):Auth::id();
 
         $path = str_replace('../','',$path);
         $filename = $file->store($path);
         $fileData = explode('/',$filename);
 
-        $resultMimeType = $mimeTypeModel->getMimeByName($file->getMimeType());
+        $resultMimeType = $this->container->call([$mimeTypePresenter,'getMimeByName'],['name' => $file->getMimeType()]);
         
         $objFile = new \StdClass;
         $objFile->name          = $fileData[1];
@@ -41,8 +49,7 @@ class FileController
         $objFile->user_id       = $user_id;
         $objFile->owner_id      = $user_id;
 
-        $file = new File;
-        $status = $file->addFile($objFile);
+        $status = $this->container->call([$fileRepository,'addFile'],['request' => $objFile]);
         return $status;
     }
 
@@ -51,15 +58,15 @@ class FileController
      *
      * @return \Illuminate\Http\Response
      */
-    public function store($path, UploadRequest $upload, MimeTypeModel $mimeTypeModel)
+    public function store($path, $upload, MimeTypeRepository $mimeTypePresenter, FileRepository $fileRepository)
     {
         $status = array();
         if($upload->photos == (Array)$upload->photos){
             for ($i=0; $i < count($upload->photos); $i++) { 
-                $status[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeModel);
+                $status[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypePresenter, $fileRepository);
             }
         }else{
-            $status[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeModel);
+            $status[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypePresenter, $fileRepository);
         }
         
         if(count($status)>0){

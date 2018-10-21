@@ -121,21 +121,21 @@ class CategoryRepository
         return $result; 
     }
 
-    private function getQueryCategory($search, Category $category){
+    private function getQueryCategory($search, $category){
        return $category->where('code','LIKE','%'.$search.'%')
             ->orWhere('name','LIKE','%'.$search.'%');
     }
 
     public function getSearch($search="", Category $category){
-        return $category->getQueryCategory($search)->get();
+        return $this->getQueryCategory($search, $category)->get();
     }
 
     public function getSearchOne($search="", Category $category){
-        return $category->getQueryCategory($search)->first();
+        return $this->getQueryCategory($search, $category)->first();
     }
 
     public function getSearchCount($search="", Category $category){
-        return $category->getQueryCategory($search)->count();
+        return $this->getQueryCategory($search, $category)->count();
     }
 
     public function getCategoryByCode($code, Category $category){

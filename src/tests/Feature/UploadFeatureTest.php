@@ -12,8 +12,9 @@ class UploadFeatureTest extends TestCase
 
     public function testUploadFile(){
         $file = array('photos' => UploadedFile::fake()->image('file.png', 600, 600), 'name'=>'file.png');
-        //dd($file);
-        $result = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/file/upload/tmp', $file);
-        dd($result);
+        
+        $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/file/upload/tmp', $file);
+        
+        $this->assertEquals(200, $response->status());
     }
 }

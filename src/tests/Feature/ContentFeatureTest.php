@@ -14,9 +14,15 @@ class ContentFeatureTest extends TestCase
     private $categoryData;
     private $contentTest;
 
+    private $container;
+
     private function createContentDummy()
     {
-        $this->contentDummy = $this->contentTest->createDummy();
+        $category = $this->container->make(CategoryRepository::class);
+        $this->categoryData = $this->container->call([$category,'getOne'], ['id' => 1]);
+
+        $this->contentDummy = $this->contentTest->getDummy();
+        $this->contentDummy->category_id = $this->categoryData->id;
     }
 
     public function setUp()
@@ -24,13 +30,9 @@ class ContentFeatureTest extends TestCase
         parent::setUp();
         $this->contentTest = new ContentTest();
         $this->contentTest->setup();
+        $this->container = new Container;
         $this->createContentDummy();
-
-        $container = new Container;
-        $category = $container->make(CategoryRepository::class);
-        $this->categoryData = $category->getOne(1);
-        $this->contentDummy->category_id = $this->categoryData->id;
-
+        
     }
 
     public function testAddContentOnly()
@@ -42,15 +44,16 @@ class ContentFeatureTest extends TestCase
     public function testAddContentChild()
     {
         $originalContent = $this->contentDummy;
-
+        
         $this->createContentDummy();
         $childContent = $this->contentDummy;
+        
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $originalContent);
         $content = json_decode($response->baseResponse->getContent(), true);
         $childContent->parent_id = $content["content"]["id"];
         
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $childContent);
-        dd($response);
+        
         $this->assertEquals(200, $response->status());
     }
 
@@ -61,7 +64,8 @@ class ContentFeatureTest extends TestCase
      */
     public function testGetContent()
     {
-        $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $this->contentDummy);
+        $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $this->contentDummy);
+        
         $response = $this->get($this->prefix_route . '/content?category=' . $this->categoryData->name);
         $this->assertEquals(200, $response->status());
     }
@@ -79,13 +83,15 @@ class ContentFeatureTest extends TestCase
         $originalContent = $this->contentDummy;
         $this->createContentDummy();
         $resultContent = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $originalContent);
+        
         $content = json_decode($resultContent->baseResponse->getContent(), true);
+        
         $response = $this->get($this->prefix_route . '/content/edit/' . $content['content']['code']);
-
+        
         $content = json_decode($response->baseResponse->getContent(), true);
-
-        $content = (Object) $content;
-
+        
+        $content = (Object) $content['content'];
+        
         $this->contentDummy->code = $content->code;
 
         $response = $this->get($this->prefix_route . '/content/edit/' . $content->code);
