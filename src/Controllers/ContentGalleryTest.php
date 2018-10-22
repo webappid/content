@@ -4,10 +4,14 @@ namespace WebAppId\Content\Controllers;
 
 use WebAppId\Content\Controllers\ContentController;
 
-class ContentGalleryTest extends ContentGalleryController
+use WebAppId\Content\Requests\ContentGalleryRequest;
+
+use Illuminate\Container\Container;
+
+class ContentGalleryTest
 {
-    protected function storeResult($container){
-        $container->call('WebAppId\Content\Controllers\FileController@create');
-        dd('test');
+    function store($path, ContentGalleryRequest $contentGalleryRequest, Container $container, FileController $fileController){
+        $result = $container->call([$fileController,'create'],['path'=>$path]);
+        
     }
 }

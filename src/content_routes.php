@@ -33,7 +33,7 @@ if($_SERVER["PHP_SELF"]=="vendor/phpunit/phpunit/phpunit"){
             Route::post('/update/{code}', 'WebAppId\Content\Controllers\ContentTest@update')->name($routeCode . '_update');
             Route::get('/delete/{code}', 'WebAppId\Content\Controllers\ContentTest@destroy')->name($routeCode . '_delete');
             Route::get('/detail/{code}', 'WebAppId\Content\Controllers\ContentTest@detail')->name($routeCode . '_detail');
-            Route::post('/gallery', 'WebAppId\Content\Controllers\ContentGalleryTest@store')->name($routeCode . '_list');
+            Route::post('/gallery/{path}', 'WebAppId\Content\Controllers\ContentGalleryTest@store')->name($routeCode . '_list');
         });
     });
 }
