@@ -4,7 +4,7 @@ namespace WebAppId\Content\Controllers;
 
 use WebAppId\Content\Requests\UploadRequest;
 
-use WebAppId\Content\Presenters\FileService;
+use WebAppId\Content\Services\FileService;
 
 use Illuminate\Container\Container;
 

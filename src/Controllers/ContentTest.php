@@ -8,7 +8,7 @@ use WebAppId\Content\Controllers\ContentController;
 
 use WebAppId\Content\Requests\ContentRequest;
 
-use WebAppId\Content\Presenters\ContentService;
+use WebAppId\Content\Services\ContentService;
 
 class ContentTest extends Controller
 {
