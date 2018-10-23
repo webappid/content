@@ -8,7 +8,7 @@ use WebAppId\Content\Controllers\ContentController;
 
 use WebAppId\Content\Requests\ContentRequest;
 
-use WebAppId\Content\Presenters\ContentPresenter;
+use WebAppId\Content\Presenters\ContentService;
 
 class ContentTest extends Controller
 {
@@ -16,26 +16,26 @@ class ContentTest extends Controller
     {
 
     }
-    function show(Container $container, ContentPresenter $contentPresenter)
+    function show(Container $container, ContentService $contentService)
     {
-        return $container->call([$contentPresenter,'show']);
+        return $container->call([$contentService,'show']);
     }
     function create()
     {
         
     }
 
-    function edit($code, Container $container, ContentPresenter $contentPresenter)
+    function edit($code, Container $container, ContentService $contentService)
     {
-        return $container->call([$contentPresenter,'edit'],['code' => $code]);
+        return $container->call([$contentService,'edit'],['code' => $code]);
     }
-    function update($code, ContentPresenter $contentPresenter, ContentRequest $contentRequest, Container $container)
+    function update($code, ContentService $contentService, ContentRequest $contentRequest, Container $container)
     {   
-        return $container->call([$contentPresenter,'edit'],['code' => $code, 'request'=>$contentRequest]);
+        return $container->call([$contentService,'edit'],['code' => $code, 'request'=>$contentRequest]);
     }
-    function destroy($code, Container $container, ContentPresenter $contentPresenter)
+    function destroy($code, Container $container, ContentService $contentService)
     {
-        $result = $container->call([$contentPresenter,'destroy'],['code' => $code]);
+        $result = $container->call([$contentService,'destroy'],['code' => $code]);
         if($result){
             return "Delete Success";
         }else{
@@ -43,11 +43,11 @@ class ContentTest extends Controller
         }
     }
 
-    function detail($code, Container $container, ContentPresenter $contentPresenter){
-        return $container->call([$contentPresenter,'detail'],['code' => $code]);
+    function detail($code, Container $container, ContentService $contentService){
+        return $container->call([$contentService,'detail'],['code' => $code]);
     }
 
-    public function store(Container $container, ContentPresenter $contentPresenter, ContentRequest $contentRequest){
-        return $container->call([$contentPresenter,'store'],['request'=>$contentRequest]);
+    public function store(Container $container, ContentService $contentService, ContentRequest $contentRequest){
+        return $container->call([$contentService,'store'],['request'=>$contentRequest]);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace WebAppId\Content\Controllers;
 
-use WebAppId\Content\Presenters\FilePresenter;
+use WebAppId\Content\Service\FileService;
 use WebAppId\Content\Repositories\ContentGalleryRepository;
 use WebAppId\Content\Repositories\TimeZoneRepository;
 use WebAppId\Content\Requests\ContentGalleryRequest;
@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 use Carbon\Carbon;
 
-abstract class ContentGalleryPresenter
+abstract class ContentGalleryService
 {
 
     /**

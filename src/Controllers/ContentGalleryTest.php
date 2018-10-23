@@ -10,7 +10,8 @@ use Illuminate\Container\Container;
 
 class ContentGalleryTest
 {
-    function store($path, ContentGalleryRequest $contentGalleryRequest, Container $container, FileController $fileController){
-        $result = $container->call([$fileController,'create'],['path'=>$path]);
+    function store($path, ContentGalleryRequest $contentGalleryRequest, Container $container, UploadRequest $upload){
+        $result = $container->call([$fileService, 'store'],['path'=>$path, 'upload' => $upload]);
+
     }
 }
