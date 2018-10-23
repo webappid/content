@@ -14,4 +14,12 @@ class TimeZone extends Model
     protected $hidden = [
         'created_at', 'updated_at',
     ];
+
+    public function content(){
+        return $this->hasMany(Content::class, 'time_zone_id');
+    }
+
+    public function user(){
+        return $this->hasOne(User::class, 'user_id');
+    }
 }

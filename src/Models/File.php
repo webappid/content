@@ -8,6 +8,8 @@ use WebAppId\Content\Models\Content;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
+use App\Http\Model\User;
+
 class File extends Model
 {
     protected $table='files';
@@ -17,10 +19,14 @@ class File extends Model
     protected $fillable=['id','name','description','alt','mime_type_id', 'owner_id','user_id'];
 
     public function mime(){
-        return $this->belongsTo(MimeType::class);
+        return $this->belongsTo(MimeType::class,'mime_type_id');
     }
 
-    public function content(){
-        return $this->belongsTo(Content::class);
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function owner(){
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }

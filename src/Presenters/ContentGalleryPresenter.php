@@ -23,7 +23,7 @@ abstract class ContentGalleryPresenter
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ContentGalleryRequest $request, ContentGalleryRepository $contentRepository, TimeZoneRepository $timeZoneRepository)
+    public function store($contentRequest, $fileRequest, ContentGalleryRepository $contentRepository, TimeZoneRepository $timeZoneRepository)
     {
         return null;
     }

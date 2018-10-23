@@ -18,4 +18,8 @@ class Tag extends Model
     public function content(){
         return $this->belongsToMany(Content::class, 'content_tags', 'tag_id','content_id');
     }
+
+    public function user(){
+        return $this->hasOne(User::class, 'user_id');
+    }
 }

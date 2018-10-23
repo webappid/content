@@ -15,6 +15,6 @@ class MimeType extends Model
 
     public function file()
     {
-        return $this->hasOne(File::class);
+        return $this->hasMany(File::class, 'mime_type_id');
     }
 }

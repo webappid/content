@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
+use App\Http\Model\User;
+
 class Content extends Model
 {
     //
@@ -33,14 +35,34 @@ class Content extends Model
     }
 
     public function gallery(){
-        return $this->hasMany(ContentGallery::class);
+        return $this->belongsToMany(ContentGallery::class, 'content_galleries', 'content_id', 'file_id');
     }
 
     public function status(){
-        return $this->hasOne(ContentStatus::class);
+        return $this->hasOne(ContentStatus::class, 'status_id');
     }
 
     public function tag(){
         return $this->belongsToMany(Tag::class, 'content_tags', 'content_id','tag_id');
+    }
+
+    public function file(){
+        return $this->hasOne(File::class, 'file_id');
+    }
+
+    public function language(){
+        return $this->hasOne(Language::class, 'language_id');
+    }
+
+    public function timezone(){
+        return $this->hasOne(TimeZone::class, 'time_zone_id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function owner(){
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }

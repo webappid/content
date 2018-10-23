@@ -14,15 +14,6 @@ if($_SERVER["PHP_SELF"]=="vendor/phpunit/phpunit/phpunit"){
             Route::get('{name}/{size}', 'WebAppId\Content\Controllers\FileController@show')->name($routeCode . '.resize');
             Route::post('upload/{path}', 'WebAppId\Content\Controllers\FileController@create')->name($routeCode . '.upload');
         });
-        Route::group(['prefix' => 'category'], function () {
-            $routeCode = 'category';
-            Route::get('/', 'WebAppId\Content\Controllers\CategoryTest@show')->name($routeCode . '_list');
-            Route::get('/create', 'WebAppId\Content\Controllers\CategoryTest@create')->name($routeCode . '_create');
-            Route::post('/store', 'WebAppId\Content\Controllers\CategoryTest@store')->name($routeCode . '_store');
-            Route::get('/edit/{id}', 'WebAppId\Content\Controllers\CategoryTest@edit')->name($routeCode . '_edit');
-            Route::post('/update/{id}', 'WebAppId\Content\Controllers\CategoryTest@update')->name($routeCode . '_update');
-            Route::get('/delete/{id}', 'WebAppId\Content\Controllers\CategoryTest@destroy')->name($routeCode . '_delete');
-        });
 
         Route::group(['prefix' => 'content'], function () {
             $routeCode = 'content';

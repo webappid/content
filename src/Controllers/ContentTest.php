@@ -29,12 +29,13 @@ class ContentTest extends Controller
     {
         return $container->call([$contentPresenter,'edit'],['code' => $code]);
     }
-    function update($result)
-    {
-        return $result;
+    function update($code, ContentPresenter $contentPresenter, ContentRequest $contentRequest, Container $container)
+    {   
+        return $container->call([$contentPresenter,'edit'],['code' => $code, 'request'=>$contentRequest]);
     }
-    function destroy($result)
+    function destroy($code, Container $container, ContentPresenter $contentPresenter)
     {
+        $result = $container->call([$contentPresenter,'destroy'],['code' => $code]);
         if($result){
             return "Delete Success";
         }else{
@@ -42,8 +43,8 @@ class ContentTest extends Controller
         }
     }
 
-    function detail($result){
-        return $result;
+    function detail($code, Container $container, ContentPresenter $contentPresenter){
+        return $container->call([$contentPresenter,'detail'],['code' => $code]);
     }
 
     public function store(Container $container, ContentPresenter $contentPresenter, ContentRequest $contentRequest){

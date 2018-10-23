@@ -5,6 +5,8 @@ namespace WebAppId\Content\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
+use App\Http\Model\User;
+
 class Category extends Model
 {
     protected $table='categories';
@@ -15,5 +17,9 @@ class Category extends Model
 
     public function content(){
         return $this->belongsToMany(ContentCategory::class, 'content_categories', 'id','categories_id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

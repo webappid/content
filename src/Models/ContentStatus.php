@@ -14,6 +14,6 @@ class ContentStatus extends Model
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
 
     public function content(){
-        return $this->hasMany(Content::class);
+        return $this->hasMany(Content::class, 'status_id');
     }
 }

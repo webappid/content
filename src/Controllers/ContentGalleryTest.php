@@ -12,6 +12,5 @@ class ContentGalleryTest
 {
     function store($path, ContentGalleryRequest $contentGalleryRequest, Container $container, FileController $fileController){
         $result = $container->call([$fileController,'create'],['path'=>$path]);
-        
     }
 }

@@ -3,11 +3,12 @@
 namespace WebAppId\Content\Presenters;
 
 use WebAppId\Content\Requests\ContentRequest;
-use WebAppId\Content\Repositories\ContentRepository AS ContentRepository;
-use WebAppId\Content\Repositories\ContentCategoryRepository AS ContentCategoryRepository;
-use WebAppId\Content\Repositories\CategoryRepository AS CategoryRepository;
-use WebAppId\Content\Repositories\TimeZoneRepository AS TimeZoneRepository;
-use WebAppId\Content\Repositories\ContentChildRepository AS ContentChildRepository;
+use WebAppId\Content\Repositories\ContentRepository;
+use WebAppId\Content\Repositories\ContentCategoryRepository;
+use WebAppId\Content\Repositories\CategoryRepository;
+use WebAppId\Content\Repositories\TimeZoneRepository;
+use WebAppId\Content\Repositories\ContentChildRepository;
+use WebAppId\Content\Repositories\ContentGalleryRepository;
 use Illuminate\Container\Container;
 use Illuminate\Http\Request;
 
@@ -109,26 +110,25 @@ class ContentPresenter{
         return $result;
     }
 
-    public function update(ContentRequest $request, $code, ContentRepository $contentRepository, TimeZoneRepository $timeZoneRepository)
+    public function update($code, $request, ContentRepository $contentRepository, TimeZoneRepository $timeZoneRepository)
     {
 
         $request = $this->getDefault($timeZoneRepository, $request);
         
-        $result['content'] = $contentRepository->updateContentByCode($request, $code);
+        $result['content'] = $this->container->call([$contentRepository,'updateContentByCode'],['request' => $request, 'code' => $code]);
 
         return $result;
     }
 
     public function destroy($code, ContentRepository $contentRepository)
     {
-        $result = $contentRepository->deleteContentByCode($code);   
-        return $result;
+        return $this->container->call([$contentRepository,'deleteContentByCode'],['code' => $code]);   
     }
 
-    public function detail($code, ContentRepository $contentRepository, ContentGalleryRepository $contentGallery){
+    public function detail($code, ContentRepository $contentRepository, ContentGalleryRepository $contentGalleryRepository){
         
-        $result['content'] = $contentRepository->getContentByCode($code);
-
+        $result['content'] = $this->container->call([$contentRepository,'getContentByCode'],['code' => $code]);
+        dd($result);
         return $result;
     }
 }

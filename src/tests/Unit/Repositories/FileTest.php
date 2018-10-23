@@ -75,4 +75,17 @@ class FileTest extends TestCase
             }
         }
     }
+
+    public function testGetFileMimeTypeName()
+    {
+        $result = $this->createFile();
+        if ($result != false) {
+            $resultFind = $this->container->call([$this->file,'getFileByName'],['name' => $this->objFile->name]);
+            if ($resultFind == null) {
+                $this->assertTrue(false);
+            } else {
+                $this->assertTrue(true);
+            }
+        }
+    }
 }

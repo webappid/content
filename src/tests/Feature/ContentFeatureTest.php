@@ -108,4 +108,13 @@ class ContentFeatureTest extends TestCase
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->get($this->prefix_route . '/content/delete/' . $content['content']['code']);
         $this->assertEquals(200, $response->status());
     }
+
+    public function testGetDetailContent()
+    {
+        $resultContent = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $this->contentDummy);
+        $content = json_decode($resultContent->baseResponse->getContent(), true);
+        $response = $this->get($this->prefix_route . '/content/detail/' . $content['content']['code']);
+        dd($response);
+        $this->assertEquals(200, $response->status());
+    }
 }
