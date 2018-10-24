@@ -126,9 +126,9 @@ class ContentService{
     }
 
     public function detail($code, ContentRepository $contentRepository, ContentGalleryRepository $contentGalleryRepository){
-        
         $result['content'] = $this->container->call([$contentRepository,'getContentByCode'],['code' => $code]);
-        dd($result);
+        $result['content']['gallery'] = $result['content']->gallery;
+        $result['content']['child'] = $result['content']->child;
         return $result;
     }
 }

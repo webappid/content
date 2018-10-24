@@ -6,6 +6,7 @@ use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
 use Illuminate\Container\Container;
+use Illuminate\Http\UploadedFile;
 
 class ContentFeatureTest extends TestCase
 {
@@ -113,7 +114,18 @@ class ContentFeatureTest extends TestCase
     {
         $resultContent = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $this->contentDummy);
         $content = json_decode($resultContent->baseResponse->getContent(), true);
+        
+        $this->createContentDummy();
+        $childContent = $this->contentDummy;
+        $childContent->parent_id = $content["content"]["id"];
+
+        $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $childContent);
+
+        $file = array('photos' => UploadedFile::fake()->image('file.png', 600, 600), 'name'=>'file.png', 'content_id' => $content['content']['id']);
+        $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/gallery/tmp', $file);
+
         $response = $this->get($this->prefix_route . '/content/detail/' . $content['content']['code']);
+        $content = json_decode($response->baseResponse->getContent(), true);
         $this->assertEquals(200, $response->status());
     }
 }

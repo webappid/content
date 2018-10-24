@@ -1,8 +1,8 @@
 <?php
 
-namespace WebAppId\Content\Controllers;
+namespace WebAppId\Content\Services;
 
-use WebAppId\Content\Service\FileService;
+use WebAppId\Content\Services\FileService;
 use WebAppId\Content\Repositories\ContentGalleryRepository;
 use WebAppId\Content\Repositories\TimeZoneRepository;
 use WebAppId\Content\Requests\ContentGalleryRequest;
@@ -14,8 +14,16 @@ use Illuminate\Support\Str;
 
 use Carbon\Carbon;
 
-abstract class ContentGalleryService
+class ContentGalleryService
 {
+
+    private $container;
+    private $user_id;
+
+    public function __construct(Container $container){
+        $this->container = $container;
+        $this->user_id = Auth::id()==null?session('user_id'):Auth::id();
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -23,8 +31,16 @@ abstract class ContentGalleryService
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store($contentRequest, $fileRequest, ContentGalleryRepository $contentRepository, TimeZoneRepository $timeZoneRepository)
+    public function store($path, $contentGalleryRequest, $fileRequest, FileService $fileService, ContentGalleryRepository $contentGalleryRepository, TimeZoneRepository $timeZoneRepository)
     {
-        return null;
+        $result = $this->container->call([$fileService, 'store'],['path'=>$path, 'upload' => $fileRequest]);
+        
+        $contentGalleryRequest->user_id = $this->user_id;
+        $contentGalleryRequest->file_id = $result[0]->id;
+        if($contentGalleryRequest->description == null){
+            $contentGalleryRequest->description = '';
+        }
+
+        return $this->container->call([$contentGalleryRepository, 'addContentGallery'],['request' => $contentGalleryRequest]);
     }
 }

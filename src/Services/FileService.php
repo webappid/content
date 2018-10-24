@@ -49,8 +49,8 @@ class FileService
         $objFile->user_id       = $user_id;
         $objFile->owner_id      = $user_id;
 
-        $status = $this->container->call([$fileRepository,'addFile'],['request' => $objFile]);
-        return $status;
+        $result = $this->container->call([$fileRepository,'addFile'],['request' => $objFile]);
+        return $result;
     }
 
     /**
@@ -60,26 +60,16 @@ class FileService
      */
     public function store($path, $upload, MimeTypeRepository $mimeTypeService, FileRepository $fileRepository)
     {
-        $status = array();
+        $result = array();
         if($upload->photos == (Array)$upload->photos){
             for ($i=0; $i < count($upload->photos); $i++) { 
-                $status[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeService, $fileRepository);
+                $result[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeService, $fileRepository);
             }
         }else{
-            $status[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeService, $fileRepository);
+            $result[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeService, $fileRepository);
         }
-        
-        if(count($status)>0){
-            $result['code'] = '201';
-            $result['message'] = 'Upload File Success';
-            $result['data']['images'] = $status;
-            return $result;
-        }else{
-            $result['code'] = '406';
-            $result['message'] = 'Save Data Failed';
-            $result['data']['images'] = $status;
-            return $result;
-        }
+
+        return $result;
     }
 
     private function loadFile($name, $size, $file){
