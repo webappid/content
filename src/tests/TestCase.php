@@ -9,19 +9,26 @@ use Faker\Factory as Faker;
 abstract class TestCase extends BaseTestCase
 {
     protected $faker;
+
+    protected $prefix_route = "/test";
+
     /**
      * Set up the test
      */
     public function setUp()
     {
         parent::setUp();
-        $this->faker = Faker::create('id_ID');
 
         $this->loadMigrationsFrom([
             '--realpath' => realpath(__DIR__.'/../src/migrations'),
         ]);
         $this->artisan('webappid:content:seed');
 
+    }
+
+    protected function getFaker(){
+        $faker = new Faker;
+        return $faker->create('id_ID');
     }
 
     protected function getPackageProviders($app)
