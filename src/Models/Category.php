@@ -5,6 +5,8 @@ namespace WebAppId\Content\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
+use App\Http\Model\User;
+
 class Category extends Model
 {
     protected $table='categories';
@@ -13,132 +15,11 @@ class Category extends Model
 
     protected $fillable=['id','code','name'];
 
-    /**
-     * Method To Add Data Category
-     *
-     * @param Request $data
-     * @return Boolean true/false
-     */
-    public function addCategory($data){
-        try{
-            $result          = new self();
-            $result->code    = $data->code;
-            $result->name    = $data->name;
-            $result->user_id = $data->user_id;
-
-            $result->save();
-            return $result;
-        }catch(QueryException $e){
-            report($e);
-            return false;
-        }
-    }
-    
-    /**
-     * Method To Get Data Category
-     *
-     * @param Integer $id
-     * @return Category $data
-     */
-    public function getOne($id){
-        return $this->findOrFail($id);
-    }
-
-    /**
-     * Method To Update Category
-     *
-     * @param Request $data
-     * @param Integer $id
-     * @return Boolean true/false
-     */
-    public function updateCategory($data, $id){
-        try{
-            $categoryData = $this->getOne($id);
-
-            if(!empty($categoryData)){
-                $categoryData->code = $data->code;
-                $categoryData->name = $data->name;
-                $categoryData->user_id = $data->user_id;
-                $categoryData->save();
-                return true;
-            }else{
-                return false;
-            }
-        }catch(QueryException $e){
-            report($e);
-            return false;
-        }
-    }
-
-    /**
-     * Method to Delete category Data
-     *
-     * @param Integer $id
-     * @return Boolean true/false
-     */
-    public function deleteCategory($id){
-        try{
-            $categoryData = $this->getOne($id);
-            if(!empty($categoryData)){
-                $categoryData->delete();
-                return true;
-            }else{
-                return false;
-            }
-        }catch(QueryException $e){
-            report($e);
-            return false;
-        }
-    }
-
-    /**
-     * Get All Category
-     *
-     * @return Category $data
-     */
-    public function getAll(){
-        return $this->all();
-    }
-
-    /**
-     * Method For Get Data Category Use name like or code
-     *
-     * @param Request $request
-     * @return object list category / empty object
-     */
-    public function getDataWhere($search=""){
-        $result = $this->where('code', $search)
-            ->orWhere('name','LIKE','%'.$search.'%')
-            ->get();
-        return $result;
-    }
-
-
-    public function getDatatable($search, $order_column, $order_dir, $limit_start, $limit_length){
-        $result = $this
-            ->select('id', 'code', 'name')
-            ->where('code','LIKE','%'.$search.'%')
-            ->orWhere('name','LIKE','%'.$search.'%')
-            ->orderBy($order_column, $order_dir)
-            ->offset($limit_start)
-            ->limit($limit_length)
-            ->get();
-        return $result; 
-    }
-
-    public function getSearch($search=""){
-        $result = $this
-            ->where('code','LIKE','%'.$search.'%')
-            ->orWhere('name','LIKE','%'.$search.'%')
-            ->get();
-        return $result;
-    }
-
-    public function getCategoryByCode($code){
-        return $this->where('code', $code)->first();
-    }
-
     public function content(){
         return $this->belongsToMany(ContentCategory::class, 'content_categories', 'id','categories_id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

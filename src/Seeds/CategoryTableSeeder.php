@@ -2,8 +2,10 @@
 
 namespace WebAppId\Content\Seeds;
 
-use WebAppId\Content\Models\Category;
+use WebAppId\Content\Repositories\CategoryRepository;
 use Illuminate\Database\Seeder;
+
+use Illuminate\Container\Container;
 
 class CategoryTableSeeder extends Seeder
 {
@@ -12,19 +14,20 @@ class CategoryTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(CategoryRepository $category)
     {
         //
-        $objCategory = new Category;
         $objNewCategory = new \StdClass;
+
+        $container = new Container;
 
         $categories[] = array('name' => 'page', 'code' => 'page', 'user_id' => '1');
 
         for ($i = 0; $i < count($categories); $i++) {
-            $result = $objCategory->getCategoryByCode($categories[$i]['code']);
+            $result = $container->call([$category,'getCategoryByCode'],['code' => $categories[$i]['code']]);
 
             if ($result === null) {
-                $objCategory->addCategory((Object)$categories[$i]);
+                $container->call([$category,'addCategory'],['data' => (Object)$categories[$i]]);
             }
         }
     }

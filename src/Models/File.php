@@ -8,6 +8,8 @@ use WebAppId\Content\Models\Content;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
+use App\Http\Model\User;
+
 class File extends Model
 {
     protected $table='files';
@@ -16,42 +18,15 @@ class File extends Model
 
     protected $fillable=['id','name','description','alt','mime_type_id', 'owner_id','user_id'];
 
-    public function addFile($request){
-        try{
-            $result               = new self();
-            $result->name         = $request->name;
-            $result->description  = $request->description;
-            $result->alt          = $request->alt;
-            $result->path         = $request->path;
-            $result->mime_type_id = $request->mime_type_id;
-            $result->owner_id     = $request->owner_id;
-            $result->user_id      = $request->user_id;
-            $result->save();
-            
-            return $result;
-        }catch(QueryException $e){
-            report($e);
-            return false;
-        }
-    }
-
-    public function getOne($id){
-        return $this->findOrFail($id);
-    }
-
-    public function getFileByName($name){
-        return $this->where('name',$name)->first();
-    }
-
     public function mime(){
-        return $this->belongsTo(MimeType::class);
+        return $this->belongsTo(MimeType::class,'mime_type_id');
     }
 
-    public function content(){
-        return $this->belongsTo(Content::class);
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function getFileCount(){
-        return $this->count();
+    public function owner(){
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }

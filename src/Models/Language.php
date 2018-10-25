@@ -11,29 +11,15 @@ class Language extends Model
     protected $fillable = ['id', 'code', 'name'];
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
 
-    public function addLanguage($request)
-    {
-        try{
-            $result           = new self();
-            $result->code     = $request->code;
-            $result->name     = $request->name;
-            $result->image_id = $request->image_id;
-            $result->user_id  = $request->user_id;
-            $result->save();
-
-            return $result;
-        }catch(QueryException $e){
-            report($e);
-            return false;
-        }
+    public function content(){
+        return $this->hasMany(Conent::class, 'language_id');
     }
 
-    public function getLanguage()
-    {
-        return $this->get();
+    public function image(){
+        return $this->hasOne(File::class, 'image_id');
     }
 
-    public function getLanguageByName($name){
-        return $this->where('name',$name)->first();
+    public function user(){
+        return $this->hasOne(User::class, 'user_id');
     }
 }
