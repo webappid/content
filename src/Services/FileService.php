@@ -1,6 +1,6 @@
 <?php
 
-namespace WebAppId\Content\Presenters;
+namespace WebAppId\Content\Services;
 
 use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Repositories\MimeTypeRepository;
@@ -12,7 +12,7 @@ use Illuminate\Container\Container;
 
 use \Gumlet\ImageResize;
 
-class FilePresenter
+class FileService
 {
 
     private $container;
@@ -31,14 +31,14 @@ class FilePresenter
         return $this->loadFile($name, '0', $file);
     }
 
-    private function saveFile($path, $file, $upload, $mimeTypePresenter, $fileRepository){
+    private function saveFile($path, $file, $upload, $mimeTypeService, $fileRepository){
         $user_id = Auth::id()==null?session('user_id'):Auth::id();
 
         $path = str_replace('../','',$path);
         $filename = $file->store($path);
         $fileData = explode('/',$filename);
 
-        $resultMimeType = $this->container->call([$mimeTypePresenter,'getMimeByName'],['name' => $file->getMimeType()]);
+        $resultMimeType = $this->container->call([$mimeTypeService,'getMimeByName'],['name' => $file->getMimeType()]);
         
         $objFile = new \StdClass;
         $objFile->name          = $fileData[1];
@@ -49,8 +49,8 @@ class FilePresenter
         $objFile->user_id       = $user_id;
         $objFile->owner_id      = $user_id;
 
-        $status = $this->container->call([$fileRepository,'addFile'],['request' => $objFile]);
-        return $status;
+        $result = $this->container->call([$fileRepository,'addFile'],['request' => $objFile]);
+        return $result;
     }
 
     /**
@@ -58,28 +58,18 @@ class FilePresenter
      *
      * @return \Illuminate\Http\Response
      */
-    public function store($path, $upload, MimeTypeRepository $mimeTypePresenter, FileRepository $fileRepository)
+    public function store($path, $upload, MimeTypeRepository $mimeTypeService, FileRepository $fileRepository)
     {
-        $status = array();
+        $result = array();
         if($upload->photos == (Array)$upload->photos){
             for ($i=0; $i < count($upload->photos); $i++) { 
-                $status[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypePresenter, $fileRepository);
+                $result[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeService, $fileRepository);
             }
         }else{
-            $status[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypePresenter, $fileRepository);
+            $result[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeService, $fileRepository);
         }
-        
-        if(count($status)>0){
-            $result['code'] = '201';
-            $result['message'] = 'Upload File Success';
-            $result['data']['images'] = $status;
-            return $result;
-        }else{
-            $result['code'] = '406';
-            $result['message'] = 'Save Data Failed';
-            $result['data']['images'] = $status;
-            return $result;
-        }
+
+        return $result;
     }
 
     private function loadFile($name, $size, $file){

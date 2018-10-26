@@ -27,8 +27,7 @@ class UploadFeatureTest extends TestCase
         $content = $this->getDummy();
        
         $file = array('photos' => UploadedFile::fake()->image('file.png', 600, 600), 'name'=>'file.png', 'content_id' => $content->id);
-        //dd($file);
-        $result = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/gallery/tmp', $file);
-        dd($result);
+        $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/gallery/tmp', $file);
+        $this->assertEquals(201, $response->status());
     }
 }

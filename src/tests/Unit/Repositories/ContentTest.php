@@ -27,7 +27,7 @@ class ContentTest extends TestCase
         $faker = $this->getFaker();
         $objContent->title = $faker->word;
         $objContent->code = $faker->word;
-        $objContent->description = $faker->text;
+        $objContent->description = $faker->text($maxNbChars = 190);
         $objContent->keyword = $faker->word;
         $objContent->og_title = $faker->word;
         $objContent->og_description = $faker->text;
