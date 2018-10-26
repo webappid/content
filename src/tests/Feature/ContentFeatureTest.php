@@ -85,6 +85,10 @@ class ContentFeatureTest extends TestCase
         $this->createContentDummy();
         $resultContent = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $originalContent);
         
+        if($resultContent->status()!=200){
+            dd($resultContent);
+        }
+
         $content = json_decode($resultContent->baseResponse->getContent(), true);
         
         $response = $this->get($this->prefix_route . '/content/edit/' . $content['content']['code']);
@@ -105,6 +109,10 @@ class ContentFeatureTest extends TestCase
     public function testDeleteContent()
     {
         $resultContent = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $this->contentDummy);
+        if($resultContent->status()!=200){
+            dd($resultContent->status);
+        }
+        
         $content = json_decode($resultContent->baseResponse->getContent(), true);
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->get($this->prefix_route . '/content/delete/' . $content['content']['code']);
         $this->assertEquals(200, $response->status());
@@ -126,6 +134,7 @@ class ContentFeatureTest extends TestCase
 
         $response = $this->get($this->prefix_route . '/content/detail/' . $content['content']['code']);
         $content = json_decode($response->baseResponse->getContent(), true);
+        
         $this->assertEquals(200, $response->status());
     }
 }
