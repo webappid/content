@@ -1,6 +1,6 @@
 <?php
 
-namespace WebAppId\Content\Presenters;
+namespace WebAppId\Content\Services;
 
 use WebAppId\Content\Repository\CategoryRepository;
 use WebAppId\Content\Requests\CategoryRequests;
@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class CategoryPresenter
+class CategoryService
 {
 
 	/**

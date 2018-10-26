@@ -1,6 +1,6 @@
 <?php
 
-namespace WebAppId\Content\Presenters;
+namespace WebAppId\Content\Services;
 
 use WebAppId\Content\Requests\ContentRequest;
 use WebAppId\Content\Repositories\ContentRepository;
@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class ContentPresenter{
+class ContentService{
     private $container;
 
     public function __construct(Container $container){
@@ -126,9 +126,9 @@ class ContentPresenter{
     }
 
     public function detail($code, ContentRepository $contentRepository, ContentGalleryRepository $contentGalleryRepository){
-        
         $result['content'] = $this->container->call([$contentRepository,'getContentByCode'],['code' => $code]);
-        dd($result);
+        $result['content']['gallery'] = $result['content']->gallery;
+        $result['content']['child'] = $result['content']->child;
         return $result;
     }
 }

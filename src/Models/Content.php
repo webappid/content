@@ -35,7 +35,7 @@ class Content extends Model
     }
 
     public function gallery(){
-        return $this->belongsToMany(ContentGallery::class, 'content_galleries', 'content_id', 'file_id');
+        return $this->belongsToMany(File::class, 'content_galleries', 'content_id', 'file_id');
     }
 
     public function status(){
