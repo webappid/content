@@ -22,7 +22,7 @@
     "require": {
         "php" : ">=7.1.0",
         "illuminate/support": "~5.5",
-        "doctrine/dbal": "^2.9@dev",
+        "doctrine/dbal": "^2.5",
         "gumlet/php-image-resize": "1.8.*",
         "nesbot/carbon": "^1.33"
     },
