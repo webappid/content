@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
-use App\Http\Model\User;
+use App\Http\Models\User;
 
 class Content extends Model
 {

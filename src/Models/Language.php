@@ -5,6 +5,8 @@ namespace WebAppId\Content\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
+use App\Http\Models\User;
+
 class Language extends Model
 {
     protected $table = 'languages';

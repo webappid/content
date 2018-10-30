@@ -8,7 +8,7 @@ use WebAppId\Content\Models\Content;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
-use App\Http\Model\User;
+use App\Http\Models\User;
 
 class File extends Model
 {
