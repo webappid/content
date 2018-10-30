@@ -7,6 +7,8 @@ use WebAppId\Content\Models\Content;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
+use App\Http\Models\User;
+
 class Tag extends Model
 {
     protected $table='tags';

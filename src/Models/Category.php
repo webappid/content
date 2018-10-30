@@ -5,7 +5,7 @@ namespace WebAppId\Content\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
-use App\Http\Model\User;
+use App\Http\Models\User;
 
 class Category extends Model
 {
