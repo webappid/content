@@ -1,10 +1,20 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ContentGalleryRequest extends FormRequest{
+/**
+ * Class ContentGalleryRequest
+ * @package WebAppId\Content\Requests
+ */
+class ContentGalleryRequest extends FormRequest
+{
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -14,8 +24,8 @@ class ContentGalleryRequest extends FormRequest{
     {
         return true;
     }
-
-
+    
+    
     /**
      * Get the validation rules that apply to the request.
      *
@@ -27,20 +37,20 @@ class ContentGalleryRequest extends FormRequest{
             'content_id' => 'required'
         ];
     }
-
+    
     /**
      *  Custom error message.
      *
      * @return array
      */
-
+    
     public function messages()
     {
         return [
             'content_id.required' => 'Content Id required'
         ];
     }
-
+    
     /**
      *  Filters to be applied to the input.
      *
@@ -49,7 +59,7 @@ class ContentGalleryRequest extends FormRequest{
     public function filters()
     {
         return [
-            
+        
         ];
     }
 }

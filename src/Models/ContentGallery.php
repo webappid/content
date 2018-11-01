@@ -1,11 +1,18 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
-use WebAppId\Content\Models\Content;
-use Illuminate\Database\QueryException;
-use Illuminate\Database\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class ContentGallery
+ * @package WebAppId\Content\Models
+ */
 class ContentGallery extends Model
 {
     protected $table='content_galleries';

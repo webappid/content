@@ -1,10 +1,23 @@
 <?php
+
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Seeds;
 
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder{
-    public function run(){
+/**
+ * Class DatabaseSeeder
+ * @package WebAppId\Content\Seeds
+ */
+
+class DatabaseSeeder extends Seeder
+{
+    public function run()
+    {
         $this->call(TimeZoneTableSeeder::class);
         $this->call(MimeTypeTableSeeder::class);
         $this->call(FileTableSeeder::class);

@@ -1,11 +1,28 @@
 <?php
 
+
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\MimeType;
+
+/**
+ * Class MimeTypeRepository
+ * @package WebAppId\Content\Repositories
+ */
 
 class MimeTypeRepository
 {
+    /**
+     * @param $request
+     * @param MimeType $mimeType
+     * @return bool|MimeType
+     */
     public function addMimeType($request, MimeType $mimeType)
     {
         try{
@@ -20,6 +37,11 @@ class MimeTypeRepository
         }
     }
 
+    /**
+     * @param $id
+     * @param MimeType $mimeType
+     * @return mixed
+     */
     public function getOne($id, MimeType $mimeType)
     {
         return $mimeType->findOrFail($id);
@@ -29,6 +51,7 @@ class MimeTypeRepository
      * Get Mime Type By Name
      *
      * @param String $name
+     * @param MimeType $mimeType
      * @return Object $mimeType
      */
     public function getMimeByName($name, MimeType $mimeType)

@@ -1,22 +1,31 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Services;
 
 use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Repositories\MimeTypeRepository;
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Container\Container;
+use Gumlet\ImageResize;
 
-use \Gumlet\ImageResize;
-
+/**
+ * Class FileService
+ * @package WebAppId\Content\Services
+ */
 class FileService
 {
 
     private $container;
 
+    /**
+     * FileService constructor.
+     * @param Container $container
+     */
     public function __construct(Container $container){
         $this->container = $container;
     }
@@ -24,9 +33,12 @@ class FileService
     /**
      * Display a listing of the resource.
      *
+     * @param $name
+     * @param FileRepository $file
      * @return \Illuminate\Http\Response
+     * @throws \Gumlet\ImageResizeException
      */
-    public function index($name, File $file)
+    public function index($name, FileRepository $file)
     {
         return $this->loadFile($name, '0', $file);
     }
@@ -56,7 +68,11 @@ class FileService
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param $path
+     * @param $upload
+     * @param MimeTypeRepository $mimeTypeService
+     * @param FileRepository $fileRepository
+     * @return array
      */
     public function store($path, $upload, MimeTypeRepository $mimeTypeService, FileRepository $fileRepository)
     {
@@ -72,6 +88,13 @@ class FileService
         return $result;
     }
 
+    /**
+     * @param $name
+     * @param $size
+     * @param FileRepository $file
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \Gumlet\ImageResizeException
+     */
     private function loadFile($name, $size, $file){
         $path = '../storage/app/';
         $fileData = $file->getFileByName($name);
@@ -107,10 +130,13 @@ class FileService
     /**
      * Display the specified resource.
      *
-     * @param  \Loketics\Models\File  $file
+     * @param $name
+     * @param $size
+     * @param FileRepository $file
      * @return \Illuminate\Http\Response
+     * @throws \Gumlet\ImageResizeException
      */
-    public function show($name, $size, File $file)
+    public function show($name, $size, FileRepository $file)
     {
         return $this->loadFile($name, $size, $file);
     }

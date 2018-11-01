@@ -1,13 +1,20 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
-use WebAppId\Content\Models\Content;
-
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
 
 use App\Http\Models\User;
+
+/**
+ * Class Tag
+ * @package WebAppId\Content\Models
+ */
 
 class Tag extends Model
 {

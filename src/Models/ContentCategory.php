@@ -1,10 +1,18 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
-use Illuminate\Database\QueryException;
-use Illuminate\Database\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class ContentCategory
+ * @package WebAppId\Content\Models
+ */
 class ContentCategory extends Model
 {
     //

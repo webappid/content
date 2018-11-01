@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Seeds;
 
 use Illuminate\Database\Seeder;
@@ -7,11 +12,18 @@ use WebAppId\Content\Repositories\FileRepository;
 
 use \Illuminate\Container\Container;
 
+/**
+ * Class FileTableSeeder
+ * @package WebAppId\Content\Seeds
+ */
+
 class FileTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      *
+     * @param FileRepository $file
+     * @param Container $container
      * @return void
      */
     public function run(FileRepository $file, Container $container)

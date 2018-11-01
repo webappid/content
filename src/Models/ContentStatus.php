@@ -1,12 +1,18 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
-use WebAppId\Content\Models\Content;
-
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
 
+/**
+ * Class ContentStatus
+ * @package WebAppId\Content\Models
+ */
 class ContentStatus extends Model
 {
     protected $table = 'content_statuses';
