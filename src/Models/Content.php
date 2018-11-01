@@ -1,18 +1,20 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
-use WebAppId\Content\Models\Content;
-use WebAppId\Content\Models\ContentGallery;
-use WebAppId\Content\Models\ContentStatus;
-use WebAppId\Content\Models\ContentCategory;
-
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\DB;
 
 use App\Http\Models\User;
 
+/**
+ * Class Content
+ * @package WebAppId\Content\Models
+ */
 class Content extends Model
 {
     //

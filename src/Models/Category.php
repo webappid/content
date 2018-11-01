@@ -1,12 +1,21 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
 
 use App\Http\Models\User;
 
+/**
+ * @property  user_id
+ * @property  name
+ * @property  code
+ */
 class Category extends Model
 {
     protected $table='categories';

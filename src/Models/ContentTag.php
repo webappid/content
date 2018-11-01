@@ -1,10 +1,18 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\DB;
+
+/**
+ * Class ContentTag
+ * @package WebAppId\Content\Models
+ */
 
 class ContentTag extends Model
 {

@@ -1,11 +1,20 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
 
 use App\Http\Models\User;
+
+/**
+ * Class TimeZone
+ * @package WebAppId\Content\Models
+ */
 
 class TimeZone extends Model
 {

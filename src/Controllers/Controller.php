@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Controllers;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
