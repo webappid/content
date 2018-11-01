@@ -1,9 +1,18 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Class ContentRequest
+ * @package WebAppId\Content\Requests
+ */
 class ContentRequest extends FormRequest
 {
     /**
@@ -15,7 +24,7 @@ class ContentRequest extends FormRequest
     {
         return true;
     }
-
+    
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,13 +39,13 @@ class ContentRequest extends FormRequest
             'category_id' => 'required|integer'
         ];
     }
-
+    
     /**
      *  Custom error message.
      *
      * @return array
      */
-
+    
     public function messages()
     {
         return [
@@ -46,5 +55,5 @@ class ContentRequest extends FormRequest
             'content.required' => 'Content should required'
         ];
     }
-
+    
 }

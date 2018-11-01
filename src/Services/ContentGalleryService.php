@@ -1,18 +1,21 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Services;
 
-use WebAppId\Content\Services\FileService;
 use WebAppId\Content\Repositories\ContentGalleryRepository;
-use WebAppId\Content\Repositories\TimeZoneRepository;
-use WebAppId\Content\Requests\ContentGalleryRequest;
 
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
-use Carbon\Carbon;
+/**
+ * Class ContentGalleryService
+ * @package WebAppId\Content\Services
+ */
 
 class ContentGalleryService
 {
@@ -28,10 +31,14 @@ class ContentGalleryService
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param $path
+     * @param $contentGalleryRequest
+     * @param $fileRequest
+     * @param \WebAppId\Content\Services\FileService $fileService
+     * @param ContentGalleryRepository $contentGalleryRepository
      * @return \Illuminate\Http\Response
      */
-    public function store($path, $contentGalleryRequest, $fileRequest, FileService $fileService, ContentGalleryRepository $contentGalleryRepository, TimeZoneRepository $timeZoneRepository)
+    public function store($path, $contentGalleryRequest, $fileRequest, FileService $fileService, ContentGalleryRepository $contentGalleryRepository)
     {
         $result = $this->container->call([$fileService, 'store'],['path'=>$path, 'upload' => $fileRequest]);
         

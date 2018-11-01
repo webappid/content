@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @author DyanGalih
+ */
+
 namespace WebAppId\Content\Seeds;
 
 use Illuminate\Database\Seeder;
@@ -8,13 +12,19 @@ use Illuminate\Support\Facades\DB;
 
 use Illuminate\Container\Container;
 
+/**
+ * Class TimeZoneTableSeeder
+ * @package WebAppId\Content\Seeds
+ */
 class TimeZoneTableSeeder extends Seeder
 {
-/**
- * Run the database seeds.
- *
- * @return void
- */
+    /**
+     * Run the database seeds.
+     *
+     * @param TimeZoneRepository $timezone
+     * @param Container $container
+     * @return void
+     */
     public function run(TimeZoneRepository $timezone, Container $container)
     {
         $user_id = '1';

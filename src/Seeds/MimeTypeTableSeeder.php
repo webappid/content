@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Seeds;
 
 use Illuminate\Database\Seeder;
@@ -7,11 +12,18 @@ use Illuminate\Support\Facades\DB;
 use \WebAppId\Content\Repositories\MimeTypeRepository;
 use \Illuminate\Container\Container;
 
+/**
+ * Class MimeTypeTableSeeder
+ * @package WebAppId\Content\Seeds
+ */
+
 class MimeTypeTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      *
+     * @param MimeTypeRepository $mime_type
+     * @param Container $container
      * @return void
      */
     public function run(MimeTypeRepository $mime_type, Container $container)

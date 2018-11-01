@@ -1,10 +1,18 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
 
+/**
+ * Class ContentChild
+ * @package WebAppId\Content\Models
+ */
 class ContentChild extends Model
 {
     protected $table='content_childs';

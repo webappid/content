@@ -21,7 +21,7 @@ class CreateLanguagesTable extends Migration
                 ->comment('language code');
             $table->string('name',20)
                 ->nullable(false)
-                ->default()
+                ->default('')
                 ->comment('language name');
             $table->integer('image_id')
                 ->nullable(true)

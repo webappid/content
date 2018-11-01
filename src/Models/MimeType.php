@@ -1,10 +1,18 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
-use WebAppId\Content\Models\File;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
+
+/**
+ * Class MimeType
+ * @package WebAppId\Content\Models
+ */
 
 class MimeType extends Model
 {

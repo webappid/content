@@ -1,10 +1,20 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CategoryRequest extends FormRequest{
+/**
+ * Class CategoryRequest
+ * @package WebAppId\Content\Requests
+ */
+class CategoryRequest extends FormRequest
+{
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -14,8 +24,8 @@ class CategoryRequest extends FormRequest{
     {
         return true;
     }
-
-
+    
+    
     /**
      * Get the validation rules that apply to the request.
      *
@@ -27,13 +37,13 @@ class CategoryRequest extends FormRequest{
             'name' => 'required|unique:categories|191'
         ];
     }
-
+    
     /**
      *  Custom error message.
      *
      * @return array
      */
-
+    
     public function messages()
     {
         return [
@@ -41,7 +51,7 @@ class CategoryRequest extends FormRequest{
             'name.unique' => 'Cateogory name should unique'
         ];
     }
-
+    
     /**
      *  Filters to be applied to the input.
      *

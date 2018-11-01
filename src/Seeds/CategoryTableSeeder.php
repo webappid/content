@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Seeds;
 
 use WebAppId\Content\Repositories\CategoryRepository;
@@ -7,17 +12,21 @@ use Illuminate\Database\Seeder;
 
 use Illuminate\Container\Container;
 
+/**
+ * Class CategoryTableSeeder
+ * @package WebAppId\Content\Seeds
+ */
 class CategoryTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      *
+     * @param CategoryRepository $category
      * @return void
      */
     public function run(CategoryRepository $category)
     {
         //
-        $objNewCategory = new \StdClass;
 
         $container = new Container;
 
