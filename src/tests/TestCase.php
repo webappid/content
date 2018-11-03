@@ -2,6 +2,7 @@
 
 namespace WebAppId\Content\Tests;
 
+use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 use Faker\Factory as Faker;
@@ -42,6 +43,12 @@ abstract class TestCase extends BaseTestCase
         return [
             'Content' => \WebAppId\Content\Facade::class
         ];
+    }
+    
+    public function tearDown()
+    {
+        Artisan::call('migrate:reset');
+        parent::tearDown();
     }
 
     protected function getEnvironmentSetUp($app)
