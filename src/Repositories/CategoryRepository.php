@@ -29,6 +29,7 @@ class CategoryRepository
         try {
             $category->code = $data->code;
             $category->name = $data->name;
+            $category->status_id = $data->status_id;
             $category->user_id = $data->user_id;
 
             $category->save();
