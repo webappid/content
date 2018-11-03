@@ -2,6 +2,7 @@
 
 namespace WebAppId\Content\Tests;
 
+use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
@@ -49,6 +50,10 @@ abstract class TestCase extends BaseTestCase
     {
         Artisan::call('migrate:reset');
         parent::tearDown();
+    }
+    
+    protected function getContainer(){
+        return new Container();
     }
 
     protected function getEnvironmentSetUp($app)
