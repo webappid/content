@@ -4,14 +4,12 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Tests\TestCase;
-use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
 
 use Illuminate\Container\Container;
 
 class ContentCategoryTest extends TestCase
 {
 
-    private $objContentCategory;
     private $resultContent;
     private $resultCategory;
 
@@ -119,13 +117,18 @@ class ContentCategoryTest extends TestCase
     }
 
     public function testContentCategoryGetAll(){
-        $result = $this->createContentCategory($this->getDummy());
+        $dummy = $this->getDummy();
+        $result = $this->createContentCategory($dummy);
         if (!$result) {
             $this->assertTrue(false);
         } else {
+            $this->assertEquals($dummy->content_id , $result->content_id);
+            $this->assertEquals($dummy->categories_id , $result->categories_id);
             $result = $this->container->call([$this->contentCategory,'getAll']);
             if(count($result)>0){
                 $this->assertTrue(true);
+                $this->assertEquals($dummy->content_id , $result[count($result)-1]->content_id);
+                $this->assertEquals($dummy->categories_id , $result[count($result)-1]->categories_id);
             }else{
                 $this->assertTrue(false);
             }
