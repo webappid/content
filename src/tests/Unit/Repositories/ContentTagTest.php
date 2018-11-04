@@ -2,10 +2,7 @@
 
 namespace WebAppId\Content\Tests\Unit\Repositories;
 
-use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
-use WebAppId\Content\Tests\Unit\Repositories\TagTest;
 use WebAppId\Content\Repositories\ContentTagRepository;
-use WebAppId\Content\Repositories\ContentRepository;
 use WebAppId\Content\Tests\TestCase;
 
 use Illuminate\Container\Container;
@@ -55,11 +52,14 @@ class ContentTagTest extends TestCase
     }
 
     public function createContentTag(){
-        $resultContentTag = $this->container->call([$this->contentTag,'addContentTag'],['response'=>$this->getDummy()]);
+        $dummy = $this->getDummy();
+        $resultContentTag = $this->container->call([$this->contentTag,'addContentTag'],['response'=>$dummy]);
         
         if(!$resultContentTag){
             $this->assertTrue(false);
         }else{
+            $this->assertEquals($dummy->content_id, $resultContentTag->content_id);
+            $this->assertEquals($dummy->tag_id , $resultContentTag->tag_id);
             return $resultContentTag;
         }
     }

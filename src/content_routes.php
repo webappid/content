@@ -4,7 +4,7 @@
     Route for file
 */
 
-if($_SERVER["PHP_SELF"]=="vendor/phpunit/phpunit/phpunit"){
+if(strpos($_SERVER["PHP_SELF"],'vendor/phpunit/phpunit/phpunit')!=false || $_SERVER["PHP_SELF"] == 'vendor/phpunit/phpunit/phpunit'){
     session(["content_test" => "true", "user_id" => "1"]);
     Route::group(['prefix' => 'test'], function () {
         

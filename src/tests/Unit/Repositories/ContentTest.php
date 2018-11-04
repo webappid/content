@@ -112,13 +112,29 @@ class ContentTest extends TestCase
 
     public function testUpdateContentByCode()
     {
-        
-        $result = $this->createContent($this->getDummy());
+        $objContent = $this->getDummy();
+        $result = $this->createContent($objContent);
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $result = $this->container->call([$this->content,'updateContentByCode'],['request'=>$this->getDummy(), 'code' => $result->code]);
+            $objContent = $this->getDummy();
+            $result = $this->container->call([$this->content,'updateContentByCode'],['request'=>$objContent, 'code' => $result->code]);
             if ($result) {
+                $this->assertEquals($objContent->title,$result->title);
+                $this->assertEquals($objContent->code,$result->code);
+                $this->assertEquals($objContent->description,$result->description);
+                $this->assertEquals($objContent->keyword,$result->keyword);
+                $this->assertEquals($objContent->og_title,$result->og_title);
+                $this->assertEquals($objContent->og_description,$result->og_description);
+                $this->assertEquals($objContent->default_image,$result->default_image);
+                $this->assertEquals($objContent->status_id,$result->status_id);
+                $this->assertEquals($objContent->language_id,$result->language_id);
+                $this->assertEquals($objContent->publish_date,$result->publish_date);
+                $this->assertEquals($objContent->additional_info,$result->additional_info);
+                $this->assertEquals($objContent->content,$result->content);
+                $this->assertEquals($objContent->time_zone_id,$result->time_zone_id);
+                $this->assertEquals($objContent->owner_id,$result->owner_id);
+                $this->assertEquals($objContent->user_id,$result->user_id);
                 $this->assertTrue(true);
             } else {
                 $this->asserTrue(false);
