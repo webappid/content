@@ -13,19 +13,16 @@ class CategoryTest extends TestCase
 
     private $container;
 
-
-    public function getObjCategory(){
-        return $this->objCategory;
-    }
-
+    
     public function getDummy()
     {
         $faker = $this->getFaker();
-        $this->objCategory = new \StdClass;
-        $this->objCategory->code = $faker->word;
-        $this->objCategory->name = $faker->word;
-        $this->objCategory->user_id = '1';
-        return $this->objCategory;
+        $objCategory = new \StdClass;
+        $objCategory->code = $faker->word;
+        $objCategory->name = $faker->word;
+        $objCategory->status_id = $faker->numberBetween(1,2);
+        $objCategory->user_id = '1';
+        return $objCategory;
     }
 
     public function start(){
@@ -66,6 +63,7 @@ class CategoryTest extends TestCase
                 $this->assertTrue(true);
                 $this->assertEquals($dummyData->code, $result->code);
                 $this->assertEquals($dummyData->name, $result->name);
+                $this->assertEquals($dummyData->status_id, $result->status_id);
             }else{
                 $this->assertTrue(false);
             }
@@ -83,9 +81,13 @@ class CategoryTest extends TestCase
             if($result==null){
                 $this->assertTrue(true);
             }else{
-                $result = $this->container->call([$this->category,'updateCategory'],['data' => $this->getDummy(), 'id' => $result->id]);
+                $dummyData = $this->getDummy();
+                $result = $this->container->call([$this->category,'updateCategory'],['data' => $dummyData, 'id' => $result->id]);
                 if($result){
                     $this->assertTrue(true);
+                    $this->assertEquals($dummyData->code, $result->code);
+                    $this->assertEquals($dummyData->name, $result->name);
+                    $this->assertEquals($dummyData->status_id, $result->status_id);
                 }else{
                     $this->assertTrue(false);
                 }

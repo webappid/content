@@ -50,6 +50,7 @@ class ContentFeatureTest extends TestCase
         $childContent = $this->contentDummy;
         
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array) $originalContent);
+        
         $content = json_decode($response->baseResponse->getContent(), true);
         $childContent->parent_id = $content["content"]["id"];
         

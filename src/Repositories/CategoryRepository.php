@@ -68,6 +68,7 @@ class CategoryRepository
             if (!empty($categoryData)) {
                 $categoryData->code = $data->code;
                 $categoryData->name = $data->name;
+                $categoryData->status_id = $data->status_id;
                 $categoryData->user_id = $data->user_id;
                 $categoryData->save();
                 return $categoryData;

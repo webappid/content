@@ -26,22 +26,25 @@ class CategoryStatusTest extends TestCase
         return $objCategoryStatus;
     }
     
-    public function createDummy()
+    public function createDummy($dummy)
     {
-        return $this->getContainer()->call([$this->inject(), 'addCategoryStatus'], ['request' => $this->getDummy()]);
+        return $this->getContainer()->call([$this->inject(), 'addCategoryStatus'], ['request' => $dummy]);
     }
     
-    private function inject(){
+    private function inject()
+    {
         return $this->getContainer()->make(CategoryStatusRepository::class);
     }
     
     public function testAddCategoryStatus()
     {
-        $result = $this->createDummy();
+        $dummy = $this->getDummy();
+        $result = $this->createDummy($dummy);
         if ($result == null) {
             $this->assertTrue(false);
         } else {
             $this->assertTrue(true);
+            $this->assertEquals($dummy->name, $result->name);
         }
     }
     

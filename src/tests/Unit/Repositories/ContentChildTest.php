@@ -5,7 +5,6 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use WebAppId\Content\Repositories\ContentChildRepository;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Repositories\ContentRepository;
-use Illuminate\Support\Facades\DB;
 
 use Illuminate\Container\Container;
 
@@ -13,7 +12,6 @@ class ContentChildTest extends TestCase
 {
 
     private $objContentChild;
-    private $resultContent;
     private $userId = '1';
 
     private $contentChild;
@@ -56,7 +54,7 @@ class ContentChildTest extends TestCase
     }
 
     public function testContentChild(){
-        $result = $this->addContentChild();
+        $this->addContentChild();
         $result = $this->container->call([$this->contentChild,'addContentChild'],['request' => $this->objContentChild]);
         
         if($result!=false){
