@@ -14,7 +14,6 @@ use WebAppId\Content\Models\Category;
  * Class CategoryRepository
  * @package WebAppId\Content\Repositories
  */
-
 class CategoryRepository
 {
     /**
@@ -29,9 +28,14 @@ class CategoryRepository
         try {
             $category->code = $data->code;
             $category->name = $data->name;
+            if (isset($data->parent_id)) {
+                $category->parent_id = $data->parent_id;
+            } else {
+                $category->parent_id = null;
+            }
             $category->status_id = $data->status_id;
             $category->user_id = $data->user_id;
-
+            
             $category->save();
             return $category;
         } catch (QueryException $e) {
@@ -39,7 +43,7 @@ class CategoryRepository
             return null;
         }
     }
-
+    
     /**
      * Method To Get Data Category
      *
@@ -51,7 +55,7 @@ class CategoryRepository
     {
         return $category->findOrFail($id);
     }
-
+    
     /**
      * Method To Update Category
      *
@@ -64,10 +68,15 @@ class CategoryRepository
     {
         try {
             $categoryData = $this->getOne($id, $category);
-
+            
             if (!empty($categoryData)) {
                 $categoryData->code = $data->code;
                 $categoryData->name = $data->name;
+                if (isset($data->parent_id)) {
+                    $category->parent_id = $data->parent_id;
+                } else {
+                    $category->parent_id = null;
+                }
                 $categoryData->status_id = $data->status_id;
                 $categoryData->user_id = $data->user_id;
                 $categoryData->save();
@@ -80,7 +89,7 @@ class CategoryRepository
             return null;
         }
     }
-
+    
     /**
      * Method to Delete category Data
      *
@@ -89,7 +98,7 @@ class CategoryRepository
      * @return Boolean true/false
      * @throws \Exception
      */
-
+    
     public function deleteCategory($id, Category $category)
     {
         try {
@@ -105,7 +114,7 @@ class CategoryRepository
             return false;
         }
     }
-
+    
     /**
      * Get All Category
      *
@@ -116,7 +125,7 @@ class CategoryRepository
     {
         return $category->all();
     }
-
+    
     /**
      * Method For Get Data Category Use name like or code
      *
@@ -131,8 +140,8 @@ class CategoryRepository
             ->get();
         return $result;
     }
-
-
+    
+    
     /**
      * @param Category $category
      * @param $search
@@ -154,7 +163,7 @@ class CategoryRepository
             ->get();
         return $result;
     }
-
+    
     /**
      * @param $search
      * @param $category
@@ -165,7 +174,7 @@ class CategoryRepository
         return $category->where('code', 'LIKE', '%' . $search . '%')
             ->orWhere('name', 'LIKE', '%' . $search . '%');
     }
-
+    
     /**
      * @param string $search
      * @param Category $category
@@ -175,7 +184,7 @@ class CategoryRepository
     {
         return $this->getQueryCategory($search, $category)->get();
     }
-
+    
     /**
      * @param string $search
      * @param Category $category
@@ -185,7 +194,7 @@ class CategoryRepository
     {
         return $this->getQueryCategory($search, $category)->first();
     }
-
+    
     /**
      * @param string $search
      * @param Category $category
@@ -195,7 +204,7 @@ class CategoryRepository
     {
         return $this->getQueryCategory($search, $category)->count();
     }
-
+    
     /**
      * @param $code
      * @param Category $category
@@ -205,5 +214,5 @@ class CategoryRepository
     {
         return $category->where('code', $code)->first();
     }
-
+    
 }

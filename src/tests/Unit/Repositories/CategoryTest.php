@@ -48,6 +48,7 @@ class CategoryTest extends TestCase
             $this->assertTrue(false);
         }else{
             $this->assertTrue(true);
+            return $result;
         }
     }
 
@@ -107,6 +108,24 @@ class CategoryTest extends TestCase
             }else{
                 $this->assertTrue(false);
             }
+        }
+    }
+    
+    public function testChildCategory(){
+        $resultCategory = $this->testAddCategory();
+        
+        $dummy = $this->getDummy();
+        $dummy->parent_id = $resultCategory->id;
+        
+        $resultChild = $this->createCategory($dummy);
+        
+        if($resultChild==null){
+            self::assertTrue(false);
+        }else{
+            self::assertTrue(true);
+            self::assertEquals($dummy->name, $resultChild->name);
+            self::assertEquals($dummy->code, $resultChild->code);
+            self::assertEquals($dummy->parent_id, $resultChild->parent_id);
         }
     }
 }
