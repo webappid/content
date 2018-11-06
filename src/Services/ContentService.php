@@ -181,11 +181,21 @@ class ContentService
      * @param ContentGalleryRepository $contentGalleryRepository
      * @return mixed
      */
-    public function detail($code, ContentRepository $contentRepository, ContentGalleryRepository $contentGalleryRepository)
+    public function detail($code, ContentRepository $contentRepository)
     {
         $result['content'] = $this->container->call([$contentRepository, 'getContentByCode'], ['code' => $code]);
         $result['content']['gallery'] = $result['content']->gallery;
         $result['content']['child'] = $result['content']->child;
         return $result;
+    }
+    
+    /**
+     * @param $code
+     * @param $status
+     * @param ContentRepository $contentRepository
+     * @return mixed
+     */
+    public function updateContentStatusByCode($code, $status, ContentRepository $contentRepository){
+        return $this->container->call([$contentRepository, 'updateContentStatusByCode'],['code' => $code, 'status_id' => $status]);
     }
 }

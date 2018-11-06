@@ -229,19 +229,20 @@ class ContentRepository
             return false;
         }
     }
-
+    
     /**
      * @param $code
-     * @param $statusId
+     * @param $status_id
      * @param Content $content
      * @return bool
      */
-    public function udpateContentStatusByCode($code, $statusId, Content $content){
+    public function updateContentStatusByCode($code, $status_id, Content $content){
         $content = $this->getContentByCode($code, $content);
         if($content!=null){
             try{
-                $content->status_id = $statusId;
+                $content->status_id = $status_id;
                 $content->save();
+                return $content;
             }catch(QueryException $e){
                 report($e);
                 return false;
