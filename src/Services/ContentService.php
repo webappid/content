@@ -8,6 +8,7 @@
 namespace WebAppId\Content\Services;
 
 use Illuminate\Support\Carbon;
+use WebAppId\Content\Repositories\ContentGalleryRepository;
 use WebAppId\Content\Repositories\ContentRepository;
 use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Repositories\CategoryRepository;
@@ -93,7 +94,7 @@ class ContentService
      * @param ContentChildRepository $contentChildRepository
      * @return mixed
      */
-    public function store($request, ContentRepository $contentRepository, TimeZoneRepository $timeZoneRepository, ContentCategoryRepository $contentCategoryRepository, ContentChildRepository $contentChildRepository)
+    public function store($request, ContentRepository $contentRepository, TimeZoneRepository $timeZoneRepository, ContentCategoryRepository $contentCategoryRepository, ContentChildRepository $contentChildRepository, ContentGalleryRepository $contentGalleryRepository)
     {
         $request = $this->getDefault($timeZoneRepository, $request);
         
@@ -104,8 +105,20 @@ class ContentService
             $contentChildRequest->user_id = $request->user_id;
             $contentChildRequest->content_parent_id = $request->parent_id;
             $contentChildRequest->content_child_id = $result['content']->id;
-            $result['content_child'] = $this->container->call([$contentChildRepository, 'addContentChild'], ['request' => $contentChildRequest]);
+            $result['child'] = $this->container->call([$contentChildRepository, 'addContentChild'], ['request' => $contentChildRequest]);
             
+        }
+        
+        $galleries = $request->galleries;
+        if(isset($request->galleries)){
+            for($i=0; $i<count($galleries); $i++) {
+                $galleryData = new \StdClass();
+                $galleryData->content_id = $result['content']->id;
+                $galleryData->user_id = $request->user_id;
+                $galleryData->file_id = $galleries[$i];
+                $galleryData->description = "";
+                $result['gallery'][] = $this->container->call([$contentGalleryRepository, 'addContentGallery'],['request' => $galleryData]);
+            }
         }
         
         $categories = $request->categories;
@@ -115,7 +128,7 @@ class ContentService
             $contentCategoryData->user_id = $request->user_id;
             $contentCategoryData->content_id = $result['content']->id;
             $contentCategoryData->categories_id = $categories[$i];
-            $result['content_category'] = $this->container->call([$contentCategoryRepository, 'addContentCategory'], ['data' => $contentCategoryData]);
+            $result['category'] = $this->container->call([$contentCategoryRepository, 'addContentCategory'], ['data' => $contentCategoryData]);
         }
         
         return $result;

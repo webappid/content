@@ -63,15 +63,14 @@ class ContentTest extends TestCase
     
     public function testBulkAddContentCount()
     {
-        for ($n = 0; $n < 15; $n++) {
+        for ($n = 0; $n < 10; $n++) {
             $dummyData = $this->getDummy();
             $dummyData->keyword = 'bulk';
             
             $this->container->call([$this->content, 'addContent'], ['data' => $dummyData]);
         }
         
-        $this->assertEquals(10,
-            $this->container->call([$this->content, 'getContentByKeywordCount'], ['keyword' => $dummyData->keyword]));
+        $this->assertEquals(10, $this->container->call([$this->content, 'getContentByKeywordCount'], ['keyword' => $dummyData->keyword]));
     }
     
     public function testGetContentByCode()
@@ -145,7 +144,7 @@ class ContentTest extends TestCase
             $this->assertTrue(false);
         }else {
             $status_id = $this->getFaker()->numberBetween(1, 4);
-            $resultUpdateStatus = $this->container->call([$this->content, 'udpateContentStatusByCode'], ['code' => $result->code, 'status_id' => $status_id]);
+            $resultUpdateStatus = $this->container->call([$this->content, 'updateContentStatusByCode'], ['code' => $result->code, 'status_id' => $status_id]);
             if($resultUpdateStatus == null){
                 $this->assertTrue(false);
             }else{

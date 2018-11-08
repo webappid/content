@@ -29,6 +29,11 @@ class ContentFeatureTest extends TestCase
         
         $this->contentDummy->categories = $categories;
         
+        $galleries = [];
+        $galleries[] = '1';
+        
+        $this->contentDummy->galleries = $galleries;
+        
     }
     
     public function setUp()
@@ -44,7 +49,6 @@ class ContentFeatureTest extends TestCase
     public function testAddContentOnly()
     {
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array)$this->contentDummy);
-        
         $this->assertEquals(200, $response->status());
     }
     
