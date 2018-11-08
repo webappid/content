@@ -8,7 +8,8 @@
 
 namespace WebAppId\Content\Tests\Feature\Services;
 
-
+use Illuminate\Http\Request;
+use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Services\ContentService;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
@@ -32,16 +33,50 @@ class ContentServiceTest extends TestCase
         return $contentRepositoryTest;
     }
     
-    public function testUpdateContentStatus(){
+    public function contentCategoryRepository(){
+        return $this->getContainer()->make(ContentCategoryRepository::class);
+    }
+    
+    public function testUpdateContentStatus()
+    {
         $result = $this->contentRepositoryTest()->testAddContent();
-        $status_id = $this->getFaker()->numberBetween(1,4);
-        $resultUpdateStatus = $this->getContainer()->call([$this->contentService(), 'updateContentStatusByCode'],['code' => $result->code, 'status' => $status_id]);
+        $status_id = $this->getFaker()->numberBetween(1, 4);
+        $resultUpdateStatus = $this->getContainer()->call([$this->contentService(), 'updateContentStatusByCode'], ['code' => $result->code, 'status' => $status_id]);
         
-        if($resultUpdateStatus == null){
+        if ($resultUpdateStatus == null) {
             self::assertTrue(false);
-        }else{
+        } else {
             self::assertTrue(true);
             self::assertEquals($status_id, $resultUpdateStatus->status_id);
         }
+    }
+    
+    public function testPagingContent()
+    {
+        $contentRepositoryTest = $this->contentRepositoryTest();
+        
+        $paging = 12;
+        
+        for ($i = 0; $i < $paging+10; $i++) {
+            $result = $contentRepositoryTest->testAddContent();
+            $categories = [];
+            $categories[0] = '1';
+            
+            $contentCategoryData = new \StdClass;
+            $contentCategoryData->user_id = '1';
+            $contentCategoryData->content_id = $result->id;
+            $contentCategoryData->categories_id = $categories[0];
+            
+            $result['content_category'] = $this->getContainer()->call([$this->contentCategoryRepository(), 'addContentCategory'], ['data' => $contentCategoryData]);
+        }
+        
+        $request = new Request();
+        $request->q = "";
+        $request->category = 'page';
+        
+        $result = $this->getContainer()->call([$this->contentService(),'showPaginate'],['paginate' => $paging, 'request' => $request]);
+        
+        self::assertCount($paging, $result['content']);
+        self::assertTrue(true);
     }
 }

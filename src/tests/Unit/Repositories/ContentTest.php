@@ -26,7 +26,7 @@ class ContentTest extends TestCase
         $objContent = new \StdClass;
         $faker = $this->getFaker();
         $objContent->title = $faker->word;
-        $objContent->code = $faker->word;
+        $objContent->code = $this->getFaker()->uuid;
         $objContent->description = $faker->text($maxNbChars = 190);
         $objContent->keyword = $faker->word;
         $objContent->og_title = $faker->word;
@@ -63,7 +63,7 @@ class ContentTest extends TestCase
     
     public function testBulkAddContentCount()
     {
-        for ($n = 0; $n < 10; $n++) {
+        for ($n = 0; $n < 15; $n++) {
             $dummyData = $this->getDummy();
             $dummyData->keyword = 'bulk';
             

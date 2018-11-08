@@ -23,7 +23,12 @@ class ContentFeatureTest extends TestCase
         $this->categoryData = $this->container->call([$category, 'getOne'], ['id' => 1]);
         
         $this->contentDummy = $this->contentTest->getDummy();
-        $this->contentDummy->category_id = $this->categoryData->id;
+        
+        $categories = [];
+        $categories[] = $this->categoryData->id;
+        
+        $this->contentDummy->categories = $categories;
+        
     }
     
     public function setUp()
@@ -39,6 +44,7 @@ class ContentFeatureTest extends TestCase
     public function testAddContentOnly()
     {
         $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array)$this->contentDummy);
+        
         $this->assertEquals(200, $response->status());
     }
     
@@ -66,7 +72,7 @@ class ContentFeatureTest extends TestCase
      */
     public function testGetContent()
     {
-        $response = $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array)$this->contentDummy);
+        $this->withSession(['timezone' => 'Asia/Jakarta'])->post($this->prefix_route . '/content/store', (Array)$this->contentDummy);
         
         $response = $this->get($this->prefix_route . '/content?category=' . $this->categoryData->name);
         $this->assertEquals(200, $response->status());

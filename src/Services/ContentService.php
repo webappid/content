@@ -13,7 +13,6 @@ use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Repositories\TimeZoneRepository;
 use WebAppId\Content\Repositories\ContentChildRepository;
-use WebAppId\Content\Repositories\ContentGalleryRepository;
 use Illuminate\Container\Container;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -109,14 +108,36 @@ class ContentService
             
         }
         
-        $contentCategoryData = new \StdClass;
-        $contentCategoryData->user_id = $request->user_id;
-        $contentCategoryData->content_id = $result['content']->id;
-        $contentCategoryData->categories_id = $request->category_id;
-        $result['content_category'] = $this->container->call([$contentCategoryRepository, 'addContentCategory'], ['data' => $contentCategoryData]);
+        $categories = $request->categories;
+        
+        for($i=0; $i<count($categories); $i++) {
+            $contentCategoryData = new \StdClass;
+            $contentCategoryData->user_id = $request->user_id;
+            $contentCategoryData->content_id = $result['content']->id;
+            $contentCategoryData->categories_id = $categories[$i];
+            $result['content_category'] = $this->container->call([$contentCategoryRepository, 'addContentCategory'], ['data' => $contentCategoryData]);
+        }
         
         return $result;
         
+    }
+    
+    
+    /**
+     * @param string $paginate
+     * @param Request $request
+     * @param ContentRepository $contentRepository
+     * @param CategoryRepository $categoryRepository
+     * @return mixed
+     */
+    public function showPaginate($paginate = '12', Request $request, ContentRepository $contentRepository, CategoryRepository $categoryRepository)
+    {
+        
+        $categoryName = isset($request->category) ? $request->category : $request->search['category'];
+        $categoryData = $this->container->call([$categoryRepository, 'getSearchOne'], ['search' => $categoryName]);
+        $search = isset($request->q) ? $request->q : $request->search['value'];
+        $result['content'] = $this->container->call([$contentRepository, 'getSearchPaginate'], ['search' => $search, 'category_id' => $categoryData->id, 'paginate' => $paginate]);
+        return $result;
     }
     
     /**
@@ -131,9 +152,9 @@ class ContentService
         $categoryName = isset($request->category) ? $request->category : $request->search['category'];
         $categoryData = $this->container->call([$categoryRepository, 'getSearchOne'], ['search' => $categoryName]);
         $search = isset($request->q) ? $request->q : $request->search['value'];
-        $result['content'] = $this->container->call([$contentRepository, 'getAll'], ['category_id' => $categoryData->id]);
+        $result['content'] = $this->container->call([$contentRepository, 'getSearch'], ['search' => $search, 'category_id' => $categoryData->id]);
         $result['recordsTotal'] = $this->container->call([$contentRepository, 'getAllCount'], ['category_id' => $categoryData->id]);
-        $result['recordsFiltered'] = $this->container->call([$contentRepository, 'getSearch'], ['search' => $search, 'category_id' => $categoryData->id]);
+        $result['recordsFiltered'] = $this->container->call([$contentRepository, 'getSearchCount'], ['search' => $search, 'category_id' => $categoryData->id]);
         return $result;
     }
     
@@ -178,7 +199,6 @@ class ContentService
     /**
      * @param $code
      * @param ContentRepository $contentRepository
-     * @param ContentGalleryRepository $contentGalleryRepository
      * @return mixed
      */
     public function detail($code, ContentRepository $contentRepository)
@@ -195,7 +215,8 @@ class ContentService
      * @param ContentRepository $contentRepository
      * @return mixed
      */
-    public function updateContentStatusByCode($code, $status, ContentRepository $contentRepository){
-        return $this->container->call([$contentRepository, 'updateContentStatusByCode'],['code' => $code, 'status_id' => $status]);
+    public function updateContentStatusByCode($code, $status, ContentRepository $contentRepository)
+    {
+        return $this->container->call([$contentRepository, 'updateContentStatusByCode'], ['code' => $code, 'status_id' => $status]);
     }
 }
