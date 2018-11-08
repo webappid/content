@@ -44,7 +44,7 @@ class ContentGalleryService
         
         $contentGalleryRequest->user_id = $this->user_id;
         $contentGalleryRequest->file_id = $result[0]->id;
-        if($contentGalleryRequest->description == null){
+        if(!isset($contentGalleryRequest->description)){
             $contentGalleryRequest->description = '';
         }
 
