@@ -5,8 +5,10 @@ use Illuminate\Http\UploadedFile;
 
 use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
 
-class UploadFeatureTest extends TestCase
+class UploadContentGalleryTest extends TestCase
 {
+    private $contentTest;
+    
     public function setUp()
     {
         parent::setUp();

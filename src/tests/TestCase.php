@@ -13,6 +13,8 @@ abstract class TestCase extends BaseTestCase
     protected $faker;
 
     protected $prefix_route = "/test";
+    
+    private $container;
 
     /**
      * Set up the test
@@ -53,7 +55,10 @@ abstract class TestCase extends BaseTestCase
     }
     
     protected function getContainer(){
-        return new Container();
+        if($this->container==null){
+            $this->container = new Container();
+        }
+        return $this->container;
     }
 
     protected function getEnvironmentSetUp($app)
