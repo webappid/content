@@ -1,7 +1,9 @@
 <?php
+
 namespace WebAppId\Content\Commands;
 
 use Illuminate\Console\Command;
+
 class SeedCommand extends Command
 {
     /**
@@ -16,6 +18,7 @@ class SeedCommand extends Command
      * @var string
      */
     protected $description = 'Seed database';
+    
     /**
      * Create a new command instance.
      *
@@ -25,6 +28,7 @@ class SeedCommand extends Command
     {
         parent::__construct();
     }
+    
     /**
      * Execute the console command.
      *

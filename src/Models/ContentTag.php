@@ -13,12 +13,11 @@ use Illuminate\Database\Eloquent\Model;
  * Class ContentTag
  * @package WebAppId\Content\Models
  */
-
 class ContentTag extends Model
 {
-    protected $table='content_tags';
-
-    protected $hidden=['user_id','created_at','updated_at'];
-
-    protected $fillable=['id','content_id','tag_id'];
+    protected $table = 'content_tags';
+    
+    protected $hidden = ['user_id', 'created_at', 'updated_at'];
+    
+    protected $fillable = ['id', 'content_id', 'tag_id'];
 }

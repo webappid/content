@@ -78,7 +78,7 @@ class ContentChildRepository
         $parentContent = $this->getByContentParentId($id, $contentChild);
         for ($i=0; $i < count($parentContent); $i++) { 
             $result = $parentContent[$i]->delete();
-            if($result == false){
+            if (!$result) {
                 $result = false;
             }
         }

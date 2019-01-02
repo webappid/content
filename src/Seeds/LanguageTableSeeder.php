@@ -7,15 +7,14 @@
 
 namespace WebAppId\Content\Seeds;
 
+use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
-use \WebAppId\Content\Repositories\LanguageRepository;
-use \Illuminate\Container\Container;
+use WebAppId\Content\Repositories\LanguageRepository;
 
 /**
  * Class LanguageTableSeeder
  * @package WebAppId\Content\Seeds
  */
-
 class LanguageTableSeeder extends Seeder
 {
     /**
@@ -40,7 +39,7 @@ class LanguageTableSeeder extends Seeder
                 'image_id' => $image_id
             ]
         ];
-
+        
         foreach ($data as $key) {
             $request = new \stdClass;
             $request->code = $key['code'];
@@ -48,9 +47,9 @@ class LanguageTableSeeder extends Seeder
             $request->image_id = $key['image_id'];
             $request->user_id = '1';
             $request->image_id = 1;
-
+            
             $resultLanguage = $container->call([$languages, 'getLanguageByName'], ['name' => $request->name]);
-
+            
             if ($resultLanguage === null) {
                 $container->call([$languages, 'addLanguage'], ['request' => $request]);
             }

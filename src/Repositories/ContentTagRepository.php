@@ -50,7 +50,7 @@ class ContentTagRepository
         $result = true;
         if (count($resultContentTag) > 0) {
             for ($i = 0; $i < count($resultContentTag); $i++) {
-                if ($resultContentTag[$i]->delete() == false) {
+                if (!$resultContentTag[$i]->delete()) {
                     $result = false;
                     break;
                 }

@@ -7,16 +7,14 @@
 
 namespace WebAppId\Content\Seeds;
 
+use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\FileRepository;
-
-use \Illuminate\Container\Container;
 
 /**
  * Class FileTableSeeder
  * @package WebAppId\Content\Seeds
  */
-
 class FileTableSeeder extends Seeder
 {
     /**
@@ -30,9 +28,9 @@ class FileTableSeeder extends Seeder
     {
         //
         $user_id = '1';
-        if($container->call([$file,'getFileCount'])==0){
+        if ($container->call([$file, 'getFileCount']) == 0) {
             $objNewFile = new \StdClass;
-
+            
             $objNewFile->name = 'none';
             $objNewFile->description = '';
             $objNewFile->alt = '';
@@ -40,8 +38,8 @@ class FileTableSeeder extends Seeder
             $objNewFile->mime_type_id = '32';
             $objNewFile->owner_id = $user_id;
             $objNewFile->user_id = $user_id;
-
-            $container->call([$file,'addFile'],['request' => $objNewFile]);
+            
+            $container->call([$file, 'addFile'], ['request' => $objNewFile]);
         }
     }
 }

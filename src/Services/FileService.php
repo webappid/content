@@ -7,11 +7,11 @@
 
 namespace WebAppId\Content\Services;
 
+use Gumlet\ImageResize;
+use Illuminate\Container\Container;
+use Illuminate\Support\Facades\Auth;
 use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Repositories\MimeTypeRepository;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Container\Container;
-use Gumlet\ImageResize;
 
 /**
  * Class FileService
@@ -19,17 +19,18 @@ use Gumlet\ImageResize;
  */
 class FileService
 {
-
+    
     private $container;
-
+    
     /**
      * FileService constructor.
      * @param Container $container
      */
-    public function __construct(Container $container){
+    public function __construct(Container $container)
+    {
         $this->container = $container;
     }
-
+    
     /**
      * Display a listing of the resource.
      *
@@ -42,29 +43,29 @@ class FileService
     {
         return $this->loadFile($name, '0', $file);
     }
-
-    private function saveFile($path, $file, $upload, $mimeTypeService, $fileRepository){
-        $user_id = Auth::id()==null?session('user_id'):Auth::id();
-
-        $path = str_replace('../','',$path);
+    
+    private function saveFile($path, $file, $upload, $mimeTypeService, $fileRepository)
+    {
+        $user_id = Auth::id() == null ? session('user_id') : Auth::id();
+        
+        $path = str_replace('../', '', $path);
         $filename = $file->store($path);
-        $fileData = explode('/',$filename);
-
-        $resultMimeType = $this->container->call([$mimeTypeService,'getMimeByName'],['name' => $file->getMimeType()]);
+        $fileData = explode('/', $filename);
+        
+        $resultMimeType = $this->container->call([$mimeTypeService, 'getMimeByName'], ['name' => $file->getMimeType()]);
         
         $objFile = new \StdClass;
-        $objFile->name          = $fileData[1];
-        $objFile->description   = $upload->description;
-        $objFile->alt           = $upload->alt;
-        $objFile->path          = $path;
-        $objFile->mime_type_id  = $resultMimeType[0]->id;
-        $objFile->user_id       = $user_id;
-        $objFile->owner_id      = $user_id;
-
-        $result = $this->container->call([$fileRepository,'addFile'],['request' => $objFile]);
-        return $result;
+        $objFile->name = $fileData[1];
+        $objFile->description = $upload->description;
+        $objFile->alt = $upload->alt;
+        $objFile->path = $path;
+        $objFile->mime_type_id = $resultMimeType[0]->id;
+        $objFile->user_id = $user_id;
+        $objFile->owner_id = $user_id;
+        
+        return $this->container->call([$fileRepository, 'addFile'], ['request' => $objFile]);
     }
-
+    
     /**
      * Show the form for creating a new resource.
      *
@@ -77,17 +78,17 @@ class FileService
     public function store($path, $upload, MimeTypeRepository $mimeTypeService, FileRepository $fileRepository)
     {
         $result = array();
-        if($upload->photos == (Array)$upload->photos){
-            for ($i=0; $i < count($upload->photos); $i++) { 
+        if ($upload->photos == (Array)$upload->photos) {
+            for ($i = 0; $i < count($upload->photos); $i++) {
                 $result[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeService, $fileRepository);
             }
-        }else{
+        } else {
             $result[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeService, $fileRepository);
         }
-
+        
         return $result;
     }
-
+    
     /**
      * @param $name
      * @param $size
@@ -95,38 +96,39 @@ class FileService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      * @throws \Gumlet\ImageResizeException
      */
-    private function loadFile($name, $size, $file){
+    private function loadFile($name, $size, $file)
+    {
         $path = '../storage/app/';
-        $fileData = $file->getFileByName($name);
-        if(count($fileData) > 0 && file_exists($path.$fileData[0]->path .'/'. $fileData[0]->name)){
-            $imageName  = $fileData[0]->name;
-            $path      .= $fileData[0]->path;
-            $mimeType   = $fileData[0]->mime;
-        }else{
-            $imageName  = 'default.jpg';
-            $mimeType   = 'image/png';
-            $path      .= 'default';
+        $fileData = $this->container->call([$file, 'getFileByName'], ['name', $name]);
+        if (count($fileData) > 0 && file_exists($path . $fileData[0]->path . '/' . $fileData[0]->name)) {
+            $imageName = $fileData[0]->name;
+            $path .= $fileData[0]->path;
+            $mimeType = $fileData[0]->mime;
+        } else {
+            $imageName = 'default.jpg';
+            $mimeType = 'image/png';
+            $path .= 'default';
         }
-
-        $image = new ImageResize($path .'/'. $imageName);
-
-        if($size!=='0'){
+        
+        $image = new ImageResize($path . '/' . $imageName);
+        
+        if ($size !== '0') {
             $sizeData = explode('x', $size);
-            if($sizeData[0] == $sizeData[1]){
+            if ($sizeData[0] == $sizeData[1]) {
                 $sourceWidth = $image->getSourceWidth();
                 $sourceHeight = $image->getSourceHeight();
-                if($sourceWidth<$sourceHeight){
+                if ($sourceWidth < $sourceHeight) {
                     $image->resizeToWidth($sizeData[0]);
-                }else{
+                } else {
                     $image->resizeToHeight($sizeData[1]);
                 }
-            }else{
+            } else {
                 $image->resizeToBestFit($sizeData[0], $sizeData[1]);
             }
         }
-        return response($image->output())->header('Cache-Control','max-age=2592000')->header('Content-Type', $mimeType);
+        return response($image->output())->header('Cache-Control', 'max-age=2592000')->header('Content-Type', $mimeType);
     }
-
+    
     /**
      * Display the specified resource.
      *

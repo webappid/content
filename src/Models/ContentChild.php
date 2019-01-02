@@ -15,9 +15,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ContentChild extends Model
 {
-    protected $table='content_childs';
-
-    protected $hidden=['user_id','created_at','updated_at'];
-
-    protected $fillable=['id','content_parent_id','content_child_id'];
+    protected $table = 'content_childs';
+    
+    protected $hidden = ['user_id', 'created_at', 'updated_at'];
+    
+    protected $fillable = ['id', 'content_parent_id', 'content_child_id'];
 }
