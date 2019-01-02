@@ -55,14 +55,17 @@ class ContentStatusTest extends TestCase
     }
 
     public function testGetContentStatus(){
-        $result = $this->createContentStatus($this->getDummy());
+        $dummy = $this->getDummy();
+        $result = $this->createContentStatus($dummy);
 
         if (!$result) {
             $this->assertTrue(false);
         } else {
+            $this->assertEquals($dummy->name, $result->name);
             $result = $this->container->call([$this->contentStatus,'getContentStatus']);
             if(count($result)>0){
                 $this->assertTrue(true);
+                $this->assertEquals($dummy->name, $result[count($result)-1]->name);
             }else{
                 $this->assertTrue(false);
             }
@@ -70,14 +73,17 @@ class ContentStatusTest extends TestCase
     }
 
     public function testUpdateContentStatus(){
-        $result = $this->createContentStatus($this->getDummy());
+        $dummy = $this->getDummy();
+        $result = $this->createContentStatus($dummy);
 
         if (!$result) {
             $this->assertTrue(false);
         }else{
-            
-            $result = $this->container->call([$this->contentStatus,'updateContentStatus'],["id" => $result->id, 'request'=>$this->getDummy()]);
+            $this->assertEquals($dummy->name, $result->name);
+            $dummy = $this->getDummy();
+            $result = $this->container->call([$this->contentStatus,'updateContentStatus'],["id" => $result->id, 'request'=>$dummy]);
             if($result){
+                $this->assertEquals($dummy->name, $result->name);
                 $this->assertTrue(true);
             }else{
                 $this->assertTrue(false);

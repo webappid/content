@@ -1,8 +1,19 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\ContentCategory;
+
+/**
+ * Class ContentCategoryRepository
+ * @package WebAppId\Content\Repositories
+ */
 
 class ContentCategoryRepository
 {
@@ -10,8 +21,9 @@ class ContentCategoryRepository
     /**
      * Method To Add Data ContentCategory
      *
-     * @param Request $data
-     * @return Boolean true/false
+     * @param Object $data
+     * @param ContentCategory $contentCetgory
+     * @return ContentCategory true/false
      */
     public function addContentCategory($data, ContentCategory $contentCetgory)
     {
@@ -23,14 +35,15 @@ class ContentCategoryRepository
             return $contentCetgory;
         } catch(QueryException $e){
             report($e);
-            return false;
+            return null;
         }
     }
-    
+
     /**
      * Method To Get Data ContentCategory
      *
      * @param Integer $id
+     * @param ContentCategory $contentCetgory
      * @return ContentCategory $data
      */
     public function getContentCategoryById($id, ContentCategory $contentCetgory)
@@ -41,9 +54,10 @@ class ContentCategoryRepository
     /**
      * Method To Update ContentCategory
      *
-     * @param Request $data
+     * @param Object $data
      * @param Integer $id
-     * @return Boolean true/false
+     * @param ContentCategory $contentCetgory
+     * @return ContentCategory $contentCategory
      */
     public function updateContentCategory($data, $id, ContentCategory $contentCetgory)
     {
@@ -57,11 +71,11 @@ class ContentCategoryRepository
                 $contentCategoryResult->save();
                 return $contentCategoryResult;
             } else {
-                return false;
+                return null;
             }
         } catch(QueryException $e){
             report($e);
-            return false;
+            return null;
         }
     }
 
@@ -69,7 +83,9 @@ class ContentCategoryRepository
      * Method to Delete ContentCategory Data
      *
      * @param Integer $id
-     * @return Boolean true/false
+     * @param ContentCategory $contentCategory
+     * @return bool $contentCategory
+     * @throws \Exception
      */
     public function deleteContentCategory($id, ContentCategory $contentCategory)
     {
@@ -90,13 +106,20 @@ class ContentCategoryRepository
     /**
      * Get All ContentCategory
      *
-     * @return ContentCategory $data
+     * @param ContentCategory $contentCategory
+     * @return \Illuminate\Database\Eloquent\Collection|ContentCategory[] $data
      */
-    public function getAll(ContentCategory $contentCetgory)
+    public function getAll(ContentCategory $contentCategory)
     {
-        return $contentCetgory->all();
+        return $contentCategory->all();
     }
 
+    /**
+     * @param $contentId
+     * @param $categoryId
+     * @param ContentCategory $contentCetgory
+     * @return mixed
+     */
     public function getContentCategoryByContentIdAndCategoryId($contentId, $categoryId, ContentCategory $contentCetgory){
         return $contentCetgory
             ->where('content_id',$contentId)

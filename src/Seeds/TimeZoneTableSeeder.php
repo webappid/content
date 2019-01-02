@@ -1,24 +1,33 @@
 <?php
 
+/**
+ * @author DyanGalih
+ */
+
 namespace WebAppId\Content\Seeds;
 
-use Illuminate\Database\Seeder;
-use WebAppId\Content\Repositories\TimeZoneRepository;
-use Illuminate\Support\Facades\DB;
-
 use Illuminate\Container\Container;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use WebAppId\Content\Repositories\TimeZoneRepository;
 
+/**
+ * Class TimeZoneTableSeeder
+ * @package WebAppId\Content\Seeds
+ */
 class TimeZoneTableSeeder extends Seeder
 {
-/**
- * Run the database seeds.
- *
- * @return void
- */
+    /**
+     * Run the database seeds.
+     *
+     * @param TimeZoneRepository $timezone
+     * @param Container $container
+     * @return void
+     */
     public function run(TimeZoneRepository $timezone, Container $container)
     {
         $user_id = '1';
-
+        
         $data = array(
             array(
                 "code" => "CI",
@@ -2976,19 +2985,19 @@ class TimeZoneTableSeeder extends Seeder
                 "minute" => "-0"
             ),
         );
-
+        
         DB::beginTransaction();
         $return = true;
         for ($i = 0; $i < count($data); $i++) {
             $request = new \stdClass;
-            $request->code = $data[$i]['code']==""?$data[$i]['name']:$data[$i]['code'];
+            $request->code = $data[$i]['code'] == "" ? $data[$i]['name'] : $data[$i]['code'];
             $request->name = $data[$i]['name'];
             $request->minute = $data[$i]['minute'];
             $request->user_id = $user_id;
-
-            if (count($container->call([$timezone,'getTimeZoneByName'],['name'=>$request->name])) == 0) {
-                $result = $container->call([$timezone,'addTimeZone'],['data'=>$request]);
-                if ($result == false) {
+            
+            if (count($container->call([$timezone, 'getTimeZoneByName'], ['name' => $request->name])) == 0) {
+                $result = $container->call([$timezone, 'addTimeZone'], ['data' => $request]);
+                if (!$result) {
                     $return = $result;
                     break;
                 }

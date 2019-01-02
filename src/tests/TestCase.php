@@ -2,6 +2,8 @@
 
 namespace WebAppId\Content\Tests;
 
+use Illuminate\Container\Container;
+use Illuminate\Support\Facades\Artisan;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 use Faker\Factory as Faker;
@@ -11,6 +13,8 @@ abstract class TestCase extends BaseTestCase
     protected $faker;
 
     protected $prefix_route = "/test";
+    
+    private $container;
 
     /**
      * Set up the test
@@ -42,6 +46,19 @@ abstract class TestCase extends BaseTestCase
         return [
             'Content' => \WebAppId\Content\Facade::class
         ];
+    }
+    
+    public function tearDown()
+    {
+        Artisan::call('migrate:reset');
+        parent::tearDown();
+    }
+    
+    protected function getContainer(){
+        if($this->container==null){
+            $this->container = new Container();
+        }
+        return $this->container;
     }
 
     protected function getEnvironmentSetUp($app)

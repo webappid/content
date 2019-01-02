@@ -1,14 +1,20 @@
 <?php
 
+/**
+ * @author @DyanGalih
+ * @copyright @2018
+ */
+
 namespace WebAppId\Content\Models;
 
-use WebAppId\Content\Models\MimeType;
-use WebAppId\Content\Models\Content;
-
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
 
-use App\Http\Model\User;
+use App\Http\Models\User;
+
+/**
+ * Class File
+ * @package WebAppId\Content\Models
+ */
 
 class File extends Model
 {

@@ -4,15 +4,12 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use WebAppId\Content\Repositories\ContentGalleryRepository;
 use WebAppId\Content\Tests\TestCase;
-use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
 
 use Illuminate\Container\Container;
 
 class ContentGalleryTest extends TestCase
 {
-
-    private $objContentGallery;
-
+    
     private $contentGallery;
     private $contentTest;
     private $fileTest;
