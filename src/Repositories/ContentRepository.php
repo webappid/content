@@ -136,7 +136,7 @@ class ContentRepository
      * @param Content $content
      * @return Content $data
      */
-    public function getAll($category_id = null, Content $content)
+    public function getAll(Content $content, $category_id = null)
     {
         return $this->getQueryAllByCategory($category_id, $content)->get();
     }
@@ -146,7 +146,7 @@ class ContentRepository
      * @param Content $content
      * @return mixed
      */
-    public function getAllCount($category_id = null, Content $content)
+    public function getAllCount(Content $content, $category_id = null)
     {
         return $this->getQueryAllByCategory($category_id, $content)->count();
     }
@@ -167,9 +167,9 @@ class ContentRepository
      * @param $content
      * @return mixed
      */
-    public function getDataForSearch($search = "", $category_id, $content)
+    public function getDataForSearch($category_id, $content, $search = "")
     {
-        $result = $this->getColumn($content)
+        return $this->getColumn($content)
             ->leftJoin('content_statuses AS status', 'contents.status_id', '=', 'status.id')
             ->leftJoin('languages AS lang', 'contents.language_id', '=', 'lang.id')
             ->leftJoin('content_categories AS cc', 'contents.id', '=', 'cc.content_id')
@@ -191,7 +191,6 @@ class ContentRepository
                     ->orWhere('contents.owner_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('contents.user_id', 'LIKE', '%' . $search . '%');
             });
-        return $result;
     }
     
     /**
@@ -200,7 +199,7 @@ class ContentRepository
      * @param Content $content
      * @return mixed
      */
-    public function getSearch($search = "", $category_id, Content $content)
+    public function getSearch($category_id, Content $content, $search = "")
     {
         return $this
             ->getDataForSearch($search, $category_id, $content)
@@ -214,7 +213,7 @@ class ContentRepository
      * @param Content $content
      * @return mixed
      */
-    public function getSearchPaginate($search = "", $category_id, $paginate="12", Content $content)
+    public function getSearchPaginate($category_id, Content $content, $paginate = "12", $search = "")
     {
         
         return $this
@@ -228,7 +227,7 @@ class ContentRepository
      * @param Content $content
      * @return mixed
      */
-    public function getSearchCount($search = "", $category_id, Content $content)
+    public function getSearchCount($category_id, Content $content, $search = "")
     {
         return $this
             ->getDataForSearch($search, $category_id, $content)

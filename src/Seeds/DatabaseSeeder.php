@@ -13,7 +13,6 @@ use Illuminate\Database\Seeder;
  * Class DatabaseSeeder
  * @package WebAppId\Content\Seeds
  */
-
 class DatabaseSeeder extends Seeder
 {
     public function run()

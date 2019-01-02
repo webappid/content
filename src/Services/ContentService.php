@@ -7,17 +7,17 @@
 
 namespace WebAppId\Content\Services;
 
-use Illuminate\Support\Carbon;
-use WebAppId\Content\Repositories\ContentGalleryRepository;
-use WebAppId\Content\Repositories\ContentRepository;
-use WebAppId\Content\Repositories\ContentCategoryRepository;
-use WebAppId\Content\Repositories\CategoryRepository;
-use WebAppId\Content\Repositories\TimeZoneRepository;
-use WebAppId\Content\Repositories\ContentChildRepository;
 use Illuminate\Container\Container;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use WebAppId\Content\Repositories\CategoryRepository;
+use WebAppId\Content\Repositories\ContentCategoryRepository;
+use WebAppId\Content\Repositories\ContentChildRepository;
+use WebAppId\Content\Repositories\ContentGalleryRepository;
+use WebAppId\Content\Repositories\ContentRepository;
+use WebAppId\Content\Repositories\TimeZoneRepository;
 
 /**
  * Class ContentService
@@ -110,20 +110,20 @@ class ContentService
         }
         
         $galleries = $request->galleries;
-        if(isset($request->galleries)){
-            for($i=0; $i<count($galleries); $i++) {
+        if (isset($request->galleries)) {
+            for ($i = 0; $i < count($galleries); $i++) {
                 $galleryData = new \StdClass();
                 $galleryData->content_id = $result['content']->id;
                 $galleryData->user_id = $request->user_id;
                 $galleryData->file_id = $galleries[$i];
                 $galleryData->description = "";
-                $result['gallery'][] = $this->container->call([$contentGalleryRepository, 'addContentGallery'],['request' => $galleryData]);
+                $result['gallery'][] = $this->container->call([$contentGalleryRepository, 'addContentGallery'], ['request' => $galleryData]);
             }
         }
         
         $categories = $request->categories;
-        
-        for($i=0; $i<count($categories); $i++) {
+    
+        for ($i = 0; $i < count($categories); $i++) {
             $contentCategoryData = new \StdClass;
             $contentCategoryData->user_id = $request->user_id;
             $contentCategoryData->content_id = $result['content']->id;
@@ -143,7 +143,7 @@ class ContentService
      * @param CategoryRepository $categoryRepository
      * @return mixed
      */
-    public function showPaginate($paginate = '12', Request $request, ContentRepository $contentRepository, CategoryRepository $categoryRepository)
+    public function showPaginate(Request $request, ContentRepository $contentRepository, CategoryRepository $categoryRepository, $paginate = '12')
     {
         
         $categoryName = isset($request->category) ? $request->category : $request->search['category'];

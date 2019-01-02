@@ -7,10 +7,8 @@
 
 namespace WebAppId\Content\Seeds;
 
-use WebAppId\Content\Repositories\CategoryRepository;
 use Illuminate\Database\Seeder;
-
-use Illuminate\Container\Container;
+use WebAppId\Content\Repositories\CategoryRepository;
 
 /**
  * Class CategoryTableSeeder
@@ -26,7 +24,6 @@ class CategoryTableSeeder extends Seeder
      */
     public function run(CategoryRepository $category)
     {
-        //
         
         $categories[] = array('name' => 'page', 'code' => 'page', 'status_id' => '1', 'user_id' => '1');
         
