@@ -7,11 +7,9 @@
 
 namespace WebAppId\Content\Seeds;
 
-use Illuminate\Database\Seeder;
-
-use WebAppId\Content\Repositories\ContentStatusRepository;
-
 use Illuminate\Container\Container;
+use Illuminate\Database\Seeder;
+use WebAppId\Content\Repositories\ContentStatusRepository;
 
 /**
  * Class ContentStatusTableSeeder
@@ -36,7 +34,7 @@ class ContentStatusTableSeeder extends Seeder
                 'name' => 'Publish',
             ],
             [
-                'name' => 'Unpublish',
+                'name' => 'Un-publish',
             ],
             [
                 'name' => 'Cancel',

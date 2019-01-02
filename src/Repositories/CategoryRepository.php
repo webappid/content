@@ -133,12 +133,11 @@ class CategoryRepository
      * @param Category $category
      * @return object list category / empty object
      */
-    public function getDataWhere($search = "", Category $category)
+    public function getDataWhere(Category $category, $search = "")
     {
-        $result = $category->where('code', $search)
+        return $category->where('code', $search)
             ->orWhere('name', 'LIKE', '%' . $search . '%')
             ->get();
-        return $result;
     }
     
     
@@ -153,7 +152,7 @@ class CategoryRepository
      */
     public function getDatable(Category $category, $search, $order_column, $order_dir, $limit_start, $limit_length)
     {
-        $result = $category
+        return $category
             ->select('id', 'code', 'name')
             ->where('code', 'LIKE', '%' . $search . '%')
             ->orWhere('name', 'LIKE', '%' . $search . '%')
@@ -161,7 +160,6 @@ class CategoryRepository
             ->offset($limit_start)
             ->limit($limit_length)
             ->get();
-        return $result;
     }
     
     /**
@@ -175,12 +173,13 @@ class CategoryRepository
             ->orWhere('name', 'LIKE', '%' . $search . '%');
     }
     
+    
     /**
      * @param string $search
      * @param Category $category
      * @return mixed
      */
-    public function getSearch($search = "", Category $category)
+    public function getSearch(Category $category, $search = "")
     {
         return $this->getQueryCategory($search, $category)->get();
     }
@@ -190,7 +189,7 @@ class CategoryRepository
      * @param Category $category
      * @return mixed
      */
-    public function getSearchOne($search = "", Category $category)
+    public function getSearchOne(Category $category, $search = "")
     {
         return $this->getQueryCategory($search, $category)->first();
     }
@@ -200,7 +199,7 @@ class CategoryRepository
      * @param Category $category
      * @return mixed
      */
-    public function getSearchCount($search = "", Category $category)
+    public function getSearchCount(Category $category, $search = "")
     {
         return $this->getQueryCategory($search, $category)->count();
     }

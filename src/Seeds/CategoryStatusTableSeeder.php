@@ -33,8 +33,8 @@ class CategoryStatusTableSeeder extends Seeder
             if ($result == null) {
                 $objCategoryStatus = new \StdClass;
                 $objCategoryStatus->name = $categoryStatus;
-                
-                $this->container->call([$categoryStatusRepository, 'addCategoryStatus'],['request' => $objCategoryStatus]);
+    
+                $this->container->call([$categoryStatusRepository, 'addCategoryStatus'], ['request' => $objCategoryStatus]);
             }
         }
     }
