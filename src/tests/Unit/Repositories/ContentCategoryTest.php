@@ -5,30 +5,54 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Tests\TestCase;
 
-use Illuminate\Container\Container;
-
 class ContentCategoryTest extends TestCase
 {
-
+    
     private $resultContent;
     private $resultCategory;
-
-    private $contentCategory;
+    
+    private $contentCategoryRepository;
     private $contentTest;
     private $categoryTest;
-
-    private $container;
-
+    
+    
+    private function getContentTest()
+    {
+        if ($this->contentTest == null) {
+            $this->contentTest = new ContentTest;
+        }
+        
+        return $this->contentTest;
+    }
+    
+    private function getCategoryTest()
+    {
+        if ($this->categoryTest == null) {
+            $this->categoryTest = new CategoryTest;
+        }
+        
+        return $this->categoryTest;
+    }
+    
+    public function setUp()
+    {
+        parent::setUp();
+        $this->contentCategoryRepository = $this->getContainer()->make(ContentCategoryRepository::class);
+        $this->getContentTest()->setUp();
+        $this->getCategoryTest()->setUp();
+    }
+    
+    
     private function createDummyContent()
     {
-        return $this->contentTest->createContent($this->contentTest->getDummy());
+        return $this->getContentTest()->createContent($this->getContentTest()->getDummy());
     }
-
+    
     private function createDummyCategory()
     {
-        return $this->categoryTest->createCategory($this->categoryTest->getDummy());
+        return $this->getCategoryTest()->createCategory($this->getCategoryTest()->getDummy());
     }
-
+    
     public function getDummy()
     {
         $this->resultContent = $this->createDummyContent();
@@ -47,29 +71,12 @@ class ContentCategoryTest extends TestCase
             }
         }
     }
-
+    
     public function createContentCategory($dummy)
     {
-        return $this->container->call([$this->contentCategory,'addContentCategory'],['data' => $dummy]);
+        return $this->getContainer()->call([$this->contentCategoryRepository, 'addContentCategory'], ['data' => $dummy]);
     }
-
-    public function start()
-    {
-        $this->container = new Container;
-        $this->contentCategory = $this->container->make(ContentCategoryRepository::class);
-        
-        $this->contentTest = new ContentTest;
-        $this->contentTest->setUp();
-        $this->categoryTest = new CategoryTest;
-        $this->categoryTest->setUp();
-    }
-
-    public function setUp()
-    {
-        parent::setUp();
-        $this->start();
-    }
-
+    
     public function testAddContentCategory()
     {
         $result = $this->createContentCategory($this->getDummy());
@@ -79,11 +86,11 @@ class ContentCategoryTest extends TestCase
             $this->assertTrue(true);
         }
     }
-
+    
     public function testUpdateContentCategory()
     {
         $resultContentCategory = $this->createContentCategory($this->getDummy());
-
+    
         if (!$resultContentCategory) {
             $this->assertTrue(false);
         } else {
@@ -92,7 +99,7 @@ class ContentCategoryTest extends TestCase
             $dummy->content_id = $this->resultContent->id;
             $dummy->categories_id = $result->id;
             $dummy->user_id = '1';
-            $result = $this->container->call([$this->contentCategory,'updateContentCategory'],['data' => $dummy, 'id' => $resultContentCategory->id]);
+            $result = $this->getContainer()->call([$this->contentCategoryRepository, 'updateContentCategory'], ['data' => $dummy, 'id' => $resultContentCategory->id]);
             if ($result) {
                 $this->assertTrue(true);
             } else {
@@ -100,14 +107,14 @@ class ContentCategoryTest extends TestCase
             }
         }
     }
-
+    
     public function testDeleteContentCategoryById()
     {
         $result = $this->createContentCategory($this->getDummy());
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $result = $this->container->call([$this->contentCategory,'deleteContentCategory'],['id' => $result->id]);
+            $result = $this->getContainer()->call([$this->contentCategoryRepository, 'deleteContentCategory'], ['id' => $result->id]);
             if ($result) {
                 $this->assertTrue(true);
             } else {
@@ -115,27 +122,29 @@ class ContentCategoryTest extends TestCase
             }
         }
     }
-
-    public function testContentCategoryGetAll(){
+    
+    public function testContentCategoryGetAll()
+    {
         $dummy = $this->getDummy();
         $result = $this->createContentCategory($dummy);
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $this->assertEquals($dummy->content_id , $result->content_id);
-            $this->assertEquals($dummy->categories_id , $result->categories_id);
-            $result = $this->container->call([$this->contentCategory,'getAll']);
-            if(count($result)>0){
+            $this->assertEquals($dummy->content_id, $result->content_id);
+            $this->assertEquals($dummy->categories_id, $result->categories_id);
+            $result = $this->getContainer()->call([$this->contentCategoryRepository, 'getAll']);
+            if (count($result) > 0) {
                 $this->assertTrue(true);
-                $this->assertEquals($dummy->content_id , $result[count($result)-1]->content_id);
-                $this->assertEquals($dummy->categories_id , $result[count($result)-1]->categories_id);
-            }else{
+                $this->assertEquals($dummy->content_id, $result[count($result) - 1]->content_id);
+                $this->assertEquals($dummy->categories_id, $result[count($result) - 1]->categories_id);
+            } else {
                 $this->assertTrue(false);
             }
         }
     }
-
-    public function testContentCategories(){
+    
+    public function testContentCategories()
+    {
         $result = $this->createContentCategory($this->getDummy());
         if (!$result) {
             $this->assertTrue(false);
