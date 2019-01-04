@@ -5,27 +5,23 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use WebAppId\Content\Repositories\ContentStatusRepository;
 use WebAppId\Content\Tests\TestCase;
 
-use Illuminate\Container\Container;
-
 class ContentStatusTest extends TestCase
 {
-    private $container;
-
-    private $contentStatus;
-
-    public function start(){
+    
+    private $contentStatusRepository;
+    
+    public function start()
+    {
         
-        $this->container = new Container;
-
-        $this->contentStatus = $this->container->make(ContentStatusRepository::class);
+        $this->contentStatusRepository = $this->getContainer()->make(ContentStatusRepository::class);
     }
-
+    
     public function setUp()
     {
         parent::setUp();
         $this->start();
     }
-
+    
     private function getDummy()
     {
         $dummy = new \StdClass;
@@ -33,11 +29,12 @@ class ContentStatusTest extends TestCase
         $dummy->user_id = '1';
         return $dummy;
     }
-
-    public function createContentStatus($dummy){
-        return $this->container->call([$this->contentStatus,'addContentStatus'],['request'=>$dummy]); 
+    
+    public function createContentStatus($dummy)
+    {
+        return $this->getContainer()->call([$this->contentStatusRepository, 'addContentStatus'], ['request' => $dummy]);
     }
-
+    
     /**
      * A basic test example.
      *
@@ -46,49 +43,51 @@ class ContentStatusTest extends TestCase
     public function testAddContentStatus()
     {
         $result = $this->createContentStatus($this->getDummy());
-
+    
         if (!$result) {
             $this->assertTrue(false);
         } else {
             $this->assertTrue(true);
         }
     }
-
-    public function testGetContentStatus(){
+    
+    public function testGetContentStatus()
+    {
         $dummy = $this->getDummy();
         $result = $this->createContentStatus($dummy);
-
+        
         if (!$result) {
             $this->assertTrue(false);
         } else {
             $this->assertEquals($dummy->name, $result->name);
-            $result = $this->container->call([$this->contentStatus,'getContentStatus']);
-            if(count($result)>0){
+            $result = $this->getContainer()->call([$this->contentStatusRepository, 'getContentStatus']);
+            if (count($result) > 0) {
                 $this->assertTrue(true);
-                $this->assertEquals($dummy->name, $result[count($result)-1]->name);
-            }else{
+                $this->assertEquals($dummy->name, $result[count($result) - 1]->name);
+            } else {
                 $this->assertTrue(false);
             }
         }
     }
-
-    public function testUpdateContentStatus(){
+    
+    public function testUpdateContentStatus()
+    {
         $dummy = $this->getDummy();
         $result = $this->createContentStatus($dummy);
-
+        
         if (!$result) {
             $this->assertTrue(false);
-        }else{
+        } else {
             $this->assertEquals($dummy->name, $result->name);
             $dummy = $this->getDummy();
-            $result = $this->container->call([$this->contentStatus,'updateContentStatus'],["id" => $result->id, 'request'=>$dummy]);
-            if($result){
+            $result = $this->getContainer()->call([$this->contentStatusRepository, 'updateContentStatus'], ["id" => $result->id, 'request' => $dummy]);
+            if ($result) {
                 $this->assertEquals($dummy->name, $result->name);
                 $this->assertTrue(true);
-            }else{
+            } else {
                 $this->assertTrue(false);
             }
         }
     }
-
+    
 }
