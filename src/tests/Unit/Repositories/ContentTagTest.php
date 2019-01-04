@@ -5,75 +5,94 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use WebAppId\Content\Repositories\ContentTagRepository;
 use WebAppId\Content\Tests\TestCase;
 
-use Illuminate\Container\Container;
-
 class ContentTagTest extends TestCase
 {
     private $contentTest;
+    
     private $tagTest;
-    private $contentTag;
+    
+    private $contentTagRepository;
+    
     private $resultTagTest;
+    
     private $resultContentTest;
-
-    private $container;
-
-    public function setUp(){
+    
+    public function setUp()
+    {
         parent::setUp();
-        $this->start();
+        $this->getContentTest()->setUp();
+        $this->getTagTest()->setUp();
+        $this->contentTagRepository = new ContentTagRepository;
     }
-
-    public function start(){
-        $this->contentTest = new ContentTest;
-        $this->contentTest->setUp();
-        $this->tagTest = new TagTest;
-        $this->tagTest->setUp();
-        $this->contentTag = new ContentTagRepository;
-        $this->container = new Container;
+    
+    private function getContentTest()
+    {
+        if ($this->contentTest == null) {
+            $this->contentTest = new ContentTest;
+        }
+        
+        return $this->contentTest;
     }
-
-    public function createDummyContent(){
-        return $this->contentTest->createContent($this->contentTest->getDummy());
+    
+    private function getTagTest()
+    {
+        if ($this->tagTest == null) {
+            $this->tagTest = new TagTest;
+        }
+        
+        return $this->tagTest;
     }
-
-    public function createDummyTag(){
-        return $this->tagTest->createTag($this->tagTest->getDummy());
+    
+    
+    public function createDummyContent()
+    {
+        return $this->getContentTest()->createContent($this->getContentTest()->getDummy());
     }
-
-    public function getDummy(){
+    
+    public function createDummyTag()
+    {
+        return $this->getTagTest()->createTag($this->getTagTest()->getDummy());
+    }
+    
+    public function getDummy()
+    {
         $this->resultContentTest = $this->createDummyContent();
         $this->resultTagTest = $this->createDummyTag();
-
+        
         $dummy = new \StdClass;
-
+        
         $dummy->content_id = $this->resultContentTest->id;
         $dummy->tag_id = $this->resultTagTest->id;
         $dummy->user_id = '1';
         return $dummy;
     }
-
-    public function createContentTag(){
+    
+    public function createContentTag()
+    {
         $dummy = $this->getDummy();
-        $resultContentTag = $this->container->call([$this->contentTag,'addContentTag'],['response'=>$dummy]);
+        $resultContentTag = $this->getContainer()->call([$this->contentTagRepository, 'addContentTag'], ['response' => $dummy]);
         
-        if(!$resultContentTag){
+        if (!$resultContentTag) {
             $this->assertTrue(false);
-        }else{
+        } else {
             $this->assertEquals($dummy->content_id, $resultContentTag->content_id);
-            $this->assertEquals($dummy->tag_id , $resultContentTag->tag_id);
+            $this->assertEquals($dummy->tag_id, $resultContentTag->tag_id);
             return $resultContentTag;
         }
     }
-
-    public function testAddContentTag(){
+    
+    public function testAddContentTag()
+    {
         $resultContentTag = $this->createContentTag();
-        if($resultContentTag!=false){
+        if ($resultContentTag != false) {
             $this->assertTrue(true);
         }
     }
-
-    public function testCheckContentTag(){
+    
+    public function testCheckContentTag()
+    {
         $resultContentTag = $this->createContentTag();
-        if($resultContentTag!=false){
+        if ($resultContentTag != false) {
             $this->assertTrue(true);
             
             $this->assertEquals($this->resultContentTest->tag[0]->name, $this->resultTagTest->name);

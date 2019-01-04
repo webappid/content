@@ -5,26 +5,22 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use WebAppId\Content\Repositories\LanguageRepository;
 use WebAppId\Content\Tests\TestCase;
 
-use Illuminate\Container\Container;
-
 class LanguageTest extends TestCase
 {
-    private $language;
+    private $languageRepository;
 
-    private $container;
 
     public function start()
     {
-        $this->container = new Container;
-        $this->language = $this->container->make(LanguageRepository::class);
+        $this->languageRepository = $this->getContainer()->make(LanguageRepository::class);
     }
 
     public function getDummy()
     {
         $objLanguage = new \StdClass;
-        $faker = $this->getFaker();
-        $objLanguage->code = $faker->word;
-        $objLanguage->name = $faker->word;
+    
+        $objLanguage->code = $this->getFaker()->word;
+        $objLanguage->name = $this->getFaker()->word;
         $objLanguage->image_id = '1';
         $objLanguage->user_id = '1';
         return $objLanguage;
@@ -32,7 +28,7 @@ class LanguageTest extends TestCase
 
     public function createLanguage($dummyData)
     {
-        return $this->container->call([$this->language,'addLanguage'],['request' => $dummyData]);
+        return $this->getContainer()->call([$this->languageRepository, 'addLanguage'], ['request' => $dummyData]);
     }
 
     public function setUp()
@@ -59,7 +55,7 @@ class LanguageTest extends TestCase
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $resultAllLanguage = $this->container->call([$this->language,'getLanguage']); 
+            $resultAllLanguage = $this->getContainer()->call([$this->languageRepository, 'getLanguage']);
             if(count($resultAllLanguage)>0){
                 $this->assertTrue(true);
             }else{
@@ -74,7 +70,7 @@ class LanguageTest extends TestCase
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $resultLanguage = $this->container->call([$this->language,'getLanguageByName'],['name'=>$dummyData->name]); 
+            $resultLanguage = $this->getContainer()->call([$this->languageRepository, 'getLanguageByName'], ['name' => $dummyData->name]);
             if($resultLanguage==null){
                 $this->assertTrue(false);
             }else{
