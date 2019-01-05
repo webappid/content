@@ -305,4 +305,14 @@ class ContentRepository
     {
         return $this->getQueryContentByKeyword($keyword, $content)->count();
     }
+    
+    /**
+     * @param $id
+     * @param Content $content
+     * @return mixed
+     */
+    public function getContentById($id, Content $content)
+    {
+        return $content->find($id);
+    }
 }
