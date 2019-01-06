@@ -217,7 +217,7 @@ class ContentRepository
     {
         
         return $this
-            ->getDataForSearch($search, $category_id, $content)
+            ->getDataForSearch($category_id, $content, $search)
             ->paginate($paginate);
     }
     
