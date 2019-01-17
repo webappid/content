@@ -96,6 +96,11 @@ class ContentService
      */
     public function store($request, ContentRepository $contentRepository, TimeZoneRepository $timeZoneRepository, ContentCategoryRepository $contentCategoryRepository, ContentChildRepository $contentChildRepository, ContentGalleryRepository $contentGalleryRepository)
     {
+    
+        if (!isset($request->categories)) {
+            return "categories array required";
+        }
+        
         $request = $this->getDefault($timeZoneRepository, $request);
         
         $result['content'] = $this->container->call([$contentRepository, 'addContent'], ['data' => $request]);
@@ -108,9 +113,10 @@ class ContentService
             $result['child'] = $this->container->call([$contentChildRepository, 'addContentChild'], ['request' => $contentChildRequest]);
             
         }
-        
-        $galleries = $request->galleries;
+    
+    
         if (isset($request->galleries)) {
+            $galleries = $request->galleries;
             for ($i = 0; $i < count($galleries); $i++) {
                 $galleryData = new \StdClass();
                 $galleryData->content_id = $result['content']->id;
@@ -120,7 +126,8 @@ class ContentService
                 $result['gallery'][] = $this->container->call([$contentGalleryRepository, 'addContentGallery'], ['request' => $galleryData]);
             }
         }
-        
+    
+    
         $categories = $request->categories;
     
         for ($i = 0; $i < count($categories); $i++) {

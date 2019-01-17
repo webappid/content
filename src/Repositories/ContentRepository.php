@@ -122,10 +122,8 @@ class ContentRepository
      */
     private function getQueryAllByCategory($category_id, $content)
     {
-        return $this->getColumn($content)
+        return $content
             ->leftJoin('content_categories AS cc', 'contents.id', '=', 'cc.content_id')
-            ->leftJoin('content_statuses AS status', 'contents.status_id', '=', 'status.id')
-            ->leftJoin('time_zones', 'time_zones.id', '=', 'contents.time_zone_id')
             ->when($category_id != null, function ($query) use ($category_id) {
                 return $query->where('cc.categories_id', '=', $category_id);
             });
