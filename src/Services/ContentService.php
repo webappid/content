@@ -70,10 +70,8 @@ class ContentService
         $request->language_id = isset($request->language_id) ? $request->language_id : 1;
         
         $request->publish_date = isset($request->publish_date) ? $request->publish_date : Carbon::now('UTC');
-        
-        $request->additional_info = isset($request->additional_info) ? $request->additional_info : Carbon::now('UTC');
-        
-        $request->additional_info = isset($request->additional_info) ? $request->additional_info : Carbon::now('UTC');
+    
+        $request->additional_info = isset($request->additional_info) ? $request->additional_info : "";
         
         $request->time_zone_id = isset($timeZoneData) ? $timeZoneData->id : 1;
         
@@ -98,7 +96,7 @@ class ContentService
     {
     
         if (!isset($request->categories)) {
-            return "categories array required";
+            return "categories data required";
         }
         
         $request = $this->getDefault($timeZoneRepository, $request);
