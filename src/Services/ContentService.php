@@ -70,10 +70,8 @@ class ContentService
         $request->language_id = isset($request->language_id) ? $request->language_id : 1;
         
         $request->publish_date = isset($request->publish_date) ? $request->publish_date : Carbon::now('UTC');
-        
-        $request->additional_info = isset($request->additional_info) ? $request->additional_info : Carbon::now('UTC');
-        
-        $request->additional_info = isset($request->additional_info) ? $request->additional_info : Carbon::now('UTC');
+    
+        $request->additional_info = isset($request->additional_info) ? $request->additional_info : "";
         
         $request->time_zone_id = isset($timeZoneData) ? $timeZoneData->id : 1;
         
@@ -96,6 +94,11 @@ class ContentService
      */
     public function store($request, ContentRepository $contentRepository, TimeZoneRepository $timeZoneRepository, ContentCategoryRepository $contentCategoryRepository, ContentChildRepository $contentChildRepository, ContentGalleryRepository $contentGalleryRepository)
     {
+    
+        if (!isset($request->categories)) {
+            return "categories data required";
+        }
+        
         $request = $this->getDefault($timeZoneRepository, $request);
         
         $result['content'] = $this->container->call([$contentRepository, 'addContent'], ['data' => $request]);
@@ -108,9 +111,10 @@ class ContentService
             $result['child'] = $this->container->call([$contentChildRepository, 'addContentChild'], ['request' => $contentChildRequest]);
             
         }
-        
-        $galleries = $request->galleries;
+    
+    
         if (isset($request->galleries)) {
+            $galleries = $request->galleries;
             for ($i = 0; $i < count($galleries); $i++) {
                 $galleryData = new \StdClass();
                 $galleryData->content_id = $result['content']->id;
@@ -120,7 +124,8 @@ class ContentService
                 $result['gallery'][] = $this->container->call([$contentGalleryRepository, 'addContentGallery'], ['request' => $galleryData]);
             }
         }
-        
+    
+    
         $categories = $request->categories;
     
         for ($i = 0; $i < count($categories); $i++) {
