@@ -100,10 +100,10 @@ class FileService
     {
         $path = '../storage/app/';
         $fileData = $this->container->call([$file, 'getFileByName'], ['name' => $name]);
-        if (count($fileData) > 0 && file_exists($path . $fileData[0]->path . '/' . $fileData[0]->name)) {
-            $imageName = $fileData[0]->name;
-            $path .= $fileData[0]->path;
-            $mimeType = $fileData[0]->mime;
+        if ($fileData != null && file_exists($path . $fileData->path . '/' . $fileData->name)) {
+            $imageName = $fileData->name;
+            $path .= $fileData->path;
+            $mimeType = $fileData->mime;
         } else {
             $imageName = 'default.jpg';
             $mimeType = 'image/png';
