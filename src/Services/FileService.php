@@ -35,13 +35,14 @@ class FileService
      * Display a listing of the resource.
      *
      * @param $name
+     * @param int $size
      * @param FileRepository $file
      * @return \Illuminate\Http\Response
      * @throws \Gumlet\ImageResizeException
      */
-    public function index($name, FileRepository $file)
+    public function index($name, FileRepository $file, $size = 0)
     {
-        return $this->loadFile($name, '0', $file);
+        return $this->loadFile($name, $size, $file);
     }
     
     private function saveFile($path, $file, $upload, $mimeTypeService, $fileRepository)
