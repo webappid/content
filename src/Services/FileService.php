@@ -35,14 +35,13 @@ class FileService
      * Display a listing of the resource.
      *
      * @param $name
-     * @param int $size
      * @param FileRepository $file
      * @return \Illuminate\Http\Response
      * @throws \Gumlet\ImageResizeException
      */
-    public function index($name, FileRepository $file, $size = 0)
+    public function index($name, FileRepository $file)
     {
-        return $this->loadFile($name, $size, $file);
+        return $this->loadFile($name, 0, $file);
     }
     
     private function saveFile($path, $file, $upload, $mimeTypeService, $fileRepository)
@@ -100,7 +99,7 @@ class FileService
     private function loadFile($name, $size, $file)
     {
         $path = '../storage/app/';
-        $fileData = $this->container->call([$file, 'getFileByName'], ['name', $name]);
+        $fileData = $this->container->call([$file, 'getFileByName'], ['name' => $name]);
         if (count($fileData) > 0 && file_exists($path . $fileData[0]->path . '/' . $fileData[0]->name)) {
             $imageName = $fileData[0]->name;
             $path .= $fileData[0]->path;
