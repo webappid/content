@@ -41,7 +41,7 @@ class FileService
      */
     public function index($name, FileRepository $file)
     {
-        return $this->loadFile($name, 0, $file);
+        return $this->loadFile($name, '0', $file);
     }
     
     private function saveFile($path, $file, $upload, $mimeTypeService, $fileRepository)
