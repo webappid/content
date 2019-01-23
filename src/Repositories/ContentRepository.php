@@ -72,7 +72,6 @@ class ContentRepository
             
             return $content;
         } catch (QueryException $e) {
-            dd($e);
             report($e);
             return null;
         }
@@ -175,7 +174,7 @@ class ContentRepository
             ->leftJoin('content_categories AS cc', 'contents.id', '=', 'cc.content_id')
             ->leftJoin('time_zones', 'time_zones.id', '=', 'contents.time_zone_id')
             ->where('cc.categories_id', '=', $category_id)
-            ->where(function ($query) use ($search, $category_id) {
+            ->where(function ($query) use ($search) {
                 $query
                     ->where('contents.title', 'LIKE', '%' . $search . '%')
                     ->orWhere('contents.code', 'LIKE', '%' . $search . '%')
@@ -202,7 +201,7 @@ class ContentRepository
     public function getSearch($category_id, Content $content, $search = "")
     {
         return $this
-            ->getDataForSearch($search, $category_id, $content)
+            ->getDataForSearch($category_id, $content, $search)
             ->get();
     }
     
@@ -230,7 +229,7 @@ class ContentRepository
     public function getSearchCount($category_id, Content $content, $search = "")
     {
         return $this
-            ->getDataForSearch($search, $category_id, $content)
+            ->getDataForSearch($category_id, $content, $search)
             ->count();
     }
     
