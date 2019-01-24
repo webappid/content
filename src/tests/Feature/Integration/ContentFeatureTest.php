@@ -2,11 +2,11 @@
 
 namespace WebAppId\Content\Tests\Feature;
 
+use Illuminate\Container\Container;
+use Illuminate\Http\UploadedFile;
 use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
-use Illuminate\Container\Container;
-use Illuminate\Http\UploadedFile;
 
 class ContentFeatureTest extends TestCase
 {
@@ -110,7 +110,7 @@ class ContentFeatureTest extends TestCase
         
         $this->contentDummy->code = $content->code;
         
-        $response = $this->get($this->prefix_route . '/content/edit/' . $content->code);
+        $this->get($this->prefix_route . '/content/edit/' . $content->code);
         
         $response = $this->post($this->prefix_route . '/content/update/' . $content->code, (Array)$this->contentDummy);
         

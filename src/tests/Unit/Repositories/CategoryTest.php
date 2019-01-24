@@ -81,7 +81,7 @@ class CategoryTest extends TestCase
                 $this->assertTrue(true);
             } else {
                 $dummyData = $this->getDummy();
-                $result = $this->getContainer()->call([$this->categoryRepository, 'updateCategory'], ['data' => $dummyData, 'id' => $result->id]);
+                $result = $this->getContainer()->call([$this->categoryRepository, 'updateCategory'], ['request' => $dummyData, 'id' => $result->id]);
                 if ($result) {
                     $this->assertTrue(true);
                     $this->assertEquals($dummyData->code, $result->code);

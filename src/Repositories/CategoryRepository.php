@@ -59,26 +59,26 @@ class CategoryRepository
     /**
      * Method To Update Category
      *
-     * @param Object $data
+     * @param $request
      * @param Integer $id
      * @param Category $category
      * @return Category $category
      */
-    public function updateCategory($data, $id, Category $category)
+    public function updateCategory($request, $id, Category $category)
     {
         try {
             $categoryData = $this->getOne($id, $category);
             
             if (!empty($categoryData)) {
-                $categoryData->code = $data->code;
-                $categoryData->name = $data->name;
-                if (isset($data->parent_id)) {
-                    $category->parent_id = $data->parent_id;
+                $categoryData->code = $request->code;
+                $categoryData->name = $request->name;
+                if (isset($request->parent_id)) {
+                    $category->parent_id = $request->parent_id;
                 } else {
                     $category->parent_id = null;
                 }
-                $categoryData->status_id = $data->status_id;
-                $categoryData->user_id = $data->user_id;
+                $categoryData->status_id = $request->status_id;
+                $categoryData->user_id = $request->user_id;
                 $categoryData->save();
                 return $categoryData;
             } else {
@@ -192,6 +192,15 @@ class CategoryRepository
     public function getSearchOne(Category $category, $search = "")
     {
         return $this->getQueryCategory($search, $category)->first();
+    }
+    
+    /**
+     * @param Category $category
+     * @return mixed
+     */
+    public function getAllCount(Category $category)
+    {
+        return $category->count();
     }
     
     /**

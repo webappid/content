@@ -82,10 +82,10 @@ class CategoryService
             $order_dir = 'asc';
         }
     
-        $result['data'] = $categoryRepository->getDatatable($search, $order_column, $order_dir, $limit_start, $limit_length);
-        $result['recordsTotal'] = $categoryRepository->count();
-        $result['recordsFiltered'] = $categoryRepository->getSearchCount($request->search['value']);
-    
+        $result['data'] = $this->container->call([$categoryRepository, 'getDatable'], ['search' => $search, 'order_column' => $order_column, 'order_dir' => $order_dir, 'limit_start' => $limit_start, 'limit_length' => $limit_length]);
+        $result['recordsTotal'] = $this->container->call([$categoryRepository, 'getAllCount']);
+        $result['recordsFiltered'] = $this->container->call([$categoryRepository, 'getSearchCount'], ['search', $request->search['value']]);
+        
         return $result;
     }
     
@@ -94,16 +94,17 @@ class CategoryService
      * Show the form for editing the specified resource.
      *
      * @param  int $id
+     * @param CategoryRepository $categoryRepository
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, CategoryRepository $categoryRespository)
+    public function edit($id, CategoryRepository $categoryRepository)
     {
         if ($id <= 30) {
             abort(403);
         }
     
-        $result['category'] = $categoryRespository->getOne($id);
-    
+        $result['category'] = $this->container->call([$categoryRepository, 'getOne'], ['id' => $id]);
+        
         return $result;
     }
     
@@ -125,8 +126,8 @@ class CategoryService
     
         $request->code = str::slug($request->name);
     
-        $result['data'] = $categoryRepository->updateCategory($request, $id);
-    
+        $result['data'] = $this->container->call([$categoryRepository, 'updateCategory'], ['request' => $request, 'id' => $id]);
+        
         return $result;
     
     }
@@ -135,7 +136,7 @@ class CategoryService
      * Remove the specified resource from storage.
      *
      * @param  int $id
-     * @param CategoryRepository $categoryRespository
+     * @param CategoryRepository $categoryRepository
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
@@ -145,7 +146,7 @@ class CategoryService
             abort(403);
         }
     
-        $result['data'] = $categoryRepository->deleteCategory($id);
+        $result['data'] = $this->container->call([$categoryRepository, 'deleteCategory'], ['id' => $id]);
         
         return $result;
     }

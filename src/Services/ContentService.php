@@ -222,8 +222,8 @@ class ContentService
     public function detail($code, ContentRepository $contentRepository)
     {
         $result['content'] = $this->container->call([$contentRepository, 'getContentByCode'], ['code' => $code]);
-        $result['content']['gallery'] = $result['content']->gallery;
-        $result['content']['child'] = $result['content']->child;
+        $result['content']['gallery'] = $result['content']->galleries;
+        $result['content']['child'] = $result['content']->childs;
         return $result;
     }
     

@@ -23,7 +23,7 @@ class Category extends Model
     
     protected $fillable = ['id', 'code', 'name'];
     
-    public function content()
+    public function contents()
     {
         return $this->belongsToMany(ContentCategory::class, 'content_categories', 'id', 'categories_id');
     }

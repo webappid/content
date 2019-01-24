@@ -78,8 +78,8 @@ class ContentChildTest extends TestCase
         if ($result == false) {
             $this->assertTrue(false);
         } else {
-            
-            $child = $this->resultContentParent->child;
+    
+            $child = $this->resultContentParent->childs;
             
             $this->assertEquals($child[0]->title, $this->resultContentChild->title);
             $this->assertEquals($child[0]->code, $this->resultContentChild->code);
@@ -107,7 +107,7 @@ class ContentChildTest extends TestCase
         if ($result == false) {
             $this->assertTrue(false);
         } else {
-            $parent = $this->resultContentChild->parent;
+            $parent = $this->resultContentChild->parents;
             
             $this->assertEquals($parent[0]->title, $this->resultContentParent->title);
             $this->assertEquals($parent[0]->code, $this->resultContentParent->code);
