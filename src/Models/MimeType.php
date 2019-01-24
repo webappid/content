@@ -19,7 +19,7 @@ class MimeType extends Model
     protected $fillable = ['id', 'name'];
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
     
-    public function file()
+    public function files()
     {
         return $this->hasMany(File::class, 'mime_type_id');
     }

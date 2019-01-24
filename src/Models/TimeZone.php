@@ -24,7 +24,7 @@ class TimeZone extends Model
         'created_at', 'updated_at',
     ];
     
-    public function content()
+    public function contents()
     {
         return $this->hasMany(Content::class, 'time_zone_id');
     }

@@ -22,7 +22,7 @@ class Tag extends Model
     
     protected $fillable = ['id', 'name'];
     
-    public function content()
+    public function contents()
     {
         return $this->belongsToMany(Content::class, 'content_tags', 'tag_id', 'content_id');
     }

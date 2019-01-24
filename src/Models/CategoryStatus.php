@@ -19,7 +19,7 @@ class CategoryStatus extends Model
     
     protected $fillable = ['id', 'name'];
     
-    public function category()
+    public function categories()
     {
         return $this->hasMany(Category::class, 'status_id', 'id');
     }

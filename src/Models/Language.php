@@ -20,7 +20,7 @@ class Language extends Model
     protected $fillable = ['id', 'code', 'name'];
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
     
-    public function content()
+    public function contents()
     {
         return $this->hasMany(Conent::class, 'language_id');
     }

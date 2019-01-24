@@ -19,7 +19,7 @@ class ContentStatus extends Model
     protected $fillable = ['id', 'name'];
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
     
-    public function content()
+    public function contents()
     {
         return $this->hasMany(Content::class, 'status_id');
     }
