@@ -94,8 +94,8 @@ class ContentTagTest extends TestCase
         $resultContentTag = $this->createContentTag();
         if ($resultContentTag != false) {
             $this->assertTrue(true);
-            
-            $this->assertEquals($this->resultContentTest->tag[0]->name, $this->resultTagTest->name);
+    
+            $this->assertEquals($this->resultContentTest->tags[0]->name, $this->resultTagTest->name);
         }
     }
 }
