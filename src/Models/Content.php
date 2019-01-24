@@ -55,7 +55,7 @@ class Content extends Model
     
     public function file()
     {
-        return $this->hasOne(File::class, 'file_id');
+        return $this->hasOne(File::class, 'id', 'default_image');
     }
     
     public function language()
