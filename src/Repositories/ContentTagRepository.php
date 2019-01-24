@@ -33,7 +33,6 @@ class ContentTagRepository
             $contentTag->save();
             return $contentTag;
         } catch (QueryException $e) {
-            dd($e);
             report($e);
             return false;
         }
