@@ -10,43 +10,43 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\MimeType;
+use WebAppId\Content\Services\Params\AddMimeTypeParam;
 
 /**
  * Class MimeTypeRepository
  * @package WebAppId\Content\Repositories
  */
-
 class MimeTypeRepository
 {
     /**
-     * @param $request
+     * @param AddMimeTypeParam $addMimeTypeParam
      * @param MimeType $mimeType
-     * @return bool|MimeType
+     * @return MimeType|null
      */
-    public function addMimeType($request, MimeType $mimeType)
+    public function addMimeType(AddMimeTypeParam $addMimeTypeParam, MimeType $mimeType): ?MimeType
     {
-        try{
-            $mimeType->name    = $request->name;
-            $mimeType->user_id = $request->user_id;
+        try {
+            $mimeType->name = $addMimeTypeParam->getName();
+            $mimeType->user_id = $addMimeTypeParam->getUserId();
             $mimeType->save();
-
+        
             return $mimeType;
-        }catch(QueryException $e){
+        } catch (QueryException $e) {
             report($e);
-            return false;
+            return null;
         }
     }
-
+    
     /**
      * @param $id
      * @param MimeType $mimeType
      * @return mixed
      */
-    public function getOne($id, MimeType $mimeType)
+    public function getOne(int $id, MimeType $mimeType): ?MimeType
     {
         return $mimeType->findOrFail($id);
     }
-
+    
     /**
      * Get Mime Type By Name
      *
@@ -54,7 +54,7 @@ class MimeTypeRepository
      * @param MimeType $mimeType
      * @return Object $mimeType
      */
-    public function getMimeByName($name, MimeType $mimeType)
+    public function getMimeByName(string $name, MimeType $mimeType): ?object
     {
         return $mimeType->where('name', $name)->get();
     }

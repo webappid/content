@@ -11,8 +11,10 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use WebAppId\Content\Models\Category;
 use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Requests\CategoryRequest;
+use WebAppId\Content\Responses\CategorySearchResponse;
 
 /**
  * Class CategoryService
@@ -40,17 +42,16 @@ class CategoryService
      *
      * @param CategoryRequest $request
      * @param CategoryRepository $categoryRepository
-     * @return \Illuminate\Http\Response
+     * @return Category|null
      */
-    public function store(CategoryRequest $request, CategoryRepository $categoryRepository)
+    public function store(CategoryRequest $request,
+                          CategoryRepository $categoryRepository): ?Category
     {
         $request->user_id = $this->user_id;
         
         $request->code = str::slug($request->name);
     
-        $result['data'] = $this->container->call([$categoryRepository, 'addCategory'], ['data' => $request]);
-        
-        return $result;
+        return $this->container->call([$categoryRepository, 'addCategory'], ['data' => $request]);
     }
     
     /**
@@ -58,9 +59,12 @@ class CategoryService
      *
      * @param Request $request
      * @param CategoryRepository $categoryRepository
-     * @return \Illuminate\Http\Response
+     * @param CategorySearchResponse $categorySearchResponse
+     * @return CategorySearchResponse|null
      */
-    public function show(Request $request, CategoryRepository $categoryRepository)
+    public function show(Request $request,
+                         CategoryRepository $categoryRepository,
+                         CategorySearchResponse $categorySearchResponse): ?CategorySearchResponse
     {
         $column = array(
             0 => 'id',
@@ -82,11 +86,16 @@ class CategoryService
             $order_dir = 'asc';
         }
     
-        $result['data'] = $this->container->call([$categoryRepository, 'getDatable'], ['search' => $search, 'order_column' => $order_column, 'order_dir' => $order_dir, 'limit_start' => $limit_start, 'limit_length' => $limit_length]);
-        $result['recordsTotal'] = $this->container->call([$categoryRepository, 'getAllCount']);
-        $result['recordsFiltered'] = $this->container->call([$categoryRepository, 'getSearchCount'], ['search', $request->search['value']]);
-        
-        return $result;
+    
+        $data = $this->container->call([$categoryRepository, 'getDatable'], ['search' => $search, 'order_column' => $order_column, 'order_dir' => $order_dir, 'limit_start' => $limit_start, 'limit_length' => $limit_length]);
+        $categorySearchResponse->setData($data);
+    
+        $recordsTotal = $this->container->call([$categoryRepository, 'getAllCount']);
+        $categorySearchResponse->setRecordsTotal($recordsTotal);
+    
+        $recordsFiltered = $this->container->call([$categoryRepository, 'getSearchCount'], ['search', $request->search['value']]);
+        $categorySearchResponse->setRecordsFiltered($recordsFiltered);
+        return $categorySearchResponse;
     }
     
     
@@ -95,14 +104,11 @@ class CategoryService
      *
      * @param  int $id
      * @param CategoryRepository $categoryRepository
-     * @return \Illuminate\Http\Response
+     * @return Category|null
      */
-    public function edit($id, CategoryRepository $categoryRepository)
+    public function edit(int $id,
+                         CategoryRepository $categoryRepository): ?Category
     {
-        if ($id <= 30) {
-            abort(403);
-        }
-    
         $result['category'] = $this->container->call([$categoryRepository, 'getOne'], ['id' => $id]);
         
         return $result;
@@ -114,22 +120,18 @@ class CategoryService
      * @param  int $id
      * @param CategoryRequest $request
      * @param CategoryRepository $categoryRepository
-     * @return \Illuminate\Http\Response
+     * @return Category|null
      */
-    public function update($id, CategoryRequest $request, CategoryRepository $categoryRepository)
+    public function update(int $id,
+                           CategoryRequest $request,
+                           CategoryRepository $categoryRepository): ?Category
     {
-        if ($id <= 30) {
-            abort(403);
-        }
     
         $request->user_id = Auth::id();
     
         $request->code = str::slug($request->name);
     
-        $result['data'] = $this->container->call([$categoryRepository, 'updateCategory'], ['request' => $request, 'id' => $id]);
-        
-        return $result;
-    
+        return $this->container->call([$categoryRepository, 'updateCategory'], ['request' => $request, 'id' => $id]);
     }
     
     /**
@@ -137,17 +139,13 @@ class CategoryService
      *
      * @param  int $id
      * @param CategoryRepository $categoryRepository
-     * @return \Illuminate\Http\Response
-     * @throws \Exception
+     * @return bool
      */
-    public function destroy($id, CategoryRepository $categoryRepository)
+    public function destroy(int $id,
+                            CategoryRepository $categoryRepository): bool
     {
-        if ($id <= 30) {
-            abort(403);
-        }
     
-        $result['data'] = $this->container->call([$categoryRepository, 'deleteCategory'], ['id' => $id]);
+        return $this->container->call([$categoryRepository, 'deleteCategory'], ['id' => $id]);
         
-        return $result;
     }
 }

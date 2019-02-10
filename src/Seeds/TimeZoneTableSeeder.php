@@ -10,6 +10,7 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use WebAppId\Content\Repositories\TimeZoneRepository;
+use WebAppId\Content\Services\Params\AddTimeZoneParam;
 
 /**
  * Class TimeZoneTableSeeder
@@ -20,11 +21,12 @@ class TimeZoneTableSeeder extends Seeder
     /**
      * Run the database seeds.
      *
-     * @param TimeZoneRepository $timezone
+     * @param TimeZoneRepository $timeZoneRepository
      * @param Container $container
+     * @param AddTimeZoneParam $addTimeZoneParam
      * @return void
      */
-    public function run(TimeZoneRepository $timezone, Container $container)
+    public function run(TimeZoneRepository $timeZoneRepository, Container $container, AddTimeZoneParam $addTimeZoneParam)
     {
         $user_id = '1';
         
@@ -2989,14 +2991,14 @@ class TimeZoneTableSeeder extends Seeder
         DB::beginTransaction();
         $return = true;
         for ($i = 0; $i < count($data); $i++) {
-            $request = new \stdClass;
-            $request->code = $data[$i]['code'] == "" ? $data[$i]['name'] : $data[$i]['code'];
-            $request->name = $data[$i]['name'];
-            $request->minute = $data[$i]['minute'];
-            $request->user_id = $user_id;
-            
-            if (count($container->call([$timezone, 'getTimeZoneByName'], ['name' => $request->name])) == 0) {
-                $result = $container->call([$timezone, 'addTimeZone'], ['data' => $request]);
+    
+            $addTimeZoneParam->setCode($data[$i]['code'] == "" ? $data[$i]['name'] : $data[$i]['code']);
+            $addTimeZoneParam->setName($data[$i]['name']);
+            $addTimeZoneParam->setMinute($data[$i]['minute']);
+            $addTimeZoneParam->setUserId($user_id);
+    
+            if (count($container->call([$timeZoneRepository, 'getTimeZoneByName'], ['name' => $addTimeZoneParam->getName()])) == 0) {
+                $result = $container->call([$timeZoneRepository, 'addTimeZone'], ['addTimeZoneParam' => $addTimeZoneParam]);
                 if (!$result) {
                     $return = $result;
                     break;

@@ -2,6 +2,7 @@
 
 namespace WebAppId\Content\Tests\Unit\Repositories;
 
+use WebAppId\Content\Models\Content;
 use WebAppId\Content\Repositories\ContentRepository;
 use WebAppId\Content\Tests\TestCase;
 
@@ -10,14 +11,17 @@ class ContentTest extends TestCase
     
     private $contentRepository;
     
-    
-    public function setUp()
+    private function contentRepository(): ContentRepository
     {
-        $this->contentRepository = $this->getContainer()->make(ContentRepository::class);
+        return $this->contentRepository = $this->getContainer()->make(ContentRepository::class);
+    }
+    
+    public function setUp(): void
+    {
         parent::setUp();
     }
     
-    public function getDummy()
+    public function getDummy(): object
     {
         $objContent = new \StdClass;
         $objContent->title = $this->getFaker()->word;
@@ -40,12 +44,12 @@ class ContentTest extends TestCase
         return $objContent;
     }
     
-    public function createContent($dummy)
+    public function createContent($dummy): ?Content
     {
-        return $this->getContainer()->call([$this->contentRepository, 'addContent'], ['data' => $dummy]);
+        return $this->getContainer()->call([$this->contentRepository(), 'addContent'], ['data' => $dummy]);
     }
     
-    public function testAddContent()
+    public function testAddContent(): ?Content
     {
         $result = $this->createContent($this->getDummy());
         if (!$result) {
@@ -56,26 +60,26 @@ class ContentTest extends TestCase
         }
     }
     
-    public function testBulkAddContentCount()
+    public function testBulkAddContentCount(): void
     {
         for ($n = 0; $n < 10; $n++) {
             $dummyData = $this->getDummy();
             $dummyData->keyword = 'bulk';
-    
-            $this->getContainer()->call([$this->contentRepository, 'addContent'], ['data' => $dummyData]);
+            
+            $this->getContainer()->call([$this->contentRepository(), 'addContent'], ['data' => $dummyData]);
         }
-    
-        $this->assertEquals(10, $this->getContainer()->call([$this->contentRepository, 'getContentByKeywordCount'], ['keyword' => $dummyData->keyword]));
+        
+        $this->assertEquals(10, $this->getContainer()->call([$this->contentRepository(), 'getContentByKeywordCount'], ['keyword' => $dummyData->keyword]));
     }
     
-    public function testGetContentByCode()
+    public function testGetContentByCode(): void
     {
         $objContent = $this->getDummy();
         $result = $this->createContent($objContent);
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $result = $this->getContainer()->call([$this->contentRepository, 'getContentByCode'], ["code" => $result->code, "request" => $result]);
+            $result = $this->getContainer()->call([$this->contentRepository(), 'getContentByCode'], ["code" => $result->code, "request" => $result]);
             if ($result != null) {
                 $this->assertTrue(true);
                 $this->assertEquals($objContent->title, $result->title);
@@ -100,7 +104,7 @@ class ContentTest extends TestCase
         }
     }
     
-    public function testUpdateContentByCode()
+    public function testUpdateContentByCode(): void
     {
         $objContent = $this->getDummy();
         $result = $this->createContent($objContent);
@@ -108,7 +112,7 @@ class ContentTest extends TestCase
             $this->assertTrue(false);
         } else {
             $objContent = $this->getDummy();
-            $result = $this->getContainer()->call([$this->contentRepository, 'updateContentByCode'], ['request' => $objContent, 'code' => $result->code]);
+            $result = $this->getContainer()->call([$this->contentRepository(), 'updateContentByCode'], ['request' => $objContent, 'code' => $result->code]);
             if ($result) {
                 $this->assertEquals($objContent->title, $result->title);
                 $this->assertEquals($objContent->code, $result->code);
@@ -132,14 +136,14 @@ class ContentTest extends TestCase
         }
     }
     
-    public function testUpdateContentStatusByCode()
+    public function testUpdateContentStatusByCode(): void
     {
         $result = $this->testAddContent();
         if ($result == null) {
             $this->assertTrue(false);
         } else {
             $status_id = $this->getFaker()->numberBetween(1, 4);
-            $resultUpdateStatus = $this->getContainer()->call([$this->contentRepository, 'updateContentStatusByCode'], ['code' => $result->code, 'status_id' => $status_id]);
+            $resultUpdateStatus = $this->getContainer()->call([$this->contentRepository(), 'updateContentStatusByCode'], ['code' => $result->code, 'status_id' => $status_id]);
             if ($resultUpdateStatus == null) {
                 $this->assertTrue(false);
             } else {

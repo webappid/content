@@ -9,71 +9,71 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\TimeZone;
+use WebAppId\Content\Services\Params\AddTimeZoneParam;
 
 /**
  * Class TimeZoneRepository
  * @package WebAppId\Content\Repositories
  */
-
 class TimeZoneRepository
 {
-
+    
     /**
-     * @param $data
+     * @param AddTimeZoneParam $addTimeZoneParam
      * @param TimeZone $timezone
-     * @return bool|TimeZone
+     * @return TimeZone|null
      */
-    public function addTimeZone($data, TimeZone $timezone)
+    public function addTimeZone(AddTimeZoneParam $addTimeZoneParam, TimeZone $timezone): ?TimeZone
     {
         try {
-            $timezone->code    = $data->code;
-            $timezone->name    = $data->name;
-            $timezone->minute  = $data->minute;
-            $timezone->user_id = $data->user_id;
+            $timezone->code = $addTimeZoneParam->getCode();
+            $timezone->name = $addTimeZoneParam->getName();
+            $timezone->minute = $addTimeZoneParam->getMinute();
+            $timezone->user_id = $addTimeZoneParam->getUserId();
             $timezone->save();
-
+    
             return $timezone;
         } catch (QueryException $e) {
             report($e);
-            return false;
+            return null;
         }
     }
-
+    
     /**
      * @param $name
      * @param TimeZone $timezone
-     * @return mixed
+     * @return object|null
      */
-    public function getTimeZoneByName($name, TimeZone $timezone)
+    public function getTimeZoneByName(string $name, TimeZone $timezone): ?object
     {
         return $timezone->where('name', $name)->get();
     }
-
+    
     /**
      * @param $name
      * @param TimeZone $timezone
-     * @return mixed
+     * @return TimeZone|null
      */
-    public function getOneTimeZoneByName($name, TimeZone $timezone)
+    public function getOneTimeZoneByName(string $name, TimeZone $timezone): ?TimeZone
     {
         return $timezone->where('name', '=', $name)->first();
     }
-
+    
     /**
      * @param TimeZone $timeZone
-     * @return mixed
+     * @return
      */
-    public function getAllTimeZone(TimeZone $timeZone)
+    public function getAllTimeZone(TimeZone $timeZone): ?object
     {
         return $timeZone->get();
     }
-
+    
     /**
      * @param $id
      * @param TimeZone $timezone
-     * @return mixed
+     * @return TimeZone|null
      */
-    public function getTimeZoneById($id, TimeZone $timezone)
+    public function getTimeZoneById(int $id, TimeZone $timezone): ?TimeZone
     {
         return $timezone->findOrFail($id);
     }

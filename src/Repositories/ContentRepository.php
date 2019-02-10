@@ -47,9 +47,9 @@ class ContentRepository
      *
      * @param Object $data
      * @param Content $content
-     * @return Content $content
+     * @return Content|null
      */
-    public function addContent($data, Content $content)
+    public function addContent($data, Content $content): ?Content
     {
         try {
             $content->title = $data->title;
@@ -81,9 +81,9 @@ class ContentRepository
      * @param $request
      * @param $code
      * @param Content $content
-     * @return null
+     * @return Content|null
      */
-    public function updateContentByCode($request, $code, Content $content)
+    public function updateContentByCode($request, $code, Content $content): ?Content
     {
         $result = $this->getContentByCode($code, $content);
         if ($result != null) {
@@ -133,9 +133,9 @@ class ContentRepository
      *
      * @param integer $category_id
      * @param Content $content
-     * @return Content $data
+     * @return object|null
      */
-    public function getAll(Content $content, $category_id = null)
+    public function getAll(Content $content, $category_id = null): ?object
     {
         return $this->getQueryAllByCategory($category_id, $content)->get();
     }
@@ -143,9 +143,9 @@ class ContentRepository
     /**
      * @param integer $category_id
      * @param Content $content
-     * @return mixed
+     * @return int
      */
-    public function getAllCount(Content $content, $category_id = null)
+    public function getAllCount(Content $content, $category_id = null): int
     {
         return $this->getQueryAllByCategory($category_id, $content)->count();
     }
@@ -153,9 +153,9 @@ class ContentRepository
     /**
      * @param $code
      * @param Content $content
-     * @return mixed
+     * @return Content|null
      */
-    public function getContentByCode($code, Content $content)
+    public function getContentByCode($code, Content $content): ?Content
     {
         return $content->where('code', $code)->first();
     }
@@ -196,9 +196,9 @@ class ContentRepository
      * @param string $search
      * @param $category_id
      * @param Content $content
-     * @return mixed
+     * @return object|null
      */
-    public function getSearch($category_id, Content $content, $search = "")
+    public function getSearch($category_id, Content $content, $search = ""): ?object
     {
         return $this
             ->getDataForSearch($category_id, $content, $search)
@@ -210,9 +210,9 @@ class ContentRepository
      * @param $category_id
      * @param string $paginate
      * @param Content $content
-     * @return mixed
+     * @return object|null
      */
-    public function getSearchPaginate($category_id, Content $content, $paginate = "12", $search = "")
+    public function getSearchPaginate($category_id, Content $content, $paginate = "12", $search = ""): ?object
     {
         
         return $this
@@ -224,9 +224,9 @@ class ContentRepository
      * @param string $search
      * @param $category_id
      * @param Content $content
-     * @return mixed
+     * @return int
      */
-    public function getSearchCount($category_id, Content $content, $search = "")
+    public function getSearchCount($category_id, Content $content, $search = ""): int
     {
         return $this
             ->getDataForSearch($category_id, $content, $search)
@@ -237,8 +237,9 @@ class ContentRepository
      * @param $code
      * @param Content $content
      * @return bool
+     * @throws \Exception
      */
-    public function deleteContentByCode($code, Content $content)
+    public function deleteContentByCode($code, Content $content): bool
     {
         $content = $this->getContentByCode($code, $content);
         if ($content != null) {
@@ -258,9 +259,9 @@ class ContentRepository
      * @param $code
      * @param $status_id
      * @param Content $content
-     * @return bool
+     * @return Content|null
      */
-    public function updateContentStatusByCode($code, $status_id, Content $content)
+    public function updateContentStatusByCode($code, $status_id, Content $content): ?Content
     {
         $content = $this->getContentByCode($code, $content);
         if ($content != null) {
@@ -270,7 +271,7 @@ class ContentRepository
                 return $content;
             } catch (QueryException $e) {
                 report($e);
-                return false;
+                return null;
             }
         }
     }
@@ -290,7 +291,7 @@ class ContentRepository
      * @param $keyword
      * @return mixed
      */
-    public function getContentByKeyword(Content $content, $keyword)
+    public function getContentByKeyword(Content $content, $keyword): ?object
     {
         return $this->getQueryContentByKeyword($keyword, $content)->get();
     }
@@ -300,7 +301,7 @@ class ContentRepository
      * @param Content $content
      * @return mixed
      */
-    public function getContentByKeywordCount($keyword, Content $content)
+    public function getContentByKeywordCount($keyword, Content $content): int
     {
         return $this->getQueryContentByKeyword($keyword, $content)->count();
     }
@@ -310,7 +311,7 @@ class ContentRepository
      * @param Content $content
      * @return mixed
      */
-    public function getContentById($id, Content $content)
+    public function getContentById($id, Content $content): ?Content
     {
         return $content->find($id);
     }

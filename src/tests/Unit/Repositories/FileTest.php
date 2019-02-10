@@ -2,79 +2,90 @@
 
 namespace WebAppId\Content\Tests\Unit\Repositories;
 
+use WebAppId\Content\Models\File;
 use WebAppId\Content\Repositories\FileRepository;
+use WebAppId\Content\Services\Params\AddFileParam;
 use WebAppId\Content\Tests\TestCase;
 
 class FileTest extends TestCase
 {
-    private $objFile;
-
-    private $file;
-
-    public function createDummy()
+    private $fileRepository;
+    
+    private function fileRepository(): FileRepository
     {
-        $this->objFile->name = $this->getFaker()->word;
-        $this->objFile->description = $this->getFaker()->text($maxNbChars = 200);
-        $this->objFile->alt = $this->getFaker()->word;
-        $this->objFile->path = '';
-        $this->objFile->mime_type_id = $this->getFaker()->numberBetween(1, 61);
-        $this->objFile->owner_id = '1';
-        $this->objFile->user_id = '1';
-        return $this->objFile;
+        if ($this->fileRepository == null) {
+            $this->fileRepository = $this->getContainer()->make(FileRepository::class);
+        }
+        
+        return $this->fileRepository;
     }
-
-    public function createFile()
+    
+    public function createDummy(): AddFileParam
     {
-        $this->createDummy();
-        $result = $this->getContainer()->call([$this->file, 'addFile'], ['request' => $this->objFile]);
+        $addFileParam = new AddFileParam();
+        $addFileParam->setName($this->getFaker()->word);
+        $addFileParam->setDescription($this->getFaker()->text($maxNbChars = 200));
+        $addFileParam->setAlt($this->getFaker()->word);
+        $addFileParam->setPath('');
+        $addFileParam->setMimeTypeId($this->getFaker()->numberBetween(1, 61));
+        $addFileParam->setOwnerId(1);
+        $addFileParam->setUserId(1);
+        return $addFileParam;
+    }
+    
+    public function createFile($dummyFile): ?File
+    {
+        $result = $this->getContainer()->call([$this->fileRepository(), 'addFile'], ['addFileParam' => $dummyFile]);
         if ($result == false) {
             $this->assertTrue(false);
+            return null;
         } else {
             return $result;
         }
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         parent::setUp();
-        $this->file = $this->getContainer()->make(FileRepository::class);
-        $this->objFile = new \StdClass;
     }
-
-    public function testAddFile()
+    
+    public function testAddFile(): void
     {
-        $result = $this->createFile();
+        $dummyFile = $this->createDummy();
+        $result = $this->createFile($dummyFile);
         if ($result != false) {
-            $this->assertEquals($this->objFile->name, $result->name);
-            $this->assertEquals($this->objFile->description, $result->description);
-            $this->assertEquals($this->objFile->alt, $result->alt);
-            $this->assertEquals($this->objFile->path, $result->path);
-            $this->assertEquals($this->objFile->mime_type_id, $result->mime_type_id);
+            $this->assertEquals($dummyFile->getName(), $result->name);
+            $this->assertEquals($dummyFile->getDescription(), $result->description);
+            $this->assertEquals($dummyFile->getAlt(), $result->alt);
+            $this->assertEquals($dummyFile->getPath(), $result->path);
+            $this->assertEquals($dummyFile->getMimeTypeId(), $result->mime_type_id);
         }
     }
-
-    public function testGetFileByName()
+    
+    public function testGetFileByName(): void
     {
-        $result = $this->createFile();
+        $dummyFile = $this->createDummy();
+        $result = $this->createFile($dummyFile);
         if ($result != false) {
-            $resultFind = $this->getContainer()->call([$this->file, 'getFileByName'], ['name' => $this->objFile->name]);
+            $resultFind = $this->getContainer()->call([$this->fileRepository(), 'getFileByName'], ['name' => $dummyFile->getName()]);
             if ($resultFind == null) {
                 $this->assertTrue(false);
             } else {
-                $this->assertEquals($this->objFile->name, $resultFind->name);
-                $this->assertEquals($this->objFile->description, $resultFind->description);
-                $this->assertEquals($this->objFile->alt, $resultFind->alt);
-                $this->assertEquals($this->objFile->path, $resultFind->path);
-                $this->assertEquals($this->objFile->mime_type_id, $resultFind->mime_type_id);
+                $this->assertEquals($dummyFile->getName(), $resultFind->name);
+                $this->assertEquals($dummyFile->getDescription(), $resultFind->description);
+                $this->assertEquals($dummyFile->getAlt(), $resultFind->alt);
+                $this->assertEquals($dummyFile->getPath(), $resultFind->path);
+                $this->assertEquals($dummyFile->getMimeTypeId(), $resultFind->mime_type_id);
             }
         }
     }
-
-    public function testGetFileMimeTypeName()
+    
+    public function testGetFileMimeTypeName(): void
     {
-        $result = $this->createFile();
+        $dummyFile = $this->createDummy();
+        $result = $this->createFile($dummyFile);
         if ($result != false) {
-            $resultFind = $this->getContainer()->call([$this->file, 'getFileByName'], ['name' => $this->objFile->name]);
+            $resultFind = $this->getContainer()->call([$this->fileRepository(), 'getFileByName'], ['name' => $dummyFile->getName()]);
             if ($resultFind == null) {
                 $this->assertTrue(false);
             } else {

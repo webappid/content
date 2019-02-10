@@ -15,16 +15,15 @@ use WebAppId\Content\Models\ContentTag;
  * Class ContentTagRepository
  * @package WebAppId\Content\Repositories
  */
-
 class ContentTagRepository
 {
-
+    
     /**
      * @param $response
      * @param ContentTag $contentTag
-     * @return bool|ContentTag
+     * @return ContentTag|null
      */
-    public function addContentTag($response, ContentTag $contentTag)
+    public function addContentTag($response, ContentTag $contentTag): ?ContentTag
     {
         try {
             $contentTag->content_id = $response->content_id;
@@ -34,15 +33,16 @@ class ContentTagRepository
             return $contentTag;
         } catch (QueryException $e) {
             report($e);
-            return false;
+            return null;
         }
     }
-
+    
     /**
      * @param $contentId
      * @param ContentTag $contentTag
+     * @return bool
      */
-    public function deleteContentTagByContentId($contentId, ContentTag $contentTag)
+    public function deleteContentTagByContentId($contentId, ContentTag $contentTag): bool
     {
         $resultContentTag = $contentTag->where('content_id', $contentId)->get();
         DB::beginTransaction();
@@ -60,5 +60,7 @@ class ContentTagRepository
         } else {
             DB::rollBack();
         }
+    
+        return $result;
     }
 }

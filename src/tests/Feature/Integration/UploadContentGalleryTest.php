@@ -3,13 +3,14 @@
 namespace WebAppId\Content\Tests;
 
 use Illuminate\Http\UploadedFile;
+use WebAppId\Content\Models\Content;
 use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
 
 class UploadContentGalleryTest extends TestCase
 {
     private $contentTest;
     
-    private function getContentTest()
+    private function getContentTest(): ContentTest
     {
         if ($this->contentTest == null) {
             $this->contentTest = new ContentTest;
@@ -18,18 +19,17 @@ class UploadContentGalleryTest extends TestCase
         return $this->contentTest;
     }
     
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        $this->getContentTest()->setUp();
     }
     
-    private function getDummy()
+    private function getDummy(): ?Content
     {
         return $this->getContentTest()->createContent($this->getContentTest()->getDummy());
     }
     
-    public function testUploadGallery()
+    public function testUploadGallery(): void
     {
         $content = $this->getDummy();
         

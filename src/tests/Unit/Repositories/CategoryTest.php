@@ -2,6 +2,7 @@
 
 namespace WebAppId\Content\Tests\Unit\Repositories;
 
+use WebAppId\Content\Models\Category;
 use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Tests\TestCase;
 
@@ -10,7 +11,7 @@ class CategoryTest extends TestCase
     private $categoryRepository;
     
     
-    public function getDummy()
+    public function getDummy(): object
     {
         $objCategory = new \StdClass;
         $objCategory->code = $this->getFaker()->word;
@@ -20,26 +21,29 @@ class CategoryTest extends TestCase
         return $objCategory;
     }
     
-    public function start()
+    private function categoryRepository(): CategoryRepository
     {
-        $this->categoryRepository = $this->getContainer()->make(CategoryRepository::class);
+        if ($this->categoryRepository == null) {
+            $this->categoryRepository = $this->getContainer()->make(CategoryRepository::class);
+        }
+        return $this->categoryRepository;
     }
     
-    public function setUp()
+    
+    public function setUp(): void
     {
         parent::setUp();
-        $this->start();
     }
     
-    public function createCategory($dummyData)
+    public function createCategory($dummyData): ?Category
     {
-        return $this->getContainer()->call([$this->categoryRepository, 'addCategory'], ['data' => $dummyData]);
+        return $this->getContainer()->call([$this->categoryRepository(), 'addCategory'], ['data' => $dummyData]);
     }
     
-    public function testAddCategory()
+    public function testAddCategory(): ?object
     {
         $result = $this->createCategory($this->getDummy());
-    
+        
         if (!$result) {
             $this->assertTrue(false);
         } else {
@@ -48,7 +52,7 @@ class CategoryTest extends TestCase
         }
     }
     
-    public function testGetCategoryByCode()
+    public function testGetCategoryByCode(): void
     {
         $dummyData = $this->getDummy();
         $result = $this->createCategory($dummyData);
@@ -56,7 +60,7 @@ class CategoryTest extends TestCase
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $result = $this->getContainer()->call([$this->categoryRepository, 'getCategoryByCode'], ['code' => $dummyData->code]);
+            $result = $this->getContainer()->call([$this->categoryRepository(), 'getCategoryByCode'], ['code' => $dummyData->code]);
             if ($result != null) {
                 $this->assertTrue(true);
                 $this->assertEquals($dummyData->code, $result->code);
@@ -68,7 +72,7 @@ class CategoryTest extends TestCase
         }
     }
     
-    public function testUpdateCategory()
+    public function testUpdateCategory(): void
     {
         $dummyData = $this->getDummy();
         $result = $this->createCategory($dummyData);
@@ -76,12 +80,12 @@ class CategoryTest extends TestCase
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $result = $this->getContainer()->call([$this->categoryRepository, 'getOne'], ['id' => $result->id]);
+            $result = $this->getContainer()->call([$this->categoryRepository(), 'getOne'], ['id' => $result->id]);
             if ($result == null) {
                 $this->assertTrue(true);
             } else {
                 $dummyData = $this->getDummy();
-                $result = $this->getContainer()->call([$this->categoryRepository, 'updateCategory'], ['request' => $dummyData, 'id' => $result->id]);
+                $result = $this->getContainer()->call([$this->categoryRepository(), 'updateCategory'], ['request' => $dummyData, 'id' => $result->id]);
                 if ($result) {
                     $this->assertTrue(true);
                     $this->assertEquals($dummyData->code, $result->code);
@@ -94,14 +98,14 @@ class CategoryTest extends TestCase
         }
     }
     
-    public function testDeleteCategory()
+    public function testDeleteCategory(): void
     {
         $result = $this->createCategory($this->getDummy());
         
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $result = $this->getContainer()->call([$this->categoryRepository, 'deleteCategory'], ['id' => $result->id]);
+            $result = $this->getContainer()->call([$this->categoryRepository(), 'deleteCategory'], ['id' => $result->id]);
             if ($result) {
                 $this->assertTrue(true);
             } else {
@@ -110,7 +114,7 @@ class CategoryTest extends TestCase
         }
     }
     
-    public function testChildCategory()
+    public function testChildCategory(): void
     {
         $resultCategory = $this->testAddCategory();
         

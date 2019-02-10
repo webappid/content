@@ -21,9 +21,9 @@ class CategoryRepository
      *
      * @param Object $data
      * @param Category $category
-     * @return Category $category
+     * @return Category|null
      */
-    public function addCategory($data, Category $category)
+    public function addCategory($data, Category $category): ?Category
     {
         try {
             $category->code = $data->code;
@@ -49,9 +49,9 @@ class CategoryRepository
      *
      * @param Integer $id
      * @param Category $category
-     * @return Category $data
+     * @return Category|null
      */
-    public function getOne($id, Category $category)
+    public function getOne($id, Category $category): ?Category
     {
         return $category->findOrFail($id);
     }
@@ -62,9 +62,9 @@ class CategoryRepository
      * @param $request
      * @param Integer $id
      * @param Category $category
-     * @return Category $category
+     * @return Category|null
      */
-    public function updateCategory($request, $id, Category $category)
+    public function updateCategory($request, $id, Category $category): ?Category
     {
         try {
             $categoryData = $this->getOne($id, $category);
@@ -95,11 +95,11 @@ class CategoryRepository
      *
      * @param Integer $id
      * @param Category $category
-     * @return Boolean true/false
+     * @return bool
      * @throws \Exception
      */
     
-    public function deleteCategory($id, Category $category)
+    public function deleteCategory($id, Category $category): bool
     {
         try {
             $categoryData = $this->getOne($id, $category);
@@ -119,9 +119,9 @@ class CategoryRepository
      * Get All Category
      *
      * @param Category $category
-     * @return Object $data
+     * @return Category|null
      */
-    public function getAll(Category $category)
+    public function getAll(Category $category): ?object
     {
         return $category->all();
     }
@@ -129,11 +129,11 @@ class CategoryRepository
     /**
      * Method For Get Data Category Use name like or code
      *
-     * @param String $search
      * @param Category $category
-     * @return object list category / empty object
+     * @param String $search
+     * @return Category|null list category / empty object
      */
-    public function getDataWhere(Category $category, $search = "")
+    public function getDataWhere(Category $category, $search = ""): ?object
     {
         return $category->where('code', $search)
             ->orWhere('name', 'LIKE', '%' . $search . '%')
@@ -150,7 +150,12 @@ class CategoryRepository
      * @param $limit_length
      * @return mixed
      */
-    public function getDatable(Category $category, $search, $order_column, $order_dir, $limit_start, $limit_length)
+    public function getDatable(Category $category,
+                               $search,
+                               $order_column,
+                               $order_dir,
+                               $limit_start,
+                               $limit_length): ?object
     {
         return $category
             ->select('id', 'code', 'name')
@@ -177,9 +182,9 @@ class CategoryRepository
     /**
      * @param string $search
      * @param Category $category
-     * @return mixed
+     * @return Category|null
      */
-    public function getSearch(Category $category, $search = "")
+    public function getSearch(Category $category, $search = ""): ?object
     {
         return $this->getQueryCategory($search, $category)->get();
     }
@@ -189,7 +194,7 @@ class CategoryRepository
      * @param Category $category
      * @return mixed
      */
-    public function getSearchOne(Category $category, $search = "")
+    public function getSearchOne(Category $category, $search = ""): ?Category
     {
         return $this->getQueryCategory($search, $category)->first();
     }
@@ -198,7 +203,7 @@ class CategoryRepository
      * @param Category $category
      * @return mixed
      */
-    public function getAllCount(Category $category)
+    public function getAllCount(Category $category): int
     {
         return $category->count();
     }
@@ -208,7 +213,7 @@ class CategoryRepository
      * @param Category $category
      * @return mixed
      */
-    public function getSearchCount(Category $category, $search = "")
+    public function getSearchCount(Category $category, $search = ""): int
     {
         return $this->getQueryCategory($search, $category)->count();
     }
@@ -218,7 +223,7 @@ class CategoryRepository
      * @param Category $category
      * @return mixed
      */
-    public function getCategoryByCode($code, Category $category)
+    public function getCategoryByCode($code, Category $category): ?Category
     {
         return $category->where('code', $code)->first();
     }

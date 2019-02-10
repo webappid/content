@@ -10,6 +10,7 @@ namespace WebAppId\Content\Seeds;
 use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\LanguageRepository;
+use WebAppId\Content\Services\AddLanguageParam;
 
 /**
  * Class LanguageTableSeeder
@@ -22,9 +23,10 @@ class LanguageTableSeeder extends Seeder
      *
      * @param LanguageRepository $languages
      * @param Container $container
+     * @param AddLanguageParam $addLanguageParam
      * @return void
      */
-    public function run(LanguageRepository $languages, Container $container)
+    public function run(LanguageRepository $languages, Container $container, AddLanguageParam $addLanguageParam)
     {
         $image_id = 1;
         $data = [
@@ -41,17 +43,17 @@ class LanguageTableSeeder extends Seeder
         ];
         
         foreach ($data as $key) {
-            $request = new \stdClass;
-            $request->code = $key['code'];
-            $request->name = $key['name'];
-            $request->image_id = $key['image_id'];
-            $request->user_id = '1';
-            $request->image_id = 1;
-            
-            $resultLanguage = $container->call([$languages, 'getLanguageByName'], ['name' => $request->name]);
+    
+            $addLanguageParam->setCode($key['code']);
+            $addLanguageParam->setName($key['name']);
+            $addLanguageParam->setImageId($key['image_id']);
+            $addLanguageParam->setUserId(1);
+            $addLanguageParam->setImageId(1);
+    
+            $resultLanguage = $container->call([$languages, 'getLanguageByName'], ['name' => $addLanguageParam->getName()]);
             
             if ($resultLanguage === null) {
-                $container->call([$languages, 'addLanguage'], ['request' => $request]);
+                $container->call([$languages, 'addLanguage'], ['addLanguageParam' => $addLanguageParam]);
             }
         }
     }
