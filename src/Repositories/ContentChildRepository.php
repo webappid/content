@@ -10,6 +10,7 @@ namespace WebAppId\Content\Repositories;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use WebAppId\Content\Models\ContentChild;
+use WebAppId\Content\Services\Params\AddContentChildParam;
 
 /**
  * Class ContentChildRepository
@@ -19,17 +20,17 @@ class ContentChildRepository
 {
     
     /**
-     * @param $request
+     * @param AddContentChildParam $addContentChildParam
      * @param ContentChild $contentChild
      * @return ContentChild|null
      */
-    public function addContentChild($request, ContentChild $contentChild): ?ContentChild
+    public function addContentChild(AddContentChildParam $addContentChildParam, ContentChild $contentChild): ?ContentChild
     {
         try {
-            
-            $contentChild->content_parent_id = $request->content_parent_id;
-            $contentChild->content_child_id = $request->content_child_id;
-            $contentChild->user_id = $request->user_id;
+    
+            $contentChild->content_parent_id = $addContentChildParam->getContentParentId();
+            $contentChild->content_child_id = $addContentChildParam->getContentChildId();
+            $contentChild->user_id = $addContentChildParam->getUserId();
             $contentChild->save();
             return $contentChild;
         } catch (QueryException $e) {
@@ -43,7 +44,7 @@ class ContentChildRepository
      * @param ContentChild $contentChild
      * @return mixed
      */
-    public function getOne($id, ContentChild $contentChild): ?ContentChild
+    public function getOne(int $id, ContentChild $contentChild): ?ContentChild
     {
         return $contentChild->findOrFail($id);
     }
@@ -53,7 +54,7 @@ class ContentChildRepository
      * @param ContentChild $contentChild
      * @return mixed
      */
-    public function getByContentParentId($id, ContentChild $contentChild): ?object
+    public function getByContentParentId(int $id, ContentChild $contentChild): ?object
     {
         return $contentChild->where('content_parent_id', $id)->get();
     }
@@ -64,7 +65,7 @@ class ContentChildRepository
      * @return mixed
      * @throws \Exception
      */
-    public function deleteContentChild($id, ContentChild $contentChild): bool
+    public function deleteContentChild(int $id, ContentChild $contentChild): bool
     {
         $contentChild = $this->getOne($id, $contentChild);
         if ($contentChild != null) {
@@ -78,7 +79,7 @@ class ContentChildRepository
      * @param ContentChild $contentChild
      * @return bool
      */
-    public function deleteContentChildByContentId($id, ContentChild $contentChild): bool
+    public function deleteContentChildByContentId(int $id, ContentChild $contentChild): bool
     {
         DB::beginTransaction();
         $result = true;

@@ -4,6 +4,7 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Repositories\ContentChildRepository;
+use WebAppId\Content\Services\Params\AddContentChildParam;
 use WebAppId\Content\Tests\TestCase;
 
 class ContentChildTest extends TestCase
@@ -46,21 +47,21 @@ class ContentChildTest extends TestCase
         parent::setUp();
     }
     
-    public function addContentChild(): object
+    public function addContentChild(): AddContentChildParam
     {
         $this->resultContentParent = $this->createDummyContent();
         $this->resultContentChild = $this->createDummyContent();
-        $objContentChild = new \StdClass;
-        $objContentChild->content_parent_id = $this->resultContentParent->id;
-        $objContentChild->content_child_id = $this->resultContentChild->id;
-        $objContentChild->user_id = $this->userId;
+        $objContentChild = new AddContentChildParam();
+        $objContentChild->setContentParentId($this->resultContentParent->id);
+        $objContentChild->setContentChildId($this->resultContentChild->id);
+        $objContentChild->setUserId($this->userId);
         return $objContentChild;
     }
     
     public function testContentChild(): void
     {
         $dummyData = $this->addContentChild();
-        $result = $this->getContainer()->call([$this->contentChildRepository(), 'addContentChild'], ['request' => $dummyData]);
+        $result = $this->getContainer()->call([$this->contentChildRepository(), 'addContentChild'], ['addContentChildParam' => $dummyData]);
         
         if ($result != false) {
             $this->assertTrue(true);
@@ -72,7 +73,7 @@ class ContentChildTest extends TestCase
     public function testGetContentChild(): void
     {
         $dummyData = $this->addContentChild();
-        $result = $this->getContainer()->call([$this->contentChildRepository(), 'addContentChild'], ['request' => $dummyData]);
+        $result = $this->getContainer()->call([$this->contentChildRepository(), 'addContentChild'], ['addContentChildParam' => $dummyData]);
         
         if ($result == false) {
             $this->assertTrue(false);
@@ -101,8 +102,8 @@ class ContentChildTest extends TestCase
     public function testGetContentParent(): void
     {
         $dummyData = $this->addContentChild();
-        
-        $result = $this->getContainer()->call([$this->contentChildRepository(), 'addContentChild'], ['request' => $dummyData]);
+    
+        $result = $this->getContainer()->call([$this->contentChildRepository(), 'addContentChild'], ['addContentChildParam' => $dummyData]);
         if ($result == false) {
             $this->assertTrue(false);
         } else {
@@ -129,8 +130,8 @@ class ContentChildTest extends TestCase
     public function testDeleteContentChildById(): void
     {
         $dummyData = $this->addContentChild();
-        
-        $result = $this->getContainer()->call([$this->contentChildRepository(), 'addContentChild'], ['request' => $dummyData]);
+    
+        $result = $this->getContainer()->call([$this->contentChildRepository(), 'addContentChild'], ['addContentChildParam' => $dummyData]);
         if ($result == false) {
             $this->assertTrue(false);
         } else {
@@ -147,8 +148,8 @@ class ContentChildTest extends TestCase
     public function testDeleteContentChildByParentId(): void
     {
         $dummyData = $this->addContentChild();
-        
-        $result = $this->getContainer()->call([$this->contentChildRepository(), 'addContentChild'], ['request' => $dummyData]);
+    
+        $result = $this->getContainer()->call([$this->contentChildRepository(), 'addContentChild'], ['addContentChildParam' => $dummyData]);
         if ($result == false) {
             $this->assertTrue(false);
         } else {

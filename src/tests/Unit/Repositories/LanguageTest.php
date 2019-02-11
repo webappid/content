@@ -4,7 +4,7 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use WebAppId\Content\Models\Language;
 use WebAppId\Content\Repositories\LanguageRepository;
-use WebAppId\Content\Services\AddLanguageParam;
+use WebAppId\Content\Services\Params\AddLanguageParam;
 use WebAppId\Content\Tests\TestCase;
 
 class LanguageTest extends TestCase

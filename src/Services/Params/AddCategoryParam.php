@@ -3,18 +3,22 @@
  * Created by PhpStorm.
  * User: dyangalih
  * Date: 2019-02-11
- * Time: 00:01
+ * Time: 06:03
  */
 
-namespace WebAppId\Content\Services;
+namespace WebAppId\Content\Services\Params;
 
-
-class AddLanguageParam
+/**
+ * Class AddCategoryParam
+ * @package WebAppId\Content\Services\Params
+ */
+class AddCategoryParam
 {
     private $code;
     private $name;
-    private $imageId;
+    private $statusId;
     private $userId;
+    private $parentId;
     
     /**
      * @return string
@@ -51,34 +55,49 @@ class AddLanguageParam
     /**
      * @return int
      */
-    public function getImageId(): int
+    public function getStatusId(): int
     {
-        return $this->imageId;
+        return $this->statusId;
     }
     
     /**
-     * @param int $imageId
+     * @param int $statusId
      */
-    public function setImageId(int $imageId): void
+    public function setStatusId(int $statusId): void
     {
-        $this->imageId = $imageId;
+        $this->statusId = $statusId;
     }
     
     /**
-     * @return int
+     * @return mixed
      */
-    public function getUserId(): int
+    public function getUserId()
     {
         return $this->userId;
     }
     
     /**
-     * @param int $userId
+     * @param mixed $userId
      */
-    public function setUserId(int $userId): void
+    public function setUserId($userId): void
     {
         $this->userId = $userId;
     }
     
+    /**
+     * @return int
+     */
+    public function getParentId(): ?int
+    {
+        return $this->parentId;
+    }
+    
+    /**
+     * @param int $parentId
+     */
+    public function setParentId(int $parentId): void
+    {
+        $this->parentId = $parentId;
+    }
     
 }

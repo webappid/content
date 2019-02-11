@@ -11,6 +11,7 @@ namespace WebAppId\Content\Tests\Feature\Services;
 use Illuminate\Http\Request;
 use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Services\ContentService;
+use WebAppId\Content\Services\Params\AddContentCategoryParam;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
 
@@ -74,13 +75,13 @@ class ContentServiceTest extends TestCase
             $result = $contentRepositoryTest->testAddContent();
             $categories = [];
             $categories[0] = '1';
-            
-            $contentCategoryData = new \StdClass;
-            $contentCategoryData->user_id = '1';
-            $contentCategoryData->content_id = $result->id;
-            $contentCategoryData->categories_id = $categories[0];
-            
-            $result['content_category'] = $this->getContainer()->call([$this->contentCategoryRepository(), 'addContentCategory'], ['data' => $contentCategoryData]);
+    
+            $contentCategoryData = new AddContentCategoryParam();
+            $contentCategoryData->setUserId(1);
+            $contentCategoryData->setContentId($result->id);
+            $contentCategoryData->setCategoryId($categories[0]);
+    
+            $result['content_category'] = $this->getContainer()->call([$this->contentCategoryRepository(), 'addContentCategory'], ['addContentCategoryParam' => $contentCategoryData]);
         }
         
         $request = new Request();

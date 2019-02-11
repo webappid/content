@@ -22,6 +22,7 @@ class FileTableSeeder extends Seeder
      * Run the database seeds.
      *
      * @param FileRepository $file
+     * @param AddFileParam $addFileParam
      * @param Container $container
      * @return void
      */

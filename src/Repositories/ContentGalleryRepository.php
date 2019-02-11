@@ -9,6 +9,7 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\ContentGallery;
+use WebAppId\Content\Services\Params\AddContentGalleryParam;
 
 /**
  * Class ContentGalleryRepository
@@ -18,17 +19,17 @@ class ContentGalleryRepository
 {
     
     /**
-     * @param $request
+     * @param AddContentGalleryParam $addContentGalleryParam
      * @param ContentGallery $contentGallery
      * @return ContentGallery|null
      */
-    public function addContentGallery($request, ContentGallery $contentGallery): ?ContentGallery
+    public function addContentGallery(AddContentGalleryParam $addContentGalleryParam, ContentGallery $contentGallery): ?ContentGallery
     {
         try {
-            $contentGallery->content_id = $request->content_id;
-            $contentGallery->file_id = $request->file_id;
-            $contentGallery->user_id = $request->user_id;
-            $contentGallery->description = $request->description;
+            $contentGallery->content_id = $addContentGalleryParam->getContentId();
+            $contentGallery->file_id = $addContentGalleryParam->getFileId();
+            $contentGallery->user_id = $addContentGalleryParam->getUserId();
+            $contentGallery->description = $addContentGalleryParam->getDescription();
             $contentGallery->save();
             return $contentGallery;
         } catch (QueryException $e) {
@@ -42,7 +43,7 @@ class ContentGalleryRepository
      * @param ContentGallery $contentGallery
      * @return mixed
      */
-    public function getContentGalleryByContentId($content_id, ContentGallery $contentGallery): ?object
+    public function getContentGalleryByContentId(int $content_id, ContentGallery $contentGallery): ?object
     {
         return $contentGallery->where('content_id', $content_id)->get();
     }
@@ -52,7 +53,7 @@ class ContentGalleryRepository
      * @param ContentGallery $contentGallery
      * @return bool
      */
-    public function deleteContentGalleryByContentId($content_id, ContentGallery $contentGallery): bool
+    public function deleteContentGalleryByContentId(int $content_id, ContentGallery $contentGallery): bool
     {
         try {
             $contentGalleries = $this->getContentGalleryByContentId($content_id, $contentGallery);

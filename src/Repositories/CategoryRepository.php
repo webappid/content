@@ -9,6 +9,7 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\Category;
+use WebAppId\Content\Services\Params\AddCategoryParam;
 
 /**
  * Class CategoryRepository
@@ -19,22 +20,18 @@ class CategoryRepository
     /**
      * Method To Add Data Category
      *
-     * @param Object $data
+     * @param AddCategoryParam $addCategoryParam
      * @param Category $category
      * @return Category|null
      */
-    public function addCategory($data, Category $category): ?Category
+    public function addCategory(AddCategoryParam $addCategoryParam, Category $category): ?Category
     {
         try {
-            $category->code = $data->code;
-            $category->name = $data->name;
-            if (isset($data->parent_id)) {
-                $category->parent_id = $data->parent_id;
-            } else {
-                $category->parent_id = null;
-            }
-            $category->status_id = $data->status_id;
-            $category->user_id = $data->user_id;
+            $category->code = $addCategoryParam->getCode();
+            $category->name = $addCategoryParam->getName();
+            $category->parent_id = $addCategoryParam->getParentId();
+            $category->status_id = $addCategoryParam->getStatusId();
+            $category->user_id = $addCategoryParam->getUserId();
             
             $category->save();
             return $category;
@@ -51,7 +48,7 @@ class CategoryRepository
      * @param Category $category
      * @return Category|null
      */
-    public function getOne($id, Category $category): ?Category
+    public function getOne(int $id, Category $category): ?Category
     {
         return $category->findOrFail($id);
     }
@@ -59,26 +56,26 @@ class CategoryRepository
     /**
      * Method To Update Category
      *
-     * @param $request
+     * @param AddCategoryParam $addCategoryParam
      * @param Integer $id
      * @param Category $category
      * @return Category|null
      */
-    public function updateCategory($request, $id, Category $category): ?Category
+    public function updateCategory(AddCategoryParam $addCategoryParam, int $id, Category $category): ?Category
     {
         try {
             $categoryData = $this->getOne($id, $category);
             
             if (!empty($categoryData)) {
-                $categoryData->code = $request->code;
-                $categoryData->name = $request->name;
-                if (isset($request->parent_id)) {
-                    $category->parent_id = $request->parent_id;
+                $categoryData->code = $addCategoryParam->getCode();
+                $categoryData->name = $addCategoryParam->getName();
+                if (isset($addCategoryParam->parent_id)) {
+                    $category->parent_id = $addCategoryParam->getParentId();
                 } else {
                     $category->parent_id = null;
                 }
-                $categoryData->status_id = $request->status_id;
-                $categoryData->user_id = $request->user_id;
+                $categoryData->status_id = $addCategoryParam->getStatusId();
+                $categoryData->user_id = $addCategoryParam->getUserId();
                 $categoryData->save();
                 return $categoryData;
             } else {
@@ -99,16 +96,10 @@ class CategoryRepository
      * @throws \Exception
      */
     
-    public function deleteCategory($id, Category $category): bool
+    public function deleteCategory(int $id, Category $category): bool
     {
         try {
-            $categoryData = $this->getOne($id, $category);
-            if (!empty($categoryData)) {
-                $categoryData->delete();
-                return true;
-            } else {
-                return false;
-            }
+            return $this->getOne($id, $category)->delete();
         } catch (QueryException $e) {
             report($e);
             return false;
@@ -168,11 +159,11 @@ class CategoryRepository
     }
     
     /**
-     * @param $search
-     * @param $category
-     * @return mixed
+     * @param string $search
+     * @param Category $category
+     * @return object
      */
-    private function getQueryCategory($search, $category)
+    private function getQueryCategory(string $search, Category $category): object
     {
         return $category->where('code', 'LIKE', '%' . $search . '%')
             ->orWhere('name', 'LIKE', '%' . $search . '%');
@@ -180,28 +171,28 @@ class CategoryRepository
     
     
     /**
-     * @param string $search
      * @param Category $category
-     * @return Category|null
+     * @param string $search
+     * @return object|null
      */
-    public function getSearch(Category $category, $search = ""): ?object
+    public function getSearch(Category $category, string $search = ""): ?object
     {
         return $this->getQueryCategory($search, $category)->get();
     }
     
     /**
-     * @param string $search
      * @param Category $category
-     * @return mixed
+     * @param string $search
+     * @return Category|null
      */
-    public function getSearchOne(Category $category, $search = ""): ?Category
+    public function getSearchOne(Category $category, string $search = ""): ?Category
     {
         return $this->getQueryCategory($search, $category)->first();
     }
     
     /**
      * @param Category $category
-     * @return mixed
+     * @return int
      */
     public function getAllCount(Category $category): int
     {
@@ -209,21 +200,21 @@ class CategoryRepository
     }
     
     /**
-     * @param string $search
      * @param Category $category
-     * @return mixed
+     * @param string $search
+     * @return int
      */
-    public function getSearchCount(Category $category, $search = ""): int
+    public function getSearchCount(Category $category, string $search = ""): int
     {
         return $this->getQueryCategory($search, $category)->count();
     }
     
     /**
-     * @param $code
+     * @param string $code
      * @param Category $category
-     * @return mixed
+     * @return Category|null
      */
-    public function getCategoryByCode($code, Category $category): ?Category
+    public function getCategoryByCode(string $code, Category $category): ?Category
     {
         return $category->where('code', $code)->first();
     }

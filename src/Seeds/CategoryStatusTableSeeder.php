@@ -23,7 +23,8 @@ class CategoryStatusTableSeeder extends Seeder
      * @param CategoryStatusRepository $categoryStatusRepository
      * @param AddCategoryStatusParam $addCategoryStatusParam
      */
-    public function run(CategoryStatusRepository $categoryStatusRepository, AddCategoryStatusParam $addCategoryStatusParam)
+    public function run(CategoryStatusRepository $categoryStatusRepository,
+                        AddCategoryStatusParam $addCategoryStatusParam)
     {
         $categoryStatuses = array(
             'active',

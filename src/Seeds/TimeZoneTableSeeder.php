@@ -26,7 +26,9 @@ class TimeZoneTableSeeder extends Seeder
      * @param AddTimeZoneParam $addTimeZoneParam
      * @return void
      */
-    public function run(TimeZoneRepository $timeZoneRepository, Container $container, AddTimeZoneParam $addTimeZoneParam)
+    public function run(TimeZoneRepository $timeZoneRepository,
+                        Container $container,
+                        AddTimeZoneParam $addTimeZoneParam)
     {
         $user_id = '1';
         

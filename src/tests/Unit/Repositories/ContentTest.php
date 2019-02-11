@@ -4,6 +4,7 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Repositories\ContentRepository;
+use WebAppId\Content\Services\Params\AddContentParam;
 use WebAppId\Content\Tests\TestCase;
 
 class ContentTest extends TestCase
@@ -21,32 +22,32 @@ class ContentTest extends TestCase
         parent::setUp();
     }
     
-    public function getDummy(): object
+    public function getDummy(): AddContentParam
     {
-        $objContent = new \StdClass;
-        $objContent->title = $this->getFaker()->word;
-        $objContent->code = $this->getFaker()->uuid;
-        $objContent->description = $this->getFaker()->text($maxNbChars = 190);
-        $objContent->keyword = $this->getFaker()->word;
-        $objContent->og_title = $this->getFaker()->word;
-        $objContent->og_description = $this->getFaker()->text;
-        $objContent->default_image = '1';
-        $objContent->status_id = '1';
-        $objContent->language_id = '1';
-        $objContent->publish_date = $this->getFaker()->date($format = 'Y-m-d', $max = 'now');
-        $objContent->additional_info = $this->getFaker()->text;
-        $objContent->content = $this->getFaker()->text;
-        $objContent->time_zone_id = '1';
-        $objContent->owner_id = '1';
-        $objContent->user_id = '1';
-        $objContent->creator_id = '1';
+        $objContent = new AddContentParam();
+        $objContent->setTitle($this->getFaker()->word);
+        $objContent->setCode($this->getFaker()->uuid);
+        $objContent->setDescription($this->getFaker()->text($maxNbChars = 190));
+        $objContent->setKeyword($this->getFaker()->word);
+        $objContent->setOgTitle($this->getFaker()->word);
+        $objContent->setOgDescription($this->getFaker()->text);
+        $objContent->setDefaultImage(1);
+        $objContent->setStatusId(1);
+        $objContent->setLanguageId(1);
+        $objContent->setPublishDate($this->getFaker()->date($format = 'Y-m-d', $max = 'now'));
+        $objContent->setAdditionalInfo($this->getFaker()->text);
+        $objContent->setContent($this->getFaker()->text);
+        $objContent->setTimeZoneId(1);
+        $objContent->setOwnerId(1);
+        $objContent->setUserId(1);
+        $objContent->setCreatorId(1);
         
         return $objContent;
     }
     
     public function createContent($dummy): ?Content
     {
-        return $this->getContainer()->call([$this->contentRepository(), 'addContent'], ['data' => $dummy]);
+        return $this->getContainer()->call([$this->contentRepository(), 'addContent'], ['addContentParam' => $dummy]);
     }
     
     public function testAddContent(): ?Content
@@ -64,12 +65,12 @@ class ContentTest extends TestCase
     {
         for ($n = 0; $n < 10; $n++) {
             $dummyData = $this->getDummy();
-            $dummyData->keyword = 'bulk';
-            
-            $this->getContainer()->call([$this->contentRepository(), 'addContent'], ['data' => $dummyData]);
+            $dummyData->setKeyword('bulk');
+    
+            $this->getContainer()->call([$this->contentRepository(), 'addContent'], ['addContentParam' => $dummyData]);
         }
-        
-        $this->assertEquals(10, $this->getContainer()->call([$this->contentRepository(), 'getContentByKeywordCount'], ['keyword' => $dummyData->keyword]));
+    
+        $this->assertEquals(10, $this->getContainer()->call([$this->contentRepository(), 'getContentByKeywordCount'], ['keyword' => $dummyData->getKeyword()]));
     }
     
     public function testGetContentByCode(): void
@@ -82,21 +83,21 @@ class ContentTest extends TestCase
             $result = $this->getContainer()->call([$this->contentRepository(), 'getContentByCode'], ["code" => $result->code, "request" => $result]);
             if ($result != null) {
                 $this->assertTrue(true);
-                $this->assertEquals($objContent->title, $result->title);
-                $this->assertEquals($objContent->code, $result->code);
-                $this->assertEquals($objContent->description, $result->description);
-                $this->assertEquals($objContent->keyword, $result->keyword);
-                $this->assertEquals($objContent->og_title, $result->og_title);
-                $this->assertEquals($objContent->og_description, $result->og_description);
-                $this->assertEquals($objContent->default_image, $result->default_image);
-                $this->assertEquals($objContent->status_id, $result->status_id);
-                $this->assertEquals($objContent->language_id, $result->language_id);
-                $this->assertEquals($objContent->publish_date, $result->publish_date);
-                $this->assertEquals($objContent->additional_info, $result->additional_info);
-                $this->assertEquals($objContent->content, $result->content);
-                $this->assertEquals($objContent->time_zone_id, $result->time_zone_id);
-                $this->assertEquals($objContent->owner_id, $result->owner_id);
-                $this->assertEquals($objContent->user_id, $result->user_id);
+                $this->assertEquals($objContent->getTitle(), $result->title);
+                $this->assertEquals($objContent->getCode(), $result->code);
+                $this->assertEquals($objContent->getDescription(), $result->description);
+                $this->assertEquals($objContent->getKeyword(), $result->keyword);
+                $this->assertEquals($objContent->getOgTitle(), $result->og_title);
+                $this->assertEquals($objContent->getOgDescription(), $result->og_description);
+                $this->assertEquals($objContent->getDefaultImage(), $result->default_image);
+                $this->assertEquals($objContent->getStatusId(), $result->status_id);
+                $this->assertEquals($objContent->getLanguageId(), $result->language_id);
+                $this->assertEquals($objContent->getPublishDate(), $result->publish_date);
+                $this->assertEquals($objContent->getAdditionalInfo(), $result->additional_info);
+                $this->assertEquals($objContent->getContent(), $result->content);
+                $this->assertEquals($objContent->getTimeZoneId(), $result->time_zone_id);
+                $this->assertEquals($objContent->getOwnerId(), $result->owner_id);
+                $this->assertEquals($objContent->getUserId(), $result->user_id);
             } else {
                 $this->asserTrue(false);
             }
@@ -112,23 +113,23 @@ class ContentTest extends TestCase
             $this->assertTrue(false);
         } else {
             $objContent = $this->getDummy();
-            $result = $this->getContainer()->call([$this->contentRepository(), 'updateContentByCode'], ['request' => $objContent, 'code' => $result->code]);
+            $result = $this->getContainer()->call([$this->contentRepository(), 'updateContentByCode'], ['addContentParam' => $objContent, 'code' => $result->code]);
             if ($result) {
-                $this->assertEquals($objContent->title, $result->title);
-                $this->assertEquals($objContent->code, $result->code);
-                $this->assertEquals($objContent->description, $result->description);
-                $this->assertEquals($objContent->keyword, $result->keyword);
-                $this->assertEquals($objContent->og_title, $result->og_title);
-                $this->assertEquals($objContent->og_description, $result->og_description);
-                $this->assertEquals($objContent->default_image, $result->default_image);
-                $this->assertEquals($objContent->status_id, $result->status_id);
-                $this->assertEquals($objContent->language_id, $result->language_id);
-                $this->assertEquals($objContent->publish_date, $result->publish_date);
-                $this->assertEquals($objContent->additional_info, $result->additional_info);
-                $this->assertEquals($objContent->content, $result->content);
-                $this->assertEquals($objContent->time_zone_id, $result->time_zone_id);
-                $this->assertEquals($objContent->owner_id, $result->owner_id);
-                $this->assertEquals($objContent->user_id, $result->user_id);
+                $this->assertEquals($objContent->getTitle(), $result->title);
+                $this->assertEquals($objContent->getCode(), $result->code);
+                $this->assertEquals($objContent->getDescription(), $result->description);
+                $this->assertEquals($objContent->getKeyword(), $result->keyword);
+                $this->assertEquals($objContent->getOgTitle(), $result->og_title);
+                $this->assertEquals($objContent->getOgDescription(), $result->og_description);
+                $this->assertEquals($objContent->getDefaultImage(), $result->default_image);
+                $this->assertEquals($objContent->getStatusId(), $result->status_id);
+                $this->assertEquals($objContent->getLanguageId(), $result->language_id);
+                $this->assertEquals($objContent->getPublishDate(), $result->publish_date);
+                $this->assertEquals($objContent->getAdditionalInfo(), $result->additional_info);
+                $this->assertEquals($objContent->getContent(), $result->content);
+                $this->assertEquals($objContent->getTimeZoneId(), $result->time_zone_id);
+                $this->assertEquals($objContent->getOwnerId(), $result->owner_id);
+                $this->assertEquals($objContent->getUserId(), $result->user_id);
                 $this->assertTrue(true);
             } else {
                 $this->assertTrue(false);

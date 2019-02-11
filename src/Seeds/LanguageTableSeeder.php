@@ -10,7 +10,7 @@ namespace WebAppId\Content\Seeds;
 use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\LanguageRepository;
-use WebAppId\Content\Services\AddLanguageParam;
+use WebAppId\Content\Services\Params\AddLanguageParam;
 
 /**
  * Class LanguageTableSeeder
@@ -26,7 +26,9 @@ class LanguageTableSeeder extends Seeder
      * @param AddLanguageParam $addLanguageParam
      * @return void
      */
-    public function run(LanguageRepository $languages, Container $container, AddLanguageParam $addLanguageParam)
+    public function run(LanguageRepository $languages,
+                        Container $container,
+                        AddLanguageParam $addLanguageParam)
     {
         $image_id = 1;
         $data = [

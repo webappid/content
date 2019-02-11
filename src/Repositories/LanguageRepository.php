@@ -9,7 +9,7 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\Language;
-use WebAppId\Content\Services\AddLanguageParam;
+use WebAppId\Content\Services\Params\AddLanguageParam;
 
 /**
  * Class LanguageRepository

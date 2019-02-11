@@ -8,7 +8,10 @@
 
 namespace WebAppId\Content\Services\Params;
 
-
+/**
+ * Class AddCategoryStatusParam
+ * @package WebAppId\Content\Services\Params
+ */
 class AddCategoryStatusParam
 {
     private $name;

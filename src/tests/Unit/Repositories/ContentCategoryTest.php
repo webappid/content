@@ -6,6 +6,7 @@ use WebAppId\Content\Models\Category;
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Models\ContentCategory;
 use WebAppId\Content\Repositories\ContentCategoryRepository;
+use WebAppId\Content\Services\Params\AddContentCategoryParam;
 use WebAppId\Content\Tests\TestCase;
 
 class ContentCategoryTest extends TestCase
@@ -61,7 +62,7 @@ class ContentCategoryTest extends TestCase
         return $this->getCategoryTest()->createCategory($this->getCategoryTest()->getDummy());
     }
     
-    public function getDummy(): object
+    public function getDummy(): ?AddContentCategoryParam
     {
         $this->resultContent = $this->createDummyContent();
         if (!$this->resultContent) {
@@ -71,10 +72,10 @@ class ContentCategoryTest extends TestCase
             if (!$this->resultCategory) {
                 $this->assertTrue(false);
             } else {
-                $dummy = new \StdClass;
-                $dummy->content_id = $this->resultContent->id;
-                $dummy->categories_id = $this->resultCategory->id;
-                $dummy->user_id = '1';
+                $dummy = new AddContentCategoryParam();
+                $dummy->setContentId($this->resultContent->id);
+                $dummy->setCategoryId($this->resultCategory->id);
+                $dummy->setUserId(1);
                 return $dummy;
             }
         }
@@ -82,7 +83,7 @@ class ContentCategoryTest extends TestCase
     
     public function createContentCategory($dummy): ?ContentCategory
     {
-        return $this->getContainer()->call([$this->contentCategoryRepository(), 'addContentCategory'], ['data' => $dummy]);
+        return $this->getContainer()->call([$this->contentCategoryRepository(), 'addContentCategory'], ['addContentCategoryParam' => $dummy]);
     }
     
     public function testAddContentCategory(): void
@@ -103,11 +104,11 @@ class ContentCategoryTest extends TestCase
             $this->assertTrue(false);
         } else {
             $result = $this->createDummyCategory();
-            $dummy = new \StdClass;
-            $dummy->content_id = $this->resultContent->id;
-            $dummy->categories_id = $result->id;
-            $dummy->user_id = '1';
-            $result = $this->getContainer()->call([$this->contentCategoryRepository(), 'updateContentCategory'], ['data' => $dummy, 'id' => $resultContentCategory->id]);
+            $dummy = new AddContentCategoryParam();
+            $dummy->setContentId($this->resultContent->id);
+            $dummy->setCategoryId($result->id);
+            $dummy->setUserId(1);
+            $result = $this->getContainer()->call([$this->contentCategoryRepository(), 'updateContentCategory'], ['addContentCategoryParam' => $dummy, 'id' => $resultContentCategory->id]);
             if ($result) {
                 $this->assertTrue(true);
             } else {
@@ -138,13 +139,13 @@ class ContentCategoryTest extends TestCase
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $this->assertEquals($dummy->content_id, $result->content_id);
-            $this->assertEquals($dummy->categories_id, $result->categories_id);
+            $this->assertEquals($dummy->getContentId(), $result->content_id);
+            $this->assertEquals($dummy->getCategoryId(), $result->categories_id);
             $result = $this->getContainer()->call([$this->contentCategoryRepository(), 'getAll']);
             if (count($result) > 0) {
                 $this->assertTrue(true);
-                $this->assertEquals($dummy->content_id, $result[count($result) - 1]->content_id);
-                $this->assertEquals($dummy->categories_id, $result[count($result) - 1]->categories_id);
+                $this->assertEquals($dummy->getContentId(), $result[count($result) - 1]->content_id);
+                $this->assertEquals($dummy->getCategoryId(), $result[count($result) - 1]->categories_id);
             } else {
                 $this->assertTrue(false);
             }

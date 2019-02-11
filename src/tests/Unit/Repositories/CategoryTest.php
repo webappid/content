@@ -4,6 +4,7 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use WebAppId\Content\Models\Category;
 use WebAppId\Content\Repositories\CategoryRepository;
+use WebAppId\Content\Services\Params\AddCategoryParam;
 use WebAppId\Content\Tests\TestCase;
 
 class CategoryTest extends TestCase
@@ -11,14 +12,14 @@ class CategoryTest extends TestCase
     private $categoryRepository;
     
     
-    public function getDummy(): object
+    public function getDummy(): AddCategoryParam
     {
-        $objCategory = new \StdClass;
-        $objCategory->code = $this->getFaker()->word;
-        $objCategory->name = $this->getFaker()->word;
-        $objCategory->status_id = $this->getFaker()->numberBetween(1, 2);
-        $objCategory->user_id = '1';
-        return $objCategory;
+        $addCategoryParam = new AddCategoryParam();
+        $addCategoryParam->setCode($this->getFaker()->word);
+        $addCategoryParam->setName($this->getFaker()->word);
+        $addCategoryParam->setStatusId($this->getFaker()->numberBetween(1, 2));
+        $addCategoryParam->setUserId(1);
+        return $addCategoryParam;
     }
     
     private function categoryRepository(): CategoryRepository
@@ -37,19 +38,15 @@ class CategoryTest extends TestCase
     
     public function createCategory($dummyData): ?Category
     {
-        return $this->getContainer()->call([$this->categoryRepository(), 'addCategory'], ['data' => $dummyData]);
+        return $this->getContainer()->call([$this->categoryRepository(), 'addCategory'], ['addCategoryParam' => $dummyData]);
     }
     
-    public function testAddCategory(): ?object
+    public function testAddCategory(): ?Category
     {
         $result = $this->createCategory($this->getDummy());
-        
-        if (!$result) {
-            $this->assertTrue(false);
-        } else {
-            $this->assertTrue(true);
-            return $result;
-        }
+    
+        self::assertNotEquals(null, $result);
+        return $result;
     }
     
     public function testGetCategoryByCode(): void
@@ -60,12 +57,12 @@ class CategoryTest extends TestCase
         if (!$result) {
             $this->assertTrue(false);
         } else {
-            $result = $this->getContainer()->call([$this->categoryRepository(), 'getCategoryByCode'], ['code' => $dummyData->code]);
+            $result = $this->getContainer()->call([$this->categoryRepository(), 'getCategoryByCode'], ['code' => $dummyData->getCode()]);
             if ($result != null) {
                 $this->assertTrue(true);
-                $this->assertEquals($dummyData->code, $result->code);
-                $this->assertEquals($dummyData->name, $result->name);
-                $this->assertEquals($dummyData->status_id, $result->status_id);
+                $this->assertEquals($dummyData->getCode(), $result->code);
+                $this->assertEquals($dummyData->getName(), $result->name);
+                $this->assertEquals($dummyData->getStatusId(), $result->status_id);
             } else {
                 $this->assertTrue(false);
             }
@@ -85,12 +82,12 @@ class CategoryTest extends TestCase
                 $this->assertTrue(true);
             } else {
                 $dummyData = $this->getDummy();
-                $result = $this->getContainer()->call([$this->categoryRepository(), 'updateCategory'], ['request' => $dummyData, 'id' => $result->id]);
+                $result = $this->getContainer()->call([$this->categoryRepository(), 'updateCategory'], ['addCategoryParam' => $dummyData, 'id' => $result->id]);
                 if ($result) {
                     $this->assertTrue(true);
-                    $this->assertEquals($dummyData->code, $result->code);
-                    $this->assertEquals($dummyData->name, $result->name);
-                    $this->assertEquals($dummyData->status_id, $result->status_id);
+                    $this->assertEquals($dummyData->getCode(), $result->code);
+                    $this->assertEquals($dummyData->getName(), $result->name);
+                    $this->assertEquals($dummyData->getStatusId(), $result->status_id);
                 } else {
                     $this->assertTrue(false);
                 }
@@ -106,11 +103,7 @@ class CategoryTest extends TestCase
             $this->assertTrue(false);
         } else {
             $result = $this->getContainer()->call([$this->categoryRepository(), 'deleteCategory'], ['id' => $result->id]);
-            if ($result) {
-                $this->assertTrue(true);
-            } else {
-                $this->assertTrue(false);
-            }
+            self::assertEquals(true, $result);
         }
     }
     
@@ -119,7 +112,7 @@ class CategoryTest extends TestCase
         $resultCategory = $this->testAddCategory();
         
         $dummy = $this->getDummy();
-        $dummy->parent_id = $resultCategory->id;
+        $dummy->setParentId($resultCategory->id);
         
         $resultChild = $this->createCategory($dummy);
         
@@ -127,9 +120,43 @@ class CategoryTest extends TestCase
             self::assertTrue(false);
         } else {
             self::assertTrue(true);
-            self::assertEquals($dummy->name, $resultChild->name);
-            self::assertEquals($dummy->code, $resultChild->code);
-            self::assertEquals($dummy->parent_id, $resultChild->parent_id);
+            self::assertEquals($dummy->getName(), $resultChild->name);
+            self::assertEquals($dummy->getCode(), $resultChild->code);
+            self::assertEquals($dummy->getParentId(), $resultChild->parent_id);
         }
+    }
+    
+    public function testGetAll(): void
+    {
+        $categories = $this->getContainer()->call([$this->categoryRepository(), 'getAll']);
+        self::assertGreaterThanOrEqual(1, count($categories));
+    }
+    
+    public function testGetSearch(): void
+    {
+        $category = $this->testAddCategory();
+        $result = $this->getContainer()->call([$this->categoryRepository(), 'getSearch'], ['search' => $category->name]);
+        self::assertGreaterThanOrEqual(1, count($result));
+    }
+    
+    public function testGetSearchOne(): void
+    {
+        $category = $this->testAddCategory();
+        $result = $this->getContainer()->call([$this->categoryRepository(), 'getSearchOne'], ['search' => $category->name]);
+        self::assertNotEquals(null, $result);
+    }
+    
+    public function testGetAllCount(): void
+    {
+        $this->testAddCategory();
+        $result = $this->getContainer()->call([$this->categoryRepository(), 'getAllCount']);
+        self::assertGreaterThanOrEqual(1, $result);
+    }
+    
+    public function testGetSearchCount(): void
+    {
+        $category = $this->testAddCategory();
+        $result = $this->getContainer()->call([$this->categoryRepository(), 'getSearchCount'], ['search' => $category->name]);
+        self::assertGreaterThanOrEqual(1, $result);
     }
 }

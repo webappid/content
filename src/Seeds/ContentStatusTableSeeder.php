@@ -44,7 +44,7 @@ class ContentStatusTableSeeder extends Seeder
                 'name' => 'Cancel',
             ],
             [
-                'name' => 'Comming Soon',
+                'name' => 'Coming Soon',
             ],
         ];
         

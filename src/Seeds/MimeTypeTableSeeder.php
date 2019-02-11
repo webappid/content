@@ -27,7 +27,9 @@ class MimeTypeTableSeeder extends Seeder
      * @param Container $container
      * @return void
      */
-    public function run(MimeTypeRepository $mimeTypeRepository, AddMimeTypeParam $addMimeTypeParam, Container $container)
+    public function run(MimeTypeRepository $mimeTypeRepository,
+                        AddMimeTypeParam $addMimeTypeParam,
+                        Container $container)
     {
         $user_id = '1';
         
