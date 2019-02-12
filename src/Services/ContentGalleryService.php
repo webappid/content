@@ -8,7 +8,9 @@
 namespace WebAppId\Content\Services;
 
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use WebAppId\Content\Models\ContentGallery;
 use WebAppId\Content\Repositories\ContentGalleryRepository;
 
 /**
@@ -30,14 +32,18 @@ class ContentGalleryService
     /**
      * Store a newly created resource in storage.
      *
-     * @param $path
-     * @param $contentGalleryRequest
-     * @param $fileRequest
+     * @param string $path
+     * @param FormRequest $contentGalleryRequest
+     * @param FormRequest $fileRequest
      * @param \WebAppId\Content\Services\FileService $fileService
      * @param ContentGalleryRepository $contentGalleryRepository
-     * @return \Illuminate\Http\Response
+     * @return ContentGallery|null
      */
-    public function store($path, $contentGalleryRequest, $fileRequest, FileService $fileService, ContentGalleryRepository $contentGalleryRepository)
+    public function store(string $path,
+                          FormRequest $contentGalleryRequest,
+                          FormRequest $fileRequest,
+                          FileService $fileService,
+                          ContentGalleryRepository $contentGalleryRepository): ?ContentGallery
     {
         $result = $this->container->call([$fileService, 'store'], ['path' => $path, 'upload' => $fileRequest]);
         

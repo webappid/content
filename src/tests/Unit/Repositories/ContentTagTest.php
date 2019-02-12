@@ -2,6 +2,9 @@
 
 namespace WebAppId\Content\Tests\Unit\Repositories;
 
+use WebAppId\Content\Models\Content;
+use WebAppId\Content\Models\ContentTag;
+use WebAppId\Content\Models\Tag;
 use WebAppId\Content\Repositories\ContentTagRepository;
 use WebAppId\Content\Tests\TestCase;
 
@@ -17,15 +20,20 @@ class ContentTagTest extends TestCase
     
     private $resultContentTest;
     
-    public function setUp()
+    private function contentTagRepository(): ContentTagRepository
     {
-        parent::setUp();
-        $this->getContentTest()->setUp();
-        $this->getTagTest()->setUp();
-        $this->contentTagRepository = new ContentTagRepository;
+        if ($this->contentTagRepository == null) {
+            $this->contentTagRepository = new ContentTagRepository();
+        }
+        return $this->contentTagRepository;
     }
     
-    private function getContentTest()
+    public function setUp(): void
+    {
+        parent::setUp();
+    }
+    
+    private function getContentTest(): ?ContentTest
     {
         if ($this->contentTest == null) {
             $this->contentTest = new ContentTest;
@@ -34,7 +42,7 @@ class ContentTagTest extends TestCase
         return $this->contentTest;
     }
     
-    private function getTagTest()
+    private function getTagTest(): ?TagTest
     {
         if ($this->tagTest == null) {
             $this->tagTest = new TagTest;
@@ -44,17 +52,17 @@ class ContentTagTest extends TestCase
     }
     
     
-    public function createDummyContent()
+    public function createDummyContent(): ?Content
     {
         return $this->getContentTest()->createContent($this->getContentTest()->getDummy());
     }
     
-    public function createDummyTag()
+    public function createDummyTag(): ?Tag
     {
         return $this->getTagTest()->createTag($this->getTagTest()->getDummy());
     }
     
-    public function getDummy()
+    public function getDummy(): object
     {
         $this->resultContentTest = $this->createDummyContent();
         $this->resultTagTest = $this->createDummyTag();
@@ -67,10 +75,10 @@ class ContentTagTest extends TestCase
         return $dummy;
     }
     
-    public function createContentTag()
+    public function createContentTag(): ?ContentTag
     {
         $dummy = $this->getDummy();
-        $resultContentTag = $this->getContainer()->call([$this->contentTagRepository, 'addContentTag'], ['response' => $dummy]);
+        $resultContentTag = $this->getContainer()->call([$this->contentTagRepository(), 'addContentTag'], ['response' => $dummy]);
         
         if (!$resultContentTag) {
             $this->assertTrue(false);
@@ -81,7 +89,7 @@ class ContentTagTest extends TestCase
         }
     }
     
-    public function testAddContentTag()
+    public function testAddContentTag(): void
     {
         $resultContentTag = $this->createContentTag();
         if ($resultContentTag != false) {
@@ -89,12 +97,12 @@ class ContentTagTest extends TestCase
         }
     }
     
-    public function testCheckContentTag()
+    public function testCheckContentTag(): void
     {
         $resultContentTag = $this->createContentTag();
         if ($resultContentTag != false) {
             $this->assertTrue(true);
-    
+            
             $this->assertEquals($this->resultContentTest->tags[0]->name, $this->resultTagTest->name);
         }
     }

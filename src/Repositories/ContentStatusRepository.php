@@ -9,83 +9,89 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\ContentStatus;
+use WebAppId\Content\Services\Params\AddContentStatusParam;
 
 /**
  * Class ContentStatusRepository
  * @package WebAppId\Content\Repositories
  */
-
 class ContentStatusRepository
 {
-
+    
     /**
-     * @param $request
+     * @param AddContentStatusParam $addContentStatusParam
      * @param ContentStatus $contentStatus
-     * @return bool|ContentStatus
+     * @return ContentStatus|null
      */
-    public function addContentStatus($request, ContentStatus $contentStatus)
+    public function addContentStatus(AddContentStatusParam $addContentStatusParam,
+                                     ContentStatus $contentStatus): ?ContentStatus
     {
         try {
-            $contentStatus->name = $request->name;
-            $contentStatus->user_id = $request->user_id;
+            $contentStatus->name = $addContentStatusParam->getName();
+            $contentStatus->user_id = $addContentStatusParam->getUserId();
             $contentStatus->save();
             return $contentStatus;
         } catch (QueryException $e) {
             report($e);
-            return false;
+            return null;
         }
-
+    
     }
-
+    
     /**
      * @param ContentStatus $contentStatus
-     * @return mixed
+     * @return object|null
      */
-    public function getContentStatus(ContentStatus $contentStatus)
+    public function getContentStatus(ContentStatus $contentStatus): ?object
     {
         return $contentStatus->get();
     }
-
+    
     /**
-     * @param $id
-     * @param $request
+     * @param int $id
+     * @param AddContentStatusParam $addContentStatusParam
      * @param ContentStatus $contentStatus
-     * @return bool
+     * @return ContentStatus|null
      */
-    public function updateContentStatus($id, $request, ContentStatus $contentStatus)
+    public function updateContentStatus(int $id,
+                                        AddContentStatusParam $addContentStatusParam,
+                                        ContentStatus $contentStatus): ?ContentStatus
     {
         try {
             $result = $contentStatus->find($id);
             if (!empty($result)) {
-                $result->name = $request->name;
-                $result->user_id = $request->user_id;
+                $result->name = $addContentStatusParam->getName();
+                $result->user_id = $addContentStatusParam->getUserId();
                 $result->save();
                 return $result;
             } else {
-                return false;
+                return null;
             }
         } catch (QueryException $e) {
             report($e);
-            return false;
+            return null;
         }
     }
-
+    
     /**
      * @param $id
      * @param ContentStatus $contentStatus
-     * @return mixed
+     * @return ContentStatus|null
      */
-    public function getContentStatusById($id, ContentStatus $contentStatus)
+    public function getContentStatusById(int $id,
+                                         ContentStatus $contentStatus): ?ContentStatus
     {
         return $contentStatus->find($id);
     }
-
+    
     /**
      * @param $name
      * @param ContentStatus $contentStatus
-     * @return mixed
+     * @return object|null
      */
-    public function getContentStatusesByName($name, ContentStatus $contentStatus){
+    public function getContentStatusesByName(string $name,
+                                             ContentStatus $contentStatus): ?object
+    {
         return $contentStatus->where('name', $name)->get();
     }
 }

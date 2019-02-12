@@ -10,6 +10,7 @@ namespace WebAppId\Content\Seeds;
 use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\ContentStatusRepository;
+use WebAppId\Content\Services\Params\AddContentStatusParam;
 
 /**
  * Class ContentStatusTableSeeder
@@ -21,10 +22,13 @@ class ContentStatusTableSeeder extends Seeder
      * Run the database seeds.
      *
      * @param ContentStatusRepository $contentStatus
+     * @param AddContentStatusParam $addContentStatusParam
      * @param Container $container
      * @return void
      */
-    public function run(ContentStatusRepository $contentStatus, Container $container)
+    public function run(ContentStatusRepository $contentStatus,
+                        AddContentStatusParam $addContentStatusParam,
+                        Container $container)
     {
         $data = [
             [
@@ -40,17 +44,17 @@ class ContentStatusTableSeeder extends Seeder
                 'name' => 'Cancel',
             ],
             [
-                'name' => 'Comming Soon',
+                'name' => 'Coming Soon',
             ],
         ];
         
         foreach ($data as $key) {
-            $request = new \stdClass;
-            $request->name = $key['name'];
-            $request->user_id = '1';
-            
-            if (count($container->call([$contentStatus, 'getContentStatusesByName'], ['name' => $request->name])) == 0) {
-                $container->call([$contentStatus, 'addContentStatus'], ['request' => $request]);
+    
+            $addContentStatusParam->setName($key['name']);
+            $addContentStatusParam->setUserId(1);
+    
+            if (count($container->call([$contentStatus, 'getContentStatusesByName'], ['name' => $addContentStatusParam->getName()])) == 0) {
+                $container->call([$contentStatus, 'addContentStatus'], ['addContentStatusParam' => $addContentStatusParam]);
             }
         }
     }

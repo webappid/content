@@ -9,6 +9,7 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\Content;
+use WebAppId\Content\Services\Params\AddContentParam;
 
 /**
  * Class ContentRepository
@@ -45,29 +46,29 @@ class ContentRepository
     /**
      * Method To Add Data Content
      *
-     * @param Object $data
+     * @param AddContentParam $addContentParam
      * @param Content $content
-     * @return Content $content
+     * @return Content|null
      */
-    public function addContent($data, Content $content)
+    public function addContent(AddContentParam $addContentParam, Content $content): ?Content
     {
         try {
-            $content->title = $data->title;
-            $content->code = $data->code;
-            $content->description = $data->description;
-            $content->keyword = $data->keyword;
-            $content->og_title = $data->og_title;
-            $content->og_description = $data->og_description;
-            $content->default_image = $data->default_image;
-            $content->status_id = $data->status_id;
-            $content->language_id = $data->language_id;
-            $content->publish_date = $data->publish_date;
-            $content->additional_info = $data->additional_info;
-            $content->content = $data->content;
-            $content->time_zone_id = $data->time_zone_id;
-            $content->owner_id = $data->owner_id;
-            $content->user_id = $data->user_id;
-            $content->creator_id = $data->creator_id;
+            $content->title = $addContentParam->getTitle();
+            $content->code = $addContentParam->getCode();
+            $content->description = $addContentParam->getDescription();
+            $content->keyword = $addContentParam->getKeyword();
+            $content->og_title = $addContentParam->getOgTitle();
+            $content->og_description = $addContentParam->getOgDescription();
+            $content->default_image = $addContentParam->getDefaultImage();
+            $content->status_id = $addContentParam->getStatusId();
+            $content->language_id = $addContentParam->getLanguageId();
+            $content->publish_date = $addContentParam->getPublishDate();
+            $content->additional_info = $addContentParam->getAdditionalInfo();
+            $content->content = $addContentParam->getContent();
+            $content->time_zone_id = $addContentParam->getTimeZoneId();
+            $content->owner_id = $addContentParam->getOwnerId();
+            $content->user_id = $addContentParam->getUserId();
+            $content->creator_id = $addContentParam->getCreatorId();
             $content->save();
             
             return $content;
@@ -78,31 +79,33 @@ class ContentRepository
     }
     
     /**
-     * @param $request
+     * @param AddContentParam $addContentParam
      * @param $code
      * @param Content $content
-     * @return null
+     * @return Content|null
      */
-    public function updateContentByCode($request, $code, Content $content)
+    public function updateContentByCode(AddContentParam $addContentParam,
+                                        string $code,
+                                        Content $content): ?Content
     {
         $result = $this->getContentByCode($code, $content);
         if ($result != null) {
             try {
-                $result->title = $request->title;
-                $result->code = $request->code;
-                $result->description = $request->description;
-                $result->keyword = $request->keyword;
-                $result->og_title = $request->og_title;
-                $result->og_description = $request->og_description;
-                $result->default_image = $request->default_image;
-                $result->status_id = $request->status_id;
-                $result->language_id = $request->language_id;
-                $result->publish_date = $request->publish_date;
-                $result->additional_info = $request->additional_info;
-                $result->content = $request->content;
-                $result->time_zone_id = $request->time_zone_id;
-                $result->owner_id = $request->owner_id;
-                $result->user_id = $request->user_id;
+                $result->title = $addContentParam->getTitle();
+                $result->code = $addContentParam->getCode();
+                $result->description = $addContentParam->getDescription();
+                $result->keyword = $addContentParam->getKeyword();
+                $result->og_title = $addContentParam->getOgTitle();
+                $result->og_description = $addContentParam->getOgDescription();
+                $result->default_image = $addContentParam->getDefaultImage();
+                $result->status_id = $addContentParam->getStatusId();
+                $result->language_id = $addContentParam->getLanguageId();
+                $result->publish_date = $addContentParam->getPublishDate();
+                $result->additional_info = $addContentParam->getAdditionalInfo();
+                $result->content = $addContentParam->getContent();
+                $result->time_zone_id = $addContentParam->getTimeZoneId();
+                $result->owner_id = $addContentParam->getOwnerId();
+                $result->user_id = $addContentParam->getUserId();
                 $result->save();
                 return $result;
             } catch (QueryException $e) {
@@ -115,11 +118,11 @@ class ContentRepository
     }
     
     /**
-     * @param $category_id
-     * @param $content
+     * @param int $category_id
+     * @param Content $content
      * @return mixed
      */
-    private function getQueryAllByCategory($category_id, $content)
+    private function getQueryAllByCategory(int $category_id, Content $content)
     {
         return $content
             ->leftJoin('content_categories AS cc', 'contents.id', '=', 'cc.content_id')
@@ -133,9 +136,9 @@ class ContentRepository
      *
      * @param integer $category_id
      * @param Content $content
-     * @return Content $data
+     * @return object|null
      */
-    public function getAll(Content $content, $category_id = null)
+    public function getAll(Content $content, int $category_id = null): ?object
     {
         return $this->getQueryAllByCategory($category_id, $content)->get();
     }
@@ -143,9 +146,9 @@ class ContentRepository
     /**
      * @param integer $category_id
      * @param Content $content
-     * @return mixed
+     * @return int
      */
-    public function getAllCount(Content $content, $category_id = null)
+    public function getAllCount(Content $content, int $category_id = null): int
     {
         return $this->getQueryAllByCategory($category_id, $content)->count();
     }
@@ -153,9 +156,9 @@ class ContentRepository
     /**
      * @param $code
      * @param Content $content
-     * @return mixed
+     * @return Content|null
      */
-    public function getContentByCode($code, Content $content)
+    public function getContentByCode(string $code, Content $content): ?Content
     {
         return $content->where('code', $code)->first();
     }
@@ -166,7 +169,7 @@ class ContentRepository
      * @param $content
      * @return mixed
      */
-    public function getDataForSearch($category_id, $content, $search = "")
+    public function getDataForSearch(int $category_id, Content $content, string $search = "")
     {
         return $this->getColumn($content)
             ->leftJoin('content_statuses AS status', 'contents.status_id', '=', 'status.id')
@@ -196,9 +199,9 @@ class ContentRepository
      * @param string $search
      * @param $category_id
      * @param Content $content
-     * @return mixed
+     * @return object|null
      */
-    public function getSearch($category_id, Content $content, $search = "")
+    public function getSearch(int $category_id, Content $content, string $search = ""): ?object
     {
         return $this
             ->getDataForSearch($category_id, $content, $search)
@@ -210,9 +213,9 @@ class ContentRepository
      * @param $category_id
      * @param string $paginate
      * @param Content $content
-     * @return mixed
+     * @return object|null
      */
-    public function getSearchPaginate($category_id, Content $content, $paginate = "12", $search = "")
+    public function getSearchPaginate(int $category_id, Content $content, int $paginate = 12, string $search = ""): ?object
     {
         
         return $this
@@ -224,9 +227,9 @@ class ContentRepository
      * @param string $search
      * @param $category_id
      * @param Content $content
-     * @return mixed
+     * @return int
      */
-    public function getSearchCount($category_id, Content $content, $search = "")
+    public function getSearchCount(int $category_id, Content $content, string $search = ""): int
     {
         return $this
             ->getDataForSearch($category_id, $content, $search)
@@ -237,8 +240,9 @@ class ContentRepository
      * @param $code
      * @param Content $content
      * @return bool
+     * @throws \Exception
      */
-    public function deleteContentByCode($code, Content $content)
+    public function deleteContentByCode(string $code, Content $content): bool
     {
         $content = $this->getContentByCode($code, $content);
         if ($content != null) {
@@ -258,9 +262,9 @@ class ContentRepository
      * @param $code
      * @param $status_id
      * @param Content $content
-     * @return bool
+     * @return Content|null
      */
-    public function updateContentStatusByCode($code, $status_id, Content $content)
+    public function updateContentStatusByCode(string $code, int $status_id, Content $content): ?Content
     {
         $content = $this->getContentByCode($code, $content);
         if ($content != null) {
@@ -270,7 +274,7 @@ class ContentRepository
                 return $content;
             } catch (QueryException $e) {
                 report($e);
-                return false;
+                return null;
             }
         }
     }
@@ -280,7 +284,7 @@ class ContentRepository
      * @param $content
      * @return mixed
      */
-    public function getQueryContentByKeyword($keyword, $content)
+    public function getQueryContentByKeyword(string $keyword, Content $content)
     {
         return $content::where('keyword', $keyword);
     }
@@ -290,7 +294,7 @@ class ContentRepository
      * @param $keyword
      * @return mixed
      */
-    public function getContentByKeyword(Content $content, $keyword)
+    public function getContentByKeyword(Content $content, string $keyword): ?object
     {
         return $this->getQueryContentByKeyword($keyword, $content)->get();
     }
@@ -300,7 +304,7 @@ class ContentRepository
      * @param Content $content
      * @return mixed
      */
-    public function getContentByKeywordCount($keyword, Content $content)
+    public function getContentByKeywordCount(string $keyword, Content $content): int
     {
         return $this->getQueryContentByKeyword($keyword, $content)->count();
     }
@@ -310,7 +314,7 @@ class ContentRepository
      * @param Content $content
      * @return mixed
      */
-    public function getContentById($id, Content $content)
+    public function getContentById(int $id, Content $content): ?Content
     {
         return $content->find($id);
     }

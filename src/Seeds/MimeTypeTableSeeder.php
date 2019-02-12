@@ -11,6 +11,7 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use WebAppId\Content\Repositories\MimeTypeRepository;
+use WebAppId\Content\Services\Params\AddMimeTypeParam;
 
 /**
  * Class MimeTypeTableSeeder
@@ -21,11 +22,14 @@ class MimeTypeTableSeeder extends Seeder
     /**
      * Run the database seeds.
      *
-     * @param MimeTypeRepository $mime_type
+     * @param MimeTypeRepository $mimeTypeRepository
+     * @param AddMimeTypeParam $addMimeTypeParam
      * @param Container $container
      * @return void
      */
-    public function run(MimeTypeRepository $mime_type, Container $container)
+    public function run(MimeTypeRepository $mimeTypeRepository,
+                        AddMimeTypeParam $addMimeTypeParam,
+                        Container $container)
     {
         $user_id = '1';
         
@@ -96,12 +100,12 @@ class MimeTypeTableSeeder extends Seeder
         DB::beginTransaction();
         $return = true;
         foreach ($data as $key) {
-            $request = new \StdClass;
-            $request->name = $key['name'];
-            $request->user_id = $user_id;
-            
-            if (count($container->call([$mime_type, 'getMimeByName'], ['name' => $request->name])) == 0) {
-                $result = $container->call([$mime_type, 'addMimeType'], ['request' => $request]);
+    
+            $addMimeTypeParam->setName($key['name']);
+            $addMimeTypeParam->setUserId(1);
+    
+            if (count($container->call([$mimeTypeRepository, 'getMimeByName'], ['name' => $addMimeTypeParam->getName()])) == 0) {
+                $result = $container->call([$mimeTypeRepository, 'addMimeType'], ['addMimeTypeParam' => $addMimeTypeParam]);
                 if (!$result) {
                     $return = $result;
                     break;

@@ -11,18 +11,19 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\CategoryStatus;
+use WebAppId\Content\Services\Params\AddCategoryStatusParam;
 
 class CategoryStatusRepository
 {
     /**
-     * @param $request
+     * @param AddCategoryStatusParam $addCategoryStatusParam
      * @param CategoryStatus $categoryStatus
      * @return null|CategoryStatus
      */
-    public function addCategoryStatus($request, CategoryStatus $categoryStatus)
+    public function addCategoryStatus(AddCategoryStatusParam $addCategoryStatusParam, CategoryStatus $categoryStatus): ?CategoryStatus
     {
         try {
-            $categoryStatus->name = $request->name;
+            $categoryStatus->name = $addCategoryStatusParam->getName();
             $categoryStatus->save();
             return $categoryStatus;
         } catch (QueryException $queryException) {
@@ -32,11 +33,12 @@ class CategoryStatusRepository
     }
     
     /**
-     * @param $name
+     * @param string $name
      * @param CategoryStatus $categoryStatus
-     * @return mixed
+     * @return CategoryStatus|null
      */
-    public function getByName($name, CategoryStatus $categoryStatus){
-        return $categoryStatus->where('name',$name)->first();
+    public function getByName(string $name, CategoryStatus $categoryStatus): ?CategoryStatus
+    {
+        return $categoryStatus->where('name', $name)->first();
     }
 }

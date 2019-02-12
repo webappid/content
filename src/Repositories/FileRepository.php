@@ -9,60 +9,64 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\File;
+use WebAppId\Content\Services\Params\AddFileParam;
 
 /**
  * Class FileRepository
  * @package WebAppId\Content\Repositories
  */
-
 class FileRepository
 {
     /**
-     * @param $request
+     * @param AddFileParam $addFileParam
      * @param File $file
-     * @return bool|File
+     * @return File|null
      */
-    public function addFile($request, File $file){
-        try{
-            $file->name         = $request->name;
-            $file->description  = $request->description;
-            $file->alt          = $request->alt;
-            $file->path         = $request->path;
-            $file->mime_type_id = $request->mime_type_id;
-            $file->owner_id     = $request->owner_id;
-            $file->user_id      = $request->user_id;
+    public function addFile(AddFileParam $addFileParam, File $file): ?File
+    {
+        try {
+            $file->name = $addFileParam->getName();
+            $file->description = $addFileParam->getDescription();
+            $file->alt = $addFileParam->getAlt();
+            $file->path = $addFileParam->getPath();
+            $file->mime_type_id = $addFileParam->getMimeTypeId();
+            $file->owner_id = $addFileParam->getOwnerId();
+            $file->user_id = $addFileParam->getUserId();
             $file->save();
             
             return $file;
-        }catch(QueryException $e){
+        } catch (QueryException $e) {
             report($e);
-            return false;
+            return null;
         }
     }
-
+    
     /**
-     * @param $id
+     * @param int $id
      * @param File $file
-     * @return mixed
+     * @return File|null
      */
-    public function getOne($id, File $file){
+    public function getOne(int $id, File $file): ?File
+    {
         return $file->findOrFail($id);
     }
-
+    
     /**
-     * @param $name
+     * @param string $name
      * @param File $file
-     * @return mixed
+     * @return File|null
      */
-    public function getFileByName($name, File $file){
+    public function getFileByName(string $name, File $file): ?File
+    {
         return $file->where('name', $name)->first();
     }
-
+    
     /**
      * @param File $file
-     * @return mixed
+     * @return int
      */
-    public function getFileCount(File $file){
+    public function getFileCount(File $file): int
+    {
         return $file->count();
     }
 }

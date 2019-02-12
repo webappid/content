@@ -39,12 +39,12 @@ class FileService
      * @return \Illuminate\Http\Response
      * @throws \Gumlet\ImageResizeException
      */
-    public function index($name, FileRepository $file)
+    public function index(string $name, FileRepository $file)
     {
         return $this->loadFile($name, '0', $file);
     }
     
-    private function saveFile($path, $file, $upload, $mimeTypeService, $fileRepository)
+    private function saveFile(string $path, $file, $upload, $mimeTypeService, $fileRepository)
     {
         $user_id = Auth::id() == null ? session('user_id') : Auth::id();
         
@@ -71,19 +71,22 @@ class FileService
      *
      * @param $path
      * @param $upload
-     * @param MimeTypeRepository $mimeTypeService
+     * @param MimeTypeRepository $mimeTypeRepository
      * @param FileRepository $fileRepository
      * @return array
      */
-    public function store($path, $upload, MimeTypeRepository $mimeTypeService, FileRepository $fileRepository)
+    public function store(string $path,
+                          $upload,
+                          MimeTypeRepository $mimeTypeRepository,
+                          FileRepository $fileRepository)
     {
         $result = array();
         if ($upload->photos == (Array)$upload->photos) {
             for ($i = 0; $i < count($upload->photos); $i++) {
-                $result[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeService, $fileRepository);
+                $result[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeRepository, $fileRepository);
             }
         } else {
-            $result[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeService, $fileRepository);
+            $result[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeRepository, $fileRepository);
         }
         
         return $result;

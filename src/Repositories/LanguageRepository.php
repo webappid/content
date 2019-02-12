@@ -9,51 +9,51 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\Language;
+use WebAppId\Content\Services\Params\AddLanguageParam;
 
 /**
  * Class LanguageRepository
  * @package WebAppId\Content\Repositories
  */
-
 class LanguageRepository
 {
-
+    
     /**
-     * @param $request
+     * @param AddLanguageParam $addLanguageParam
      * @param Language $language
-     * @return bool|Language
+     * @return Language|null
      */
-    public function addLanguage($request, Language $language)
+    public function addLanguage(AddLanguageParam $addLanguageParam, Language $language): ?Language
     {
         try {
-            $language->code = $request->code;
-            $language->name = $request->name;
-            $language->image_id = $request->image_id;
-            $language->user_id = $request->user_id;
+            $language->code = $addLanguageParam->getCode();
+            $language->name = $addLanguageParam->getName();
+            $language->image_id = $addLanguageParam->getImageId();
+            $language->user_id = $addLanguageParam->getUserId();
             $language->save();
-
+    
             return $language;
         } catch (QueryException $e) {
             report($e);
-            return false;
+            return null;
         }
     }
-
+    
     /**
      * @param Language $language
-     * @return mixed
+     * @return object|null
      */
-    public function getLanguage(Language $language)
+    public function getLanguage(Language $language): ?object
     {
         return $language->get();
     }
-
+    
     /**
      * @param $name
      * @param Language $language
-     * @return mixed
+     * @return Language|null
      */
-    public function getLanguageByName($name, Language $language)
+    public function getLanguageByName($name, Language $language): ?Language
     {
         return $language->where('name', $name)->first();
     }

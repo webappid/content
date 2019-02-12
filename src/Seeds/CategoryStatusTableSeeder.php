@@ -11,6 +11,7 @@ namespace WebAppId\Content\Seeds;
 
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\CategoryStatusRepository;
+use WebAppId\Content\Services\Params\AddCategoryStatusParam;
 
 /**
  * Class CategoryStatusTableSeeder
@@ -20,8 +21,10 @@ class CategoryStatusTableSeeder extends Seeder
 {
     /**
      * @param CategoryStatusRepository $categoryStatusRepository
+     * @param AddCategoryStatusParam $addCategoryStatusParam
      */
-    public function run(CategoryStatusRepository $categoryStatusRepository)
+    public function run(CategoryStatusRepository $categoryStatusRepository,
+                        AddCategoryStatusParam $addCategoryStatusParam)
     {
         $categoryStatuses = array(
             'active',
@@ -31,10 +34,9 @@ class CategoryStatusTableSeeder extends Seeder
         foreach ($categoryStatuses as $categoryStatus) {
             $result = $this->container->call([$categoryStatusRepository, 'getByName'], ['name' => $categoryStatus]);
             if ($result == null) {
-                $objCategoryStatus = new \StdClass;
-                $objCategoryStatus->name = $categoryStatus;
+                $addCategoryStatusParam->setName($categoryStatus);
     
-                $this->container->call([$categoryStatusRepository, 'addCategoryStatus'], ['request' => $objCategoryStatus]);
+                $this->container->call([$categoryStatusRepository, 'addCategoryStatus'], ['addCategoryStatusParam' => $addCategoryStatusParam]);
             }
         }
     }

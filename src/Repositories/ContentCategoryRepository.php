@@ -9,76 +9,76 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\ContentCategory;
+use WebAppId\Content\Services\Params\AddContentCategoryParam;
 
 /**
  * Class ContentCategoryRepository
  * @package WebAppId\Content\Repositories
  */
-
 class ContentCategoryRepository
 {
-
+    
     /**
      * Method To Add Data ContentCategory
      *
-     * @param Object $data
-     * @param ContentCategory $contentCetgory
+     * @param AddContentCategoryParam $addContentCategoryParam
+     * @param ContentCategory $contentCategory
      * @return ContentCategory true/false
      */
-    public function addContentCategory($data, ContentCategory $contentCetgory)
+    public function addContentCategory(AddContentCategoryParam $addContentCategoryParam, ContentCategory $contentCategory): ?ContentCategory
     {
         try {
-            $contentCetgory->content_id    = $data->content_id;
-            $contentCetgory->categories_id = $data->categories_id;
-            $contentCetgory->user_id       = $data->user_id;
-            $contentCetgory->save();
-            return $contentCetgory;
-        } catch(QueryException $e){
+            $contentCategory->content_id = $addContentCategoryParam->getContentId();
+            $contentCategory->categories_id = $addContentCategoryParam->getCategoryId();
+            $contentCategory->user_id = $addContentCategoryParam->getUserId();
+            $contentCategory->save();
+            return $contentCategory;
+        } catch (QueryException $e) {
             report($e);
             return null;
         }
     }
-
+    
     /**
      * Method To Get Data ContentCategory
      *
      * @param Integer $id
-     * @param ContentCategory $contentCetgory
+     * @param ContentCategory $contentCategory
      * @return ContentCategory $data
      */
-    public function getContentCategoryById($id, ContentCategory $contentCetgory)
+    public function getContentCategoryById($id, ContentCategory $contentCategory): ?ContentCategory
     {
-        return $contentCetgory->findOrFail($id);
+        return $contentCategory->findOrFail($id);
     }
-
+    
     /**
      * Method To Update ContentCategory
      *
-     * @param Object $data
+     * @param AddContentCategoryParam $addContentCategoryParam
      * @param Integer $id
-     * @param ContentCategory $contentCetgory
+     * @param ContentCategory $contentCategory
      * @return ContentCategory $contentCategory
      */
-    public function updateContentCategory($data, $id, ContentCategory $contentCetgory)
+    public function updateContentCategory(AddContentCategoryParam $addContentCategoryParam, int $id, ContentCategory $contentCategory): ?ContentCategory
     {
         try {
-            $contentCategoryResult = $this->getContentCategoryById($id, $contentCetgory);
-
-            if(! empty($contentCategoryResult)){
-                $contentCategoryResult->content_id = $data->content_id;
-                $contentCategoryResult->categories_id = $data->categories_id;
-                $contentCategoryResult->user_id = $data->user_id;
+            $contentCategoryResult = $this->getContentCategoryById($id, $contentCategory);
+    
+            if (!empty($contentCategoryResult)) {
+                $contentCategoryResult->content_id = $addContentCategoryParam->getContentId();
+                $contentCategoryResult->categories_id = $addContentCategoryParam->getCategoryId();
+                $contentCategoryResult->user_id = $addContentCategoryParam->getUserId();
                 $contentCategoryResult->save();
                 return $contentCategoryResult;
             } else {
                 return null;
             }
-        } catch(QueryException $e){
+        } catch (QueryException $e) {
             report($e);
             return null;
         }
     }
-
+    
     /**
      * Method to Delete ContentCategory Data
      *
@@ -87,42 +87,45 @@ class ContentCategoryRepository
      * @return bool $contentCategory
      * @throws \Exception
      */
-    public function deleteContentCategory($id, ContentCategory $contentCategory)
+    public function deleteContentCategory(int $id, ContentCategory $contentCategory): bool
     {
         try {
             $categoryResult = $this->getContentCategoryById($id, $contentCategory);
-            if(! empty($categoryResult)){
+            if (!empty($categoryResult)) {
                 $categoryResult->delete();
                 return true;
             } else {
                 return false;
             }
-        } catch (QueryException $e){
+        } catch (QueryException $e) {
             report($e);
             return false;
         }
     }
-
+    
     /**
      * Get All ContentCategory
      *
      * @param ContentCategory $contentCategory
      * @return \Illuminate\Database\Eloquent\Collection|ContentCategory[] $data
      */
-    public function getAll(ContentCategory $contentCategory)
+    public function getAll(ContentCategory $contentCategory): ?object
     {
         return $contentCategory->all();
     }
-
+    
     /**
      * @param $contentId
      * @param $categoryId
-     * @param ContentCategory $contentCetgory
+     * @param ContentCategory $contentCategory
      * @return mixed
      */
-    public function getContentCategoryByContentIdAndCategoryId($contentId, $categoryId, ContentCategory $contentCetgory){
-        return $contentCetgory
-            ->where('content_id',$contentId)
+    public function getContentCategoryByContentIdAndCategoryId(int $contentId,
+                                                               int $categoryId,
+                                                               ContentCategory $contentCategory): ?ContentCategory
+    {
+        return $contentCategory
+            ->where('content_id', $contentId)
             ->where('categories_id', $categoryId)
             ->first();
     }

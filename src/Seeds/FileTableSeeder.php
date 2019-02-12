@@ -10,6 +10,7 @@ namespace WebAppId\Content\Seeds;
 use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\FileRepository;
+use WebAppId\Content\Services\Params\AddFileParam;
 
 /**
  * Class FileTableSeeder
@@ -21,25 +22,25 @@ class FileTableSeeder extends Seeder
      * Run the database seeds.
      *
      * @param FileRepository $file
+     * @param AddFileParam $addFileParam
      * @param Container $container
      * @return void
      */
-    public function run(FileRepository $file, Container $container)
+    public function run(FileRepository $file, AddFileParam $addFileParam, Container $container)
     {
         //
         $user_id = '1';
         if ($container->call([$file, 'getFileCount']) == 0) {
-            $objNewFile = new \StdClass;
-            
-            $objNewFile->name = 'none';
-            $objNewFile->description = '';
-            $objNewFile->alt = '';
-            $objNewFile->path = 'default.png';
-            $objNewFile->mime_type_id = '32';
-            $objNewFile->owner_id = $user_id;
-            $objNewFile->user_id = $user_id;
-            
-            $container->call([$file, 'addFile'], ['request' => $objNewFile]);
+    
+            $addFileParam->setName('default');
+            $addFileParam->setDescription('');
+            $addFileParam->setAlt('');
+            $addFileParam->setPath('default.png');
+            $addFileParam->setMimeTypeId('32');
+            $addFileParam->setOwnerId($user_id);
+            $addFileParam->setUserId($user_id);
+    
+            $container->call([$file, 'addFile'], ['addFileParam' => $addFileParam]);
         }
     }
 }
