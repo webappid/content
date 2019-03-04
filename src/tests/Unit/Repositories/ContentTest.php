@@ -17,11 +17,6 @@ class ContentTest extends TestCase
         return $this->contentRepository = $this->getContainer()->make(ContentRepository::class);
     }
     
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-    
     public function getDummy(): AddContentParam
     {
         $objContent = new AddContentParam();

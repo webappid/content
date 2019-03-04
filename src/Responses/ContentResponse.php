@@ -33,33 +33,33 @@ class ContentResponse extends AbstractResponse
     }
     
     /**
-     * @return array|null
+     * @return mixed
      */
-    public function getChild(): ?array
+    public function getChild()
     {
         return $this->child;
     }
     
     /**
-     * @param array $child
+     * @param mixed $child
      */
-    public function setChild(array $child): void
+    public function setChild($child): void
     {
         $this->child = $child;
     }
     
     /**
-     * @return array|null
+     * @return mixed
      */
-    public function getGallery(): ?array
+    public function getGallery()
     {
         return $this->gallery;
     }
     
     /**
-     * @param array $gallery
+     * @param mixed $gallery
      */
-    public function setGallery(array $gallery): void
+    public function setGallery($gallery): void
     {
         $this->gallery = $gallery;
     }

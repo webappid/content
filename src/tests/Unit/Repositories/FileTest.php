@@ -44,11 +44,6 @@ class FileTest extends TestCase
         }
     }
     
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-    
     public function testAddFile(): void
     {
         $dummyFile = $this->createDummy();

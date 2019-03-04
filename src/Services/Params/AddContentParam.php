@@ -30,6 +30,9 @@ class AddContentParam
     private $ownerId;
     private $userId;
     private $creatorId;
+    private $categories;
+    private $parentId;
+    private $galleries;
     
     /**
      * @return string
@@ -50,7 +53,7 @@ class AddContentParam
     /**
      * @return string
      */
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }
@@ -146,7 +149,7 @@ class AddContentParam
     /**
      * @return int
      */
-    public function getStatusId(): int
+    public function getStatusId(): ?int
     {
         return $this->statusId;
     }
@@ -162,7 +165,7 @@ class AddContentParam
     /**
      * @return int
      */
-    public function getLanguageId(): int
+    public function getLanguageId(): ?int
     {
         return $this->languageId;
     }
@@ -178,7 +181,7 @@ class AddContentParam
     /**
      * @return string
      */
-    public function getPublishDate(): string
+    public function getPublishDate(): ?string
     {
         return $this->publishDate;
     }
@@ -218,75 +221,124 @@ class AddContentParam
     }
     
     /**
-     * @param mixed $content
+     * @param string $content
      */
-    public function setContent($content): void
+    public function setContent(string $content): void
     {
         $this->content = $content;
     }
     
     /**
-     * @return mixed
+     * @return int
      */
-    public function getTimeZoneId()
+    public function getTimeZoneId(): ?int
     {
         return $this->timeZoneId;
     }
     
     /**
-     * @param mixed $timeZoneId
+     * @param int $timeZoneId
      */
-    public function setTimeZoneId($timeZoneId): void
+    public function setTimeZoneId(int $timeZoneId): void
     {
         $this->timeZoneId = $timeZoneId;
     }
     
     /**
-     * @return mixed
+     * @return int
      */
-    public function getOwnerId()
+    public function getOwnerId(): ?int
     {
         return $this->ownerId;
     }
     
     /**
-     * @param mixed $ownerId
+     * @param int $ownerId
      */
-    public function setOwnerId($ownerId): void
+    public function setOwnerId(int $ownerId): void
     {
         $this->ownerId = $ownerId;
     }
     
     /**
-     * @return mixed
+     * @return int
      */
-    public function getUserId()
+    public function getUserId(): ?int
     {
         return $this->userId;
     }
     
     /**
-     * @param mixed $userId
+     * @param int $userId
      */
-    public function setUserId($userId): void
+    public function setUserId(int $userId): void
     {
         $this->userId = $userId;
     }
     
     /**
-     * @return mixed
+     * @return int
      */
-    public function getCreatorId()
+    public function getCreatorId(): ?int
     {
         return $this->creatorId;
     }
     
     /**
-     * @param mixed $creatorId
+     * @param int $creatorId
      */
-    public function setCreatorId($creatorId): void
+    public function setCreatorId(int $creatorId): void
     {
         $this->creatorId = $creatorId;
     }
+    
+    /**
+     * @return array
+     */
+    public function getCategories(): ?array
+    {
+        return $this->categories;
+    }
+    
+    /**
+     * @param array $categories
+     */
+    public function setCategories(array $categories): void
+    {
+        $this->categories = $categories;
+    }
+    
+    /**
+     * @return int
+     */
+    public function getParentId(): ?int
+    {
+        return $this->parentId;
+    }
+    
+    /**
+     * @param int $parentId
+     */
+    public function setParentId(int $parentId): void
+    {
+        $this->parentId = $parentId;
+    }
+    
+    /**
+     * @return array|null
+     */
+    public function getGalleries(): ?array
+    {
+        return $this->galleries;
+    }
+    
+    /**
+     * @param array $galleries
+     */
+    public function setGalleries(array $galleries): void
+    {
+        $this->galleries = $galleries;
+    }
+    
     
 }

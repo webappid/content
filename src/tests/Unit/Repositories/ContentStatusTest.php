@@ -20,11 +20,6 @@ class ContentStatusTest extends TestCase
         return $this->contentStatusRepository;
     }
     
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-    
     private function getDummy(): AddContentStatusParam
     {
         $dummy = new AddContentStatusParam();

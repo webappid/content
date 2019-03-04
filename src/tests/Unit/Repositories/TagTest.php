@@ -38,11 +38,6 @@ class TagTest extends TestCase
         return $this->tagRepository;
     }
     
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-    
     public function testAddTag(): void
     {
         $dummy = $this->getDummy();

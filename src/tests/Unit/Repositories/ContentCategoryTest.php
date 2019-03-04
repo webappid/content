@@ -46,12 +46,6 @@ class ContentCategoryTest extends TestCase
         return $this->contentCategoryRepository;
     }
     
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-    
-    
     private function createDummyContent(): ?Content
     {
         return $this->getContentTest()->createContent($this->getContentTest()->getDummy());
