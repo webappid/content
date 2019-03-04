@@ -37,6 +37,6 @@ class ContentStatusService
      */
     public function getContentStatus(ContentStatusRepository $contentStatusRepository): ?object
     {
-        return $this->container->call([$contentStatusRepository, "getContentStatus"]);
+        return $this->container->call([$contentStatusRepository, 'getContentStatus']);
     }
 }

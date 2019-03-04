@@ -35,11 +35,6 @@ class LanguageTest extends TestCase
         return $this->getContainer()->call([$this->languageRepository(), 'addLanguage'], ['addLanguageParam' => $dummyData]);
     }
     
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-    
     public function testAddLanguage(): void
     {
         $dummyData = $this->getDummy();

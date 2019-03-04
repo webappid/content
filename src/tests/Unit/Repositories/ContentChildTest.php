@@ -42,11 +42,6 @@ class ContentChildTest extends TestCase
         return $this->contentTest;
     }
     
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-    
     public function addContentChild(): AddContentChildParam
     {
         $this->resultContentParent = $this->createDummyContent();

@@ -43,11 +43,6 @@ class ContentGalleryTest extends TestCase
         return $this->contentTest;
     }
     
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-    
     public function getDummy(int $content_id, int $file_id): AddContentGalleryParam
     {
         $objContentGallery = new AddContentGalleryParam();

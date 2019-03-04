@@ -69,17 +69,17 @@ class AddCategoryParam
     }
     
     /**
-     * @return mixed
+     * @return int
      */
-    public function getUserId()
+    public function getUserId(): int
     {
         return $this->userId;
     }
     
     /**
-     * @param mixed $userId
+     * @param int $userId
      */
-    public function setUserId($userId): void
+    public function setUserId(int $userId): void
     {
         $this->userId = $userId;
     }

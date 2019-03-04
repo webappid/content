@@ -30,12 +30,6 @@ class CategoryTest extends TestCase
         return $this->categoryRepository;
     }
     
-    
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-    
     public function createCategory($dummyData): ?Category
     {
         return $this->getContainer()->call([$this->categoryRepository(), 'addCategory'], ['addCategoryParam' => $dummyData]);

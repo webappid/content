@@ -28,11 +28,6 @@ class ContentTagTest extends TestCase
         return $this->contentTagRepository;
     }
     
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-    
     private function getContentTest(): ?ContentTest
     {
         if ($this->contentTest == null) {
