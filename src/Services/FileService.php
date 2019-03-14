@@ -12,6 +12,7 @@ use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Auth;
 use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Repositories\MimeTypeRepository;
+use WebAppId\Content\Services\Params\AddFileParam;
 
 /**
  * Class FileService
@@ -44,26 +45,34 @@ class FileService
         return $this->loadFile($name, '0', $file);
     }
     
-    private function saveFile(string $path, $file, $upload, $mimeTypeService, $fileRepository)
+    private function saveFile(string $path, $file, $upload,
+                              MimeTypeRepository $mimeTypeRepository,
+                              FileRepository $fileRepository,
+                              AddFileParam $addFileParam)
     {
         $user_id = Auth::id() == null ? session('user_id') : Auth::id();
         
         $path = str_replace('../', '', $path);
         $filename = $file->store($path);
         $fileData = explode('/', $filename);
-        
-        $resultMimeType = $this->container->call([$mimeTypeService, 'getMimeByName'], ['name' => $file->getMimeType()]);
-        
-        $objFile = new \StdClass;
-        $objFile->name = $fileData[1];
-        $objFile->description = $upload->description;
-        $objFile->alt = $upload->alt;
-        $objFile->path = $path;
-        $objFile->mime_type_id = $resultMimeType[0]->id;
-        $objFile->user_id = $user_id;
-        $objFile->owner_id = $user_id;
-        
-        return $this->container->call([$fileRepository, 'addFile'], ['request' => $objFile]);
+    
+        $resultMimeType = $this->container->call([$mimeTypeRepository, 'getMimeByName'], ['name' => $file->getMimeType()]);
+    
+        if ($upload->description == null) {
+            $upload->description = '';
+        }
+        if ($upload->alt == null) {
+            $upload->alt = '';
+        }
+        $addFileParam->setName($fileData[1]);
+        $addFileParam->setDescription($upload->description);
+        $addFileParam->setAlt($upload->alt);
+        $addFileParam->setPath($path);
+        $addFileParam->setMimeTypeId($resultMimeType[0]->id);
+        $addFileParam->setUserId($user_id);
+        $addFileParam->setOwnerId($user_id);
+    
+        return $this->container->call([$fileRepository, 'addFile'], ['addFileParam' => $addFileParam]);
     }
     
     /**
@@ -78,15 +87,16 @@ class FileService
     public function store(string $path,
                           $upload,
                           MimeTypeRepository $mimeTypeRepository,
-                          FileRepository $fileRepository)
+                          FileRepository $fileRepository,
+                          AddFileParam $addFileParam)
     {
         $result = array();
         if ($upload->photos == (Array)$upload->photos) {
             for ($i = 0; $i < count($upload->photos); $i++) {
-                $result[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeRepository, $fileRepository);
+                $result[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeRepository, $fileRepository, $addFileParam);
             }
         } else {
-            $result[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeRepository, $fileRepository);
+            $result[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeRepository, $fileRepository, $addFileParam);
         }
         
         return $result;
