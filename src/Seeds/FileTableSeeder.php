@@ -32,10 +32,10 @@ class FileTableSeeder extends Seeder
         $user_id = '1';
         if ($container->call([$file, 'getFileCount']) == 0) {
     
-            $addFileParam->setName('default');
+            $addFileParam->setName('default.png');
             $addFileParam->setDescription('');
             $addFileParam->setAlt('');
-            $addFileParam->setPath('default.png');
+            $addFileParam->setPath('default');
             $addFileParam->setMimeTypeId('32');
             $addFileParam->setOwnerId($user_id);
             $addFileParam->setUserId($user_id);
