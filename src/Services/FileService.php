@@ -116,30 +116,42 @@ class FileService
         if ($fileData != null && file_exists($path . $fileData->path . '/' . $fileData->name)) {
             $imageName = $fileData->name;
             $path .= $fileData->path;
-            $mimeType = $fileData->mime;
+            $mimeType = $fileData->mime->name;
         } else {
             $imageName = 'default.jpg';
             $mimeType = 'image/png';
             $path .= 'default';
         }
+    
+        if ($mimeType != 'image/svg+xml') {
+            $image = new ImageResize($path . '/' . $imageName);
         
-        $image = new ImageResize($path . '/' . $imageName);
-        
-        if ($size !== '0') {
-            $sizeData = explode('x', $size);
-            if ($sizeData[0] == $sizeData[1]) {
-                $sourceWidth = $image->getSourceWidth();
-                $sourceHeight = $image->getSourceHeight();
-                if ($sourceWidth < $sourceHeight) {
-                    $image->resizeToWidth($sizeData[0]);
+            if ($size !== '0') {
+                $sizeData = explode('x', $size);
+                if ($sizeData[0] == $sizeData[1]) {
+                    $sourceWidth = $image->getSourceWidth();
+                    $sourceHeight = $image->getSourceHeight();
+                    if ($sourceWidth < $sourceHeight) {
+                        $image->resizeToWidth($sizeData[0]);
+                    } else {
+                        $image->resizeToHeight($sizeData[1]);
+                    }
                 } else {
-                    $image->resizeToHeight($sizeData[1]);
+                    $image->resizeToBestFit($sizeData[0], $sizeData[1]);
                 }
-            } else {
-                $image->resizeToBestFit($sizeData[0], $sizeData[1]);
             }
+            return response($image->output())->header('Cache-Control', 'max-age=2592000')->header('Content-Type', $mimeType);
+        } else {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="' . basename($path . '/' . $imageName) . '"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($path . '/' . $imageName));
+            readfile($path . '/' . $imageName);
+            exit;
         }
-        return response($image->output())->header('Cache-Control', 'max-age=2592000')->header('Content-Type', $mimeType);
     }
     
     /**
