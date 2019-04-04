@@ -123,7 +123,10 @@ class FileService
             $path .= 'default';
         }
     
-        if ($mimeType != 'image/svg+xml') {
+        if ($mimeType == 'image/svg+xml') {
+            readfile($path . '/' . $imageName);
+            exit;
+        } else {
             $image = new ImageResize($path . '/' . $imageName);
         
             if ($size !== '0') {
@@ -141,16 +144,6 @@ class FileService
                 }
             }
             return response($image->output())->header('Cache-Control', 'max-age=2592000')->header('Content-Type', $mimeType);
-        } else {
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="' . basename($path . '/' . $imageName) . '"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($path . '/' . $imageName));
-            readfile($path . '/' . $imageName);
-            exit;
         }
     }
     
