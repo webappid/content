@@ -112,34 +112,42 @@ class FileService
     private function loadFile($name, $size, $file)
     {
         $path = '../storage/app/';
+        if (!file_exists($path)) {
+            $path = 'storage/app/';
+        }
         $fileData = $this->container->call([$file, 'getFileByName'], ['name' => $name]);
         if ($fileData != null && file_exists($path . $fileData->path . '/' . $fileData->name)) {
             $imageName = $fileData->name;
             $path .= $fileData->path;
-            $mimeType = $fileData->mime;
+            $mimeType = $fileData->mime->name;
         } else {
             $imageName = 'default.jpg';
             $mimeType = 'image/png';
             $path .= 'default';
         }
+    
+        if ($mimeType == 'image/svg+xml') {
+            readfile($path . '/' . $imageName);
+            exit;
+        } else {
+            $image = new ImageResize($path . '/' . $imageName);
         
-        $image = new ImageResize($path . '/' . $imageName);
-        
-        if ($size !== '0') {
-            $sizeData = explode('x', $size);
-            if ($sizeData[0] == $sizeData[1]) {
-                $sourceWidth = $image->getSourceWidth();
-                $sourceHeight = $image->getSourceHeight();
-                if ($sourceWidth < $sourceHeight) {
-                    $image->resizeToWidth($sizeData[0]);
+            if ($size !== '0') {
+                $sizeData = explode('x', $size);
+                if ($sizeData[0] == $sizeData[1]) {
+                    $sourceWidth = $image->getSourceWidth();
+                    $sourceHeight = $image->getSourceHeight();
+                    if ($sourceWidth < $sourceHeight) {
+                        $image->resizeToWidth($sizeData[0]);
+                    } else {
+                        $image->resizeToHeight($sizeData[1]);
+                    }
                 } else {
-                    $image->resizeToHeight($sizeData[1]);
+                    $image->resizeToBestFit($sizeData[0], $sizeData[1]);
                 }
-            } else {
-                $image->resizeToBestFit($sizeData[0], $sizeData[1]);
             }
+            return response($image->output())->header('Cache-Control', 'max-age=2592000')->header('Content-Type', $mimeType);
         }
-        return response($image->output())->header('Cache-Control', 'max-age=2592000')->header('Content-Type', $mimeType);
     }
     
     /**
