@@ -112,6 +112,9 @@ class FileService
     private function loadFile($name, $size, $file)
     {
         $path = '../storage/app/';
+        if (!file_exists($path)) {
+            $path = 'storage/app/';
+        }
         $fileData = $this->container->call([$file, 'getFileByName'], ['name' => $name]);
         if ($fileData != null && file_exists($path . $fileData->path . '/' . $fileData->name)) {
             $imageName = $fileData->name;
