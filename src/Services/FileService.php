@@ -7,12 +7,15 @@
 
 namespace WebAppId\Content\Services;
 
-use Gumlet\ImageResize;
+use Gumlet\ImageResizeException;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Repositories\MimeTypeRepository;
 use WebAppId\Content\Services\Params\AddFileParam;
+use WebAppId\Content\Tools\ImageResize;
 
 /**
  * Class FileService
@@ -37,8 +40,8 @@ class FileService
      *
      * @param $name
      * @param FileRepository $file
-     * @return \Illuminate\Http\Response
-     * @throws \Gumlet\ImageResizeException
+     * @return Response
+     * @throws ImageResizeException
      */
     public function index(string $name, FileRepository $file)
     {
@@ -106,8 +109,8 @@ class FileService
      * @param $name
      * @param $size
      * @param FileRepository $file
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
-     * @throws \Gumlet\ImageResizeException
+     * @return ResponseFactory|Response
+     * @throws ImageResizeException
      */
     private function loadFile($name, $size, $file)
     {
@@ -156,8 +159,8 @@ class FileService
      * @param $name
      * @param $size
      * @param FileRepository $file
-     * @return \Illuminate\Http\Response
-     * @throws \Gumlet\ImageResizeException
+     * @return Response
+     * @throws ImageResizeException
      */
     public function show($name, $size, FileRepository $file)
     {
