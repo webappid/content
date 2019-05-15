@@ -16,6 +16,7 @@ use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Repositories\MimeTypeRepository;
 use WebAppId\Content\Services\Params\AddFileParam;
 use WebAppId\Content\Tools\ImageResize;
+use WebAppId\Content\Tools\SmartReadFile;
 
 /**
  * Class FileService
@@ -38,16 +39,26 @@ class FileService
     /**
      * Display a listing of the resource.
      *
-     * @param $name
+     * @param string $name
      * @param FileRepository $file
+     * @param SmartReadFile $smartReadFile
      * @return Response
      * @throws ImageResizeException
      */
-    public function index(string $name, FileRepository $file)
+    public function index(string $name, FileRepository $file, SmartReadFile $smartReadFile)
     {
-        return $this->loadFile($name, '0', $file);
+        return $this->loadFile($name, '0', $file, $smartReadFile);
     }
     
+    /**
+     * @param string $path
+     * @param $file
+     * @param $upload
+     * @param MimeTypeRepository $mimeTypeRepository
+     * @param FileRepository $fileRepository
+     * @param AddFileParam $addFileParam
+     * @return mixed
+     */
     private function saveFile(string $path, $file, $upload,
                               MimeTypeRepository $mimeTypeRepository,
                               FileRepository $fileRepository,
@@ -81,10 +92,11 @@ class FileService
     /**
      * Show the form for creating a new resource.
      *
-     * @param $path
+     * @param string $path
      * @param $upload
      * @param MimeTypeRepository $mimeTypeRepository
      * @param FileRepository $fileRepository
+     * @param AddFileParam $addFileParam
      * @return array
      */
     public function store(string $path,
@@ -93,46 +105,53 @@ class FileService
                           FileRepository $fileRepository,
                           AddFileParam $addFileParam)
     {
-        $result = array();
-        if ($upload->photos == (Array)$upload->photos) {
-            for ($i = 0; $i < count($upload->photos); $i++) {
-                $result[$i] = $this->saveFile($path, $upload->photos[$i], $upload, $mimeTypeRepository, $fileRepository, $addFileParam);
-            }
-        } else {
-            $result[0] = $this->saveFile($path, $upload->photos, $upload, $mimeTypeRepository, $fileRepository, $addFileParam);
-        }
-        
+        $result[0] = $this->saveFile($path, $upload->upload_file, $upload, $mimeTypeRepository, $fileRepository, $addFileParam);
         return $result;
     }
+    
+    /**
+     * @param string $path
+     * @param $upload
+     * @param MimeTypeRepository $mimeTypeRepository
+     * @param FileRepository $fileRepository
+     * @param AddFileParam $addFileParam
+     */
+    public function storeMulti(string $path,
+                               $upload,
+                               MimeTypeRepository $mimeTypeRepository,
+                               FileRepository $fileRepository,
+                               AddFileParam $addFileParam)
+    {
+        for ($i = 0; $i < count($upload->upload_files); $i++) {
+            $result[$i] = $this->saveFile($path, $upload->upload_files[$i], $upload, $mimeTypeRepository, $fileRepository, $addFileParam);
+        }
+    }
+    
     
     /**
      * @param $name
      * @param $size
      * @param FileRepository $file
-     * @return ResponseFactory|Response
+     * @param SmartReadFile $smartReadFile
+     * @return ResponseFactory|Response|void
      * @throws ImageResizeException
      */
-    private function loadFile($name, $size, $file)
+    private function loadFile($name, $size, $file, SmartReadFile $smartReadFile)
     {
         $path = '../storage/app/';
-        if (!file_exists($path)) {
-            $path = 'storage/app/';
-        }
         $fileData = $this->container->call([$file, 'getFileByName'], ['name' => $name]);
         if ($fileData != null && file_exists($path . $fileData->path . '/' . $fileData->name)) {
             $imageName = $fileData->name;
             $path .= $fileData->path;
-            $mimeType = $fileData->mime->name;
+            $mimeType = $fileData->mime;
         } else {
             $imageName = 'default.jpg';
             $mimeType = 'image/png';
             $path .= 'default';
         }
     
-        if ($mimeType == 'image/svg+xml') {
-            readfile($path . '/' . $imageName);
-            exit;
-        } else {
+        $isImage = strpos($mimeType, 'image');
+        if ($isImage) {
             $image = new ImageResize($path . '/' . $imageName);
         
             if ($size !== '0') {
@@ -150,6 +169,8 @@ class FileService
                 }
             }
             return response($image->output())->header('Cache-Control', 'max-age=2592000')->header('Content-Type', $mimeType);
+        } else {
+            return $smartReadFile->getFile($path . '/', $imageName);
         }
     }
     
@@ -159,11 +180,12 @@ class FileService
      * @param $name
      * @param $size
      * @param FileRepository $file
+     * @param SmartReadFile $smartReadFile
      * @return Response
      * @throws ImageResizeException
      */
-    public function show($name, $size, FileRepository $file)
+    public function show($name, $size, FileRepository $file, SmartReadFile $smartReadFile)
     {
-        return $this->loadFile($name, $size, $file);
+        return $this->loadFile($name, $size, $file, $smartReadFile);
     }
 }
