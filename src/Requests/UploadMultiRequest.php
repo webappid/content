@@ -10,10 +10,11 @@ namespace WebAppId\Content\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class UploadRequest
+ * Class UploadMultiRequest
  * @package WebAppId\Content\Requests
  */
-class UploadRequest extends FormRequest{
+class UploadMultiRequest extends FormRequest
+{
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -33,7 +34,7 @@ class UploadRequest extends FormRequest{
     {
         return [
             'name' => 'required|string|max:191',
-            'upload_file' => 'required'
+            'upload_files' => 'required|array'
         ];
     }
 }
