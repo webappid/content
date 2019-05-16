@@ -153,7 +153,7 @@ class FileService
         $isImage = strpos($mimeType, 'image');
         if ($isImage) {
             $image = new ImageResize($path . '/' . $imageName);
-        
+    
             if ($size !== '0') {
                 $sizeData = explode('x', $size);
                 if ($sizeData[0] == $sizeData[1]) {
@@ -170,7 +170,7 @@ class FileService
             }
             return response($image->output())->header('Cache-Control', 'max-age=2592000')->header('Content-Type', $mimeType);
         } else {
-            return $smartReadFile->getFile($path . '/', $imageName);
+            return $smartReadFile->getFile($path . '/' . $imageName, $imageName);
         }
     }
     
