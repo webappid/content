@@ -40,14 +40,15 @@ class FileService
      * Display a listing of the resource.
      *
      * @param string $name
+     * @param bool $download
      * @param FileRepository $file
      * @param SmartReadFile $smartReadFile
      * @return Response
      * @throws ImageResizeException
      */
-    public function index(string $name, FileRepository $file, SmartReadFile $smartReadFile)
+    public function index(string $name, FileRepository $file, SmartReadFile $smartReadFile, bool $download = false)
     {
-        return $this->loadFile($name, '0', $file, $smartReadFile);
+        return $this->loadFile($name, '0', $file, $smartReadFile, $download);
     }
     
     /**
@@ -132,11 +133,12 @@ class FileService
      * @param $name
      * @param $size
      * @param FileRepository $file
+     * @param bool $download
      * @param SmartReadFile $smartReadFile
      * @return ResponseFactory|Response|void
      * @throws ImageResizeException
      */
-    private function loadFile($name, $size, $file, SmartReadFile $smartReadFile)
+    private function loadFile($name, $size, $file, SmartReadFile $smartReadFile, bool $download = false)
     {
         $path = '../storage/app/';
         $fileData = $this->container->call([$file, 'getFileByName'], ['name' => $name]);
@@ -151,7 +153,7 @@ class FileService
         }
     
         $isImage = strpos($mimeType, 'image');
-        if ($isImage) {
+        if ($isImage && !$download) {
             $image = new ImageResize($path . '/' . $imageName);
     
             if ($size !== '0') {
@@ -186,6 +188,6 @@ class FileService
      */
     public function show($name, $size, FileRepository $file, SmartReadFile $smartReadFile)
     {
-        return $this->loadFile($name, $size, $file, $smartReadFile);
+        return $this->loadFile($name, $size, $file, $smartReadFile, false);
     }
 }
