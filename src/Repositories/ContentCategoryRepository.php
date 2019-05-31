@@ -7,6 +7,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\ContentCategory;
 use WebAppId\Content\Services\Params\AddContentCategoryParam;
@@ -17,7 +18,7 @@ use WebAppId\Content\Services\Params\AddContentCategoryParam;
  */
 class ContentCategoryRepository
 {
-    
+
     /**
      * Method To Add Data ContentCategory
      *
@@ -38,7 +39,7 @@ class ContentCategoryRepository
             return null;
         }
     }
-    
+
     /**
      * Method To Get Data ContentCategory
      *
@@ -50,7 +51,7 @@ class ContentCategoryRepository
     {
         return $contentCategory->findOrFail($id);
     }
-    
+
     /**
      * Method To Update ContentCategory
      *
@@ -63,7 +64,7 @@ class ContentCategoryRepository
     {
         try {
             $contentCategoryResult = $this->getContentCategoryById($id, $contentCategory);
-    
+
             if (!empty($contentCategoryResult)) {
                 $contentCategoryResult->content_id = $addContentCategoryParam->getContentId();
                 $contentCategoryResult->categories_id = $addContentCategoryParam->getCategoryId();
@@ -78,7 +79,7 @@ class ContentCategoryRepository
             return null;
         }
     }
-    
+
     /**
      * Method to Delete ContentCategory Data
      *
@@ -102,23 +103,23 @@ class ContentCategoryRepository
             return false;
         }
     }
-    
+
     /**
      * Get All ContentCategory
      *
      * @param ContentCategory $contentCategory
-     * @return \Illuminate\Database\Eloquent\Collection|ContentCategory[] $data
+     * @return Collection
      */
-    public function getAll(ContentCategory $contentCategory): ?object
+    public function getAll(ContentCategory $contentCategory): Collection
     {
         return $contentCategory->all();
     }
-    
+
     /**
      * @param $contentId
      * @param $categoryId
      * @param ContentCategory $contentCategory
-     * @return mixed
+     * @return ContentCategory|null
      */
     public function getContentCategoryByContentIdAndCategoryId(int $contentId,
                                                                int $categoryId,

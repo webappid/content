@@ -9,34 +9,24 @@
 namespace WebAppId\Content\Services;
 
 
-use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Collection;
 use WebAppId\Content\Models\ContentStatus;
 use WebAppId\Content\Repositories\ContentStatusRepository;
+use WebAppId\DDD\Services\BaseService;
 
 /**
  * Class ContentStatusService
  * @package WebAppId\Content\Services
  */
-class ContentStatusService
+class ContentStatusService extends BaseService
 {
-    
-    private $container;
-    
-    /**
-     * ContentStatusService constructor.
-     * @param Container $container
-     */
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
     
     /**
      * @param ContentStatusRepository $contentStatusRepository
      * @return ContentStatus|null
      */
-    public function getContentStatus(ContentStatusRepository $contentStatusRepository): ?object
+    public function getContentStatus(ContentStatusRepository $contentStatusRepository): ?Collection
     {
-        return $this->container->call([$contentStatusRepository, 'getContentStatus']);
+        return $this->getContainer()->call([$contentStatusRepository, 'getContentStatus']);
     }
 }

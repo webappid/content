@@ -13,6 +13,13 @@ use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\CategoryStatus;
 use WebAppId\Content\Services\Params\AddCategoryStatusParam;
 
+/**
+ * @author: Dyan Galih<dyan.galih@gmail.com>
+ * Date: 2019-05-31
+ * Time: 14:02
+ * Class CategoryStatusRepository
+ * @package WebAppId\Content\Repositories
+ */
 class CategoryStatusRepository
 {
     /**

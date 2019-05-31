@@ -8,33 +8,23 @@
 namespace WebAppId\Content\Services;
 
 use Gumlet\ImageResizeException;
-use Illuminate\Container\Container;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Repositories\MimeTypeRepository;
 use WebAppId\Content\Services\Params\AddFileParam;
+use WebAppId\Content\Services\Params\AddMimeTypeParam;
 use WebAppId\Content\Tools\ImageResize;
 use WebAppId\Content\Tools\SmartReadFile;
+use WebAppId\DDD\Services\BaseService;
 
 /**
  * Class FileService
  * @package WebAppId\Content\Services
  */
-class FileService
+class FileService extends BaseService
 {
-    
-    private $container;
-    
-    /**
-     * FileService constructor.
-     * @param Container $container
-     */
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
     
     /**
      * Display a listing of the resource.
@@ -70,9 +60,16 @@ class FileService
         $path = str_replace('../', '', $path);
         $filename = $file->store($path);
         $fileData = explode('/', $filename);
-    
-        $resultMimeType = $this->container->call([$mimeTypeRepository, 'getMimeByName'], ['name' => $file->getMimeType()]);
-    
+
+        $resultMimeType = $this->getContainer()->call([$mimeTypeRepository, 'getMimeByName'], ['name' => $file->getMimeType()]);
+
+        if ($resultMimeType == null) {
+            $addMimeTypeParam = new AddMimeTypeParam();
+            $addMimeTypeParam->setUserId($user_id);
+            $addMimeTypeParam->setName($file->getMimeType());
+            $resultMimeType = $this->getContainer()->call([$mimeTypeRepository, 'addMimeType'], ['addMimeTypeParam' => $addMimeTypeParam]);
+        }
+        
         if ($upload->description == null) {
             $upload->description = '';
         }
@@ -83,11 +80,11 @@ class FileService
         $addFileParam->setDescription($upload->description);
         $addFileParam->setAlt($upload->alt);
         $addFileParam->setPath($path);
-        $addFileParam->setMimeTypeId($resultMimeType[0]->id);
+        $addFileParam->setMimeTypeId($resultMimeType->id);
         $addFileParam->setUserId($user_id);
         $addFileParam->setOwnerId($user_id);
-    
-        return $this->container->call([$fileRepository, 'addFile'], ['addFileParam' => $addFileParam]);
+
+        return $this->getContainer()->call([$fileRepository, 'addFile'], ['addFileParam' => $addFileParam]);
     }
     
     /**
@@ -141,7 +138,7 @@ class FileService
     private function loadFile($name, $size, $file, SmartReadFile $smartReadFile, bool $download = false)
     {
         $path = '../storage/app/';
-        $fileData = $this->container->call([$file, 'getFileByName'], ['name' => $name]);
+        $fileData = $this->getContainer()->call([$file, 'getFileByName'], ['name' => $name]);
         if ($fileData != null && file_exists($path . $fileData->path . '/' . $fileData->name)) {
             $imageName = $fileData->name;
             $path .= $fileData->path;

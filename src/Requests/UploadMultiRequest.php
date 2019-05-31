@@ -7,30 +7,19 @@
 
 namespace WebAppId\Content\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use WebAppId\DDD\Requests\AbstractFormRequest;
 
 /**
  * Class UploadMultiRequest
  * @package WebAppId\Content\Requests
  */
-class UploadMultiRequest extends FormRequest
+class UploadMultiRequest extends AbstractFormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
     
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array
      */
-    public function rules()
+    function rules(): array
     {
         return [
             'name' => 'required|string|max:191',

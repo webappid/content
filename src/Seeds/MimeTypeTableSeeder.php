@@ -32,7 +32,7 @@ class MimeTypeTableSeeder extends Seeder
                         Container $container)
     {
         $user_id = '1';
-        
+
         $data = [
             ['name' => 'audio/aac',],
             ['name' => 'application/x-abiword',],
@@ -100,11 +100,11 @@ class MimeTypeTableSeeder extends Seeder
         DB::beginTransaction();
         $return = true;
         foreach ($data as $key) {
-    
+
             $addMimeTypeParam->setName($key['name']);
             $addMimeTypeParam->setUserId(1);
-    
-            if (count($container->call([$mimeTypeRepository, 'getMimeByName'], ['name' => $addMimeTypeParam->getName()])) == 0) {
+
+            if ($container->call([$mimeTypeRepository, 'getMimeByName'], ['name' => $addMimeTypeParam->getName()]) != null) {
                 $result = $container->call([$mimeTypeRepository, 'addMimeType'], ['addMimeTypeParam' => $addMimeTypeParam]);
                 if (!$result) {
                     $return = $result;
@@ -112,7 +112,7 @@ class MimeTypeTableSeeder extends Seeder
                 }
             }
         }
-        
+
         if ($return) {
             DB::commit();
         } else {

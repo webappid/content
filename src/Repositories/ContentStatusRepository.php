@@ -7,6 +7,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\ContentStatus;
 use WebAppId\Content\Services\Params\AddContentStatusParam;
@@ -17,7 +18,7 @@ use WebAppId\Content\Services\Params\AddContentStatusParam;
  */
 class ContentStatusRepository
 {
-    
+
     /**
      * @param AddContentStatusParam $addContentStatusParam
      * @param ContentStatus $contentStatus
@@ -35,18 +36,18 @@ class ContentStatusRepository
             report($e);
             return null;
         }
-    
+
     }
-    
+
     /**
      * @param ContentStatus $contentStatus
-     * @return object|null
+     * @return Collection
      */
-    public function getContentStatus(ContentStatus $contentStatus): ?object
+    public function getContentStatus(ContentStatus $contentStatus): Collection
     {
         return $contentStatus->get();
     }
-    
+
     /**
      * @param int $id
      * @param AddContentStatusParam $addContentStatusParam
@@ -72,7 +73,7 @@ class ContentStatusRepository
             return null;
         }
     }
-    
+
     /**
      * @param $id
      * @param ContentStatus $contentStatus
@@ -83,14 +84,14 @@ class ContentStatusRepository
     {
         return $contentStatus->find($id);
     }
-    
+
     /**
      * @param $name
      * @param ContentStatus $contentStatus
-     * @return object|null
+     * @return Collection
      */
     public function getContentStatusesByName(string $name,
-                                             ContentStatus $contentStatus): ?object
+                                             ContentStatus $contentStatus): Collection
     {
         return $contentStatus->where('name', $name)->get();
     }

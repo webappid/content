@@ -7,7 +7,9 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Services\Params\AddContentParam;
 
@@ -17,7 +19,10 @@ use WebAppId\Content\Services\Params\AddContentParam;
  */
 class ContentRepository
 {
-    
+    /**
+     * @param $content
+     * @return mixed
+     */
     private function getColumn($content)
     {
         return $content
@@ -42,7 +47,7 @@ class ContentRepository
                 'status.name AS status_name'
             );
     }
-    
+
     /**
      * Method To Add Data Content
      *
@@ -70,14 +75,14 @@ class ContentRepository
             $content->user_id = $addContentParam->getUserId();
             $content->creator_id = $addContentParam->getCreatorId();
             $content->save();
-            
+
             return $content;
         } catch (QueryException $e) {
             report($e);
             return null;
         }
     }
-    
+
     /**
      * @param AddContentParam $addContentParam
      * @param $code
@@ -116,7 +121,7 @@ class ContentRepository
             return null;
         }
     }
-    
+
     /**
      * @param int $category_id
      * @param Content $content
@@ -130,19 +135,19 @@ class ContentRepository
                 return $query->where('cc.categories_id', '=', $category_id);
             });
     }
-    
+
     /**
      * Get All Content
      *
-     * @param integer $category_id
      * @param Content $content
-     * @return object|null
+     * @param integer $category_id
+     * @return Collection
      */
-    public function getAll(Content $content, int $category_id = null): ?object
+    public function getAll(Content $content, int $category_id = null): Collection
     {
         return $this->getQueryAllByCategory($category_id, $content)->get();
     }
-    
+
     /**
      * @param integer $category_id
      * @param Content $content
@@ -152,7 +157,7 @@ class ContentRepository
     {
         return $this->getQueryAllByCategory($category_id, $content)->count();
     }
-    
+
     /**
      * @param $code
      * @param Content $content
@@ -162,7 +167,7 @@ class ContentRepository
     {
         return $content->where('code', $code)->first();
     }
-    
+
     /**
      * @param string $search
      * @param $category_id
@@ -194,35 +199,35 @@ class ContentRepository
                     ->orWhere('contents.user_id', 'LIKE', '%' . $search . '%');
             });
     }
-    
+
     /**
-     * @param string $search
-     * @param $category_id
+     * @param int $category_id
      * @param Content $content
-     * @return object|null
+     * @param string $search
+     * @return Collection
      */
-    public function getSearch(int $category_id, Content $content, string $search = ""): ?object
+    public function getSearch(int $category_id, Content $content, string $search = ""): Collection
     {
         return $this
             ->getDataForSearch($category_id, $content, $search)
             ->get();
     }
-    
+
     /**
-     * @param string $search
-     * @param $category_id
-     * @param string $paginate
+     * @param int $category_id
      * @param Content $content
-     * @return object|null
+     * @param int $paginate
+     * @param string $search
+     * @return LengthAwarePaginator
      */
-    public function getSearchPaginate(int $category_id, Content $content, int $paginate = 12, string $search = ""): ?object
+    public function getSearchPaginate(int $category_id, Content $content, int $paginate = 12, string $search = ""): LengthAwarePaginator
     {
-        
+
         return $this
             ->getDataForSearch($category_id, $content, $search)
             ->paginate($paginate);
     }
-    
+
     /**
      * @param string $search
      * @param $category_id
@@ -235,7 +240,7 @@ class ContentRepository
             ->getDataForSearch($category_id, $content, $search)
             ->count();
     }
-    
+
     /**
      * @param $code
      * @param Content $content
@@ -257,7 +262,7 @@ class ContentRepository
             return false;
         }
     }
-    
+
     /**
      * @param $code
      * @param $status_id
@@ -278,7 +283,7 @@ class ContentRepository
             }
         }
     }
-    
+
     /**
      * @param $keyword
      * @param $content
@@ -288,31 +293,31 @@ class ContentRepository
     {
         return $content::where('keyword', $keyword);
     }
-    
+
     /**
      * @param Content $content
      * @param $keyword
-     * @return mixed
+     * @return Collection
      */
-    public function getContentByKeyword(Content $content, string $keyword): ?object
+    public function getContentByKeyword(Content $content, string $keyword): Collection
     {
         return $this->getQueryContentByKeyword($keyword, $content)->get();
     }
-    
+
     /**
      * @param $keyword
      * @param Content $content
-     * @return mixed
+     * @return int
      */
     public function getContentByKeywordCount(string $keyword, Content $content): int
     {
         return $this->getQueryContentByKeyword($keyword, $content)->count();
     }
-    
+
     /**
      * @param $id
      * @param Content $content
-     * @return mixed
+     * @return Content|null
      */
     public function getContentById(int $id, Content $content): ?Content
     {
