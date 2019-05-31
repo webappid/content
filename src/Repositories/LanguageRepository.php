@@ -7,6 +7,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\Language;
 use WebAppId\Content\Services\Params\AddLanguageParam;
@@ -17,7 +18,7 @@ use WebAppId\Content\Services\Params\AddLanguageParam;
  */
 class LanguageRepository
 {
-    
+
     /**
      * @param AddLanguageParam $addLanguageParam
      * @param Language $language
@@ -31,23 +32,23 @@ class LanguageRepository
             $language->image_id = $addLanguageParam->getImageId();
             $language->user_id = $addLanguageParam->getUserId();
             $language->save();
-    
+
             return $language;
         } catch (QueryException $e) {
             report($e);
             return null;
         }
     }
-    
+
     /**
      * @param Language $language
-     * @return object|null
+     * @return Collection
      */
-    public function getLanguage(Language $language): ?object
+    public function getLanguage(Language $language): Collection
     {
         return $language->get();
     }
-    
+
     /**
      * @param $name
      * @param Language $language

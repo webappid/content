@@ -9,7 +9,7 @@
 namespace WebAppId\Content\Responses;
 
 
-class AbstractResponse
+abstract class AbstractResponse
 {
     private $status;
     private $message;

@@ -7,6 +7,7 @@
 
 namespace WebAppId\Content\Services;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -24,6 +25,7 @@ use WebAppId\Content\Services\Params\AddContentChildParam;
 use WebAppId\Content\Services\Params\AddContentGalleryParam;
 use WebAppId\Content\Services\Params\AddContentParam;
 use WebAppId\Content\Services\Params\ContentSearchParam;
+use WebAppId\DDD\Services\BaseService;
 
 /**
  * Class ContentService
@@ -31,7 +33,7 @@ use WebAppId\Content\Services\Params\ContentSearchParam;
  */
 class ContentService extends BaseService
 {
-    
+
     /**
      * @param TimeZoneRepository $timeZoneRepository
      * @param AddContentParam $addContentParam
@@ -39,68 +41,68 @@ class ContentService extends BaseService
      */
     private function getDefault(TimeZoneRepository $timeZoneRepository, AddContentParam $addContentParam): AddContentParam
     {
-        
+
         $user_id = Auth::id() == null ? session('user_id') : Auth::id();
-        
+
         if (session('timezone') == null) {
             $zone = "Asia/Jakarta";
         } else {
             $zone = session('timezone');
         }
-    
+
         $addContentParam->setUserId($user_id);
-    
+
         $timeZoneData = $this->getContainer()->call([$timeZoneRepository, 'getOneTimeZoneByName'], ['name' => $zone]);
-    
+
         $addContentParam->setCode(str::slug($addContentParam->getTitle()));
-    
+
         if ($addContentParam->getKeyword() == null) {
             $addContentParam->setKeyword($addContentParam->getTitle());
         }
-    
+
         if ($addContentParam->getOgTitle() == null) {
             $addContentParam->setOgTitle($addContentParam->getTitle() . ' - ' . env('APP_NAME'));
         }
-    
+
         if ($addContentParam->getOgDescription() == null) {
             $addContentParam->setOgDescription($addContentParam->getDescription());
         }
-    
+
         if ($addContentParam->getDefaultImage() == null) {
             $addContentParam->setDefaultImage(1);
         }
-    
+
         if ($addContentParam->getStatusId() == null) {
             $addContentParam->setStatusId(1);
         }
-    
+
         if ($addContentParam->getLanguageId() == null) {
             $addContentParam->setLanguageId(1);
         }
-    
+
         if ($addContentParam->getPublishDate() == null) {
             $addContentParam->setPublishDate(Carbon::now('UTC'));
         }
-    
+
         if ($addContentParam->getAdditionalInfo() == null) {
             $addContentParam->setAdditionalInfo("");
         }
-    
+
         if ($addContentParam->getTimeZoneId() == null) {
             $addContentParam->setTimeZoneId(isset($timeZoneData) ? $timeZoneData->id : 1);
         }
-    
+
         if ($addContentParam->getCreatorId() == null) {
             $addContentParam->setCreatorId($addContentParam->getUserId());
         }
-    
+
         if ($addContentParam->getOwnerId() == null) {
             $addContentParam->setOwnerId($addContentParam->getUserId());
         }
-    
+
         return $addContentParam;
     }
-    
+
     /**
      * @param AddContentParam $addContentParam
      * @param ContentRepository $contentRepository
@@ -119,25 +121,25 @@ class ContentService extends BaseService
                           ContentGalleryRepository $contentGalleryRepository,
                           ContentResponse $contentResponse): ?ContentResponse
     {
-    
+
         if ($addContentParam->getCategories() == null || count($addContentParam->getCategories()) == 0) {
             $contentResponse->setStatus(false);
             $contentResponse->setMessage("categories data required");
             return $contentResponse;
         }
-    
+
         $request = $this->getDefault($timeZoneRepository, $addContentParam);
-    
-    
+
+
         $content = $this->getContainer()->call([$contentRepository, 'addContent'], ['addContentParam' => $request]);
         if ($content == null) {
             $contentResponse->setStatus(false);
             $contentResponse->setMessage('Save content failed');
             return $contentResponse;
         }
-    
+
         $contentResponse->setContent($content);
-    
+
         if ($addContentParam->getParentId() != null) {
             $contentChildRequest = new AddContentChildParam();
             $contentChildRequest->setUserId($request->getUserId());
@@ -146,12 +148,12 @@ class ContentService extends BaseService
             $child = $this->getContainer()->call([$contentChildRepository, 'addContentChild'], ['addContentChildParam' => $contentChildRequest]);
             $contentResponse->setChild($child);
         }
-    
+
         $galleries = $request->getGalleries();
         if ($galleries == null) {
             $galleries = [];
         }
-    
+
         foreach ($galleries as $gallery) {
             $galleryData = new AddContentGalleryParam();
             $galleryData->setContentId($content->id);
@@ -159,12 +161,12 @@ class ContentService extends BaseService
             $galleryData->setFileId($gallery);
             $galleryData->setDescription('');
             $galleries[] = $this->getContainer()->call([$contentGalleryRepository, 'addContentGallery'], ['addContentGalleryParam' => $galleryData]);
-        
+
         }
-        $contentResponse->setGallery($galleries);
-    
+        $contentResponse->setGallery((object)$galleries);
+
         $categories = $request->getCategories();
-    
+
         foreach ($categories as $category) {
             $contentCategoryData = new AddContentCategoryParam();
             $contentCategoryData->setUserId($request->getUserId());
@@ -172,30 +174,30 @@ class ContentService extends BaseService
             $contentCategoryData->setCategoryId($category);
             $categories[] = $this->getContainer()->call([$contentCategoryRepository, 'addContentCategory'], ['addContentCategoryParam' => $contentCategoryData]);
         }
-    
+
         $contentResponse->setStatus(true);
-    
+
         $contentResponse->setMessage('store data success');
-        
+
         $contentResponse->setCategories($categories);
-    
+
         return $contentResponse;
     }
-    
+
     /**
      * @param ContentSearchParam $contentSearchParam
      * @param ContentRepository $contentRepository
      * @param CategoryRepository $categoryRepository
      * @param string $paginate
-     * @return object|null
+     * @return LengthAwarePaginator|null
      */
     public
     function showPaginate(ContentSearchParam $contentSearchParam,
                           ContentRepository $contentRepository,
                           CategoryRepository $categoryRepository,
-                          $paginate = '12'): ?object
+                          $paginate = '12'): ?LengthAwarePaginator
     {
-    
+
         $categoryName = $contentSearchParam->getCategory();
         if ($categoryName == null) {
             $categoryName = '';
@@ -205,10 +207,10 @@ class ContentService extends BaseService
             $search = '';
         }
         $categoryData = $this->getContainer()->call([$categoryRepository, 'getSearchOne'], ['search' => $categoryName]);
-    
+
         return $this->getContainer()->call([$contentRepository, 'getSearchPaginate'], ['search' => $search, 'category_id' => $categoryData->id, 'paginate' => $paginate]);
     }
-    
+
     /**
      * @param ContentSearchParam $contentSearchParam
      * @param ContentRepository $contentRepository
@@ -222,7 +224,7 @@ class ContentService extends BaseService
                   CategoryRepository $categoryRepository,
                   ContentSearchResponse $contentSearchResponse): ContentSearchResponse
     {
-    
+
         $categoryName = $contentSearchParam->getCategory();
         if ($categoryName == null) {
             $categoryName = '';
@@ -243,10 +245,10 @@ class ContentService extends BaseService
         } else {
             $contentSearchResponse->setStatus(false);
         }
-    
+
         return $contentSearchResponse;
     }
-    
+
     /**
      * @param string $code
      * @param ContentRepository $contentRepository
@@ -258,7 +260,7 @@ class ContentService extends BaseService
     {
         return $this->getContainer()->call([$contentRepository, 'getContentByCode'], ['code' => $code]);
     }
-    
+
     /**
      * @param string $code
      * @param AddContentParam $addContentParam
@@ -271,12 +273,12 @@ class ContentService extends BaseService
                            ContentRepository $contentRepository,
                            TimeZoneRepository $timeZoneRepository): ?Content
     {
-    
+
         $addContentParam = $this->getDefault($timeZoneRepository, $addContentParam);
-    
+
         return $this->getContainer()->call([$contentRepository, 'updateContentByCode'], ['addContentParam' => $addContentParam, 'code' => $code]);
     }
-    
+
     /**
      * @param string $code
      * @param ContentRepository $contentRepository
@@ -288,7 +290,7 @@ class ContentService extends BaseService
     {
         return $this->getContainer()->call([$contentRepository, 'deleteContentByCode'], ['code' => $code]);
     }
-    
+
     /**
      * @param string $code
      * @param ContentRepository $contentRepository
@@ -307,7 +309,7 @@ class ContentService extends BaseService
         $contentResponse->setChild($content->childs);
         return $contentResponse;
     }
-    
+
     /**
      * @param string $code
      * @param int $status

@@ -7,59 +7,32 @@
 
 namespace WebAppId\Content\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use WebAppId\DDD\Requests\AbstractFormRequest;
 
 /**
  * Class ContentGalleryRequest
  * @package WebAppId\Content\Requests
  */
-class ContentGalleryRequest extends FormRequest
+class ContentGalleryRequest extends AbstractFormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
-    
-    
-    /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array
      */
-    public function rules()
-    {
-        return [
-            'content_id' => 'required'
-        ];
-    }
-    
-    /**
-     *  Custom error message.
-     *
-     * @return array
-     */
-    
-    public function messages()
+    public function messages(): array
     {
         return [
             'content_id.required' => 'Content Id required'
         ];
     }
-    
+
+
     /**
-     *  Filters to be applied to the input.
-     *
-     * @return array
+     * @return mixed
      */
-    public function filters()
+    function rules(): array
     {
         return [
-        
+            'content_id' => 'required'
         ];
     }
 }

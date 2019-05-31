@@ -52,10 +52,10 @@ class MimeTypeRepository
      *
      * @param String $name
      * @param MimeType $mimeType
-     * @return Object $mimeType
+     * @return MimeType|null $mimeType
      */
-    public function getMimeByName(string $name, MimeType $mimeType): ?object
+    public function getMimeByName(string $name, MimeType $mimeType): ?MimeType
     {
-        return $mimeType->where('name', $name)->get();
+        return $mimeType->where('name', $name)->first();
     }
 }

@@ -7,6 +7,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use WebAppId\Content\Models\ContentChild;
@@ -18,7 +19,7 @@ use WebAppId\Content\Services\Params\AddContentChildParam;
  */
 class ContentChildRepository
 {
-    
+
     /**
      * @param AddContentChildParam $addContentChildParam
      * @param ContentChild $contentChild
@@ -27,7 +28,7 @@ class ContentChildRepository
     public function addContentChild(AddContentChildParam $addContentChildParam, ContentChild $contentChild): ?ContentChild
     {
         try {
-    
+
             $contentChild->content_parent_id = $addContentChildParam->getContentParentId();
             $contentChild->content_child_id = $addContentChildParam->getContentChildId();
             $contentChild->user_id = $addContentChildParam->getUserId();
@@ -38,27 +39,27 @@ class ContentChildRepository
             return null;
         }
     }
-    
+
     /**
      * @param $id
      * @param ContentChild $contentChild
-     * @return mixed
+     * @return ContentChild|null
      */
     public function getOne(int $id, ContentChild $contentChild): ?ContentChild
     {
         return $contentChild->findOrFail($id);
     }
-    
+
     /**
      * @param $id
      * @param ContentChild $contentChild
-     * @return mixed
+     * @return Collection
      */
-    public function getByContentParentId(int $id, ContentChild $contentChild): ?object
+    public function getByContentParentId(int $id, ContentChild $contentChild): Collection
     {
         return $contentChild->where('content_parent_id', $id)->get();
     }
-    
+
     /**
      * @param $id
      * @param ContentChild $contentChild
@@ -73,7 +74,7 @@ class ContentChildRepository
         }
         return true;
     }
-    
+
     /**
      * @param $id
      * @param ContentChild $contentChild
@@ -98,12 +99,12 @@ class ContentChildRepository
             return false;
         }
     }
-    
+
     /**
      * @param ContentChild $contentChild
-     * @return mixed
+     * @return Collection
      */
-    public function getAll(ContentChild $contentChild): ?object
+    public function getAll(ContentChild $contentChild): Collection
     {
         return $contentChild->get();
     }

@@ -11,17 +11,19 @@ use App\Http\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property  user_id
- * @property  name
- * @property  code
+ * @author: Dyan Galih<dyan.galih@gmail.com>
+ * Date: 2019-05-31
+ * Time: 13:53
+ * Class Category
+ * @package WebAppId\Content\Models
  */
 class Category extends Model
 {
     protected $table = 'categories';
     
     protected $hidden = ['created_at', 'updated_at'];
-    
-    protected $fillable = ['id', 'code', 'name'];
+
+    protected $fillable = ['id', 'code', 'name', 'user_id', 'parent_id'];
     
     public function contents()
     {

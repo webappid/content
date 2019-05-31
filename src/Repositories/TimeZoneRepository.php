@@ -7,6 +7,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\TimeZone;
 use WebAppId\Content\Services\Params\AddTimeZoneParam;
@@ -17,7 +18,7 @@ use WebAppId\Content\Services\Params\AddTimeZoneParam;
  */
 class TimeZoneRepository
 {
-    
+
     /**
      * @param AddTimeZoneParam $addTimeZoneParam
      * @param TimeZone $timezone
@@ -31,24 +32,24 @@ class TimeZoneRepository
             $timezone->minute = $addTimeZoneParam->getMinute();
             $timezone->user_id = $addTimeZoneParam->getUserId();
             $timezone->save();
-    
+
             return $timezone;
         } catch (QueryException $e) {
             report($e);
             return null;
         }
     }
-    
+
     /**
-     * @param $name
+     * @param string $name
      * @param TimeZone $timezone
-     * @return object|null
+     * @return Collection
      */
-    public function getTimeZoneByName(string $name, TimeZone $timezone): ?object
+    public function getTimeZoneByName(string $name, TimeZone $timezone): Collection
     {
         return $timezone->where('name', $name)->get();
     }
-    
+
     /**
      * @param $name
      * @param TimeZone $timezone
@@ -58,16 +59,16 @@ class TimeZoneRepository
     {
         return $timezone->where('name', '=', $name)->first();
     }
-    
+
     /**
      * @param TimeZone $timeZone
-     * @return
+     * @return Collection
      */
-    public function getAllTimeZone(TimeZone $timeZone): ?object
+    public function getAllTimeZone(TimeZone $timeZone): Collection
     {
         return $timeZone->get();
     }
-    
+
     /**
      * @param $id
      * @param TimeZone $timezone

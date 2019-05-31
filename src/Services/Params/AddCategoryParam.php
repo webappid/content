@@ -14,12 +14,27 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddCategoryParam
 {
+    /**
+     * @var string
+     */
     private $code;
+    /**
+     * @var string
+     */
     private $name;
-    private $statusId;
-    private $userId;
-    private $parentId;
-    
+    /**
+     * @var int
+     */
+    private $status_id;
+    /**
+     * @var int
+     */
+    private $user_id;
+    /**
+     * @var int|null
+     */
+    private $parent_id;
+
     /**
      * @return string
      */
@@ -27,7 +42,7 @@ class AddCategoryParam
     {
         return $this->code;
     }
-    
+
     /**
      * @param string $code
      */
@@ -35,7 +50,7 @@ class AddCategoryParam
     {
         $this->code = $code;
     }
-    
+
     /**
      * @return string
      */
@@ -43,7 +58,7 @@ class AddCategoryParam
     {
         return $this->name;
     }
-    
+
     /**
      * @param string $name
      */
@@ -51,53 +66,52 @@ class AddCategoryParam
     {
         $this->name = $name;
     }
-    
+
     /**
      * @return int
      */
     public function getStatusId(): int
     {
-        return $this->statusId;
+        return $this->status_id;
     }
-    
+
     /**
-     * @param int $statusId
+     * @param int $status_id
      */
-    public function setStatusId(int $statusId): void
+    public function setStatusId(int $status_id): void
     {
-        $this->statusId = $statusId;
+        $this->status_id = $status_id;
     }
-    
+
     /**
      * @return int
      */
     public function getUserId(): int
     {
-        return $this->userId;
+        return $this->user_id;
     }
-    
+
     /**
-     * @param int $userId
+     * @param int $user_id
      */
-    public function setUserId(int $userId): void
+    public function setUserId(int $user_id): void
     {
-        $this->userId = $userId;
+        $this->user_id = $user_id;
     }
-    
+
     /**
-     * @return int
+     * @return int|null
      */
     public function getParentId(): ?int
     {
-        return $this->parentId;
+        return $this->parent_id;
     }
-    
+
     /**
-     * @param int $parentId
+     * @param int|null $parent_id
      */
-    public function setParentId(int $parentId): void
+    public function setParentId(?int $parent_id): void
     {
-        $this->parentId = $parentId;
+        $this->parent_id = $parent_id;
     }
-    
 }

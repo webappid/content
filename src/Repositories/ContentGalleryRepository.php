@@ -7,6 +7,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\ContentGallery;
 use WebAppId\Content\Services\Params\AddContentGalleryParam;
@@ -17,7 +18,7 @@ use WebAppId\Content\Services\Params\AddContentGalleryParam;
  */
 class ContentGalleryRepository
 {
-    
+
     /**
      * @param AddContentGalleryParam $addContentGalleryParam
      * @param ContentGallery $contentGallery
@@ -37,17 +38,17 @@ class ContentGalleryRepository
             return null;
         }
     }
-    
+
     /**
      * @param $content_id
      * @param ContentGallery $contentGallery
-     * @return mixed
+     * @return Collection
      */
-    public function getContentGalleryByContentId(int $content_id, ContentGallery $contentGallery): ?object
+    public function getContentGalleryByContentId(int $content_id, ContentGallery $contentGallery): Collection
     {
         return $contentGallery->where('content_id', $content_id)->get();
     }
-    
+
     /**
      * @param $content_id
      * @param ContentGallery $contentGallery

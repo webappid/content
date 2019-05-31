@@ -9,29 +9,43 @@
 namespace WebAppId\Content\Responses;
 
 
+use WebAppId\Content\Models\Content;
+
 class ContentResponse extends AbstractResponse
 {
-    private $content;
-    private $child;
-    private $gallery;
-    private $categories;
-    
     /**
-     * @return object|null
+     * @var Content
      */
-    public function getContent(): ?object
+    private $content;
+    /**
+     * @var mixed
+     */
+    private $child;
+    /**
+     * @var object
+     */
+    private $gallery;
+    /**
+     * @var array
+     */
+    private $categories;
+
+    /**
+     * @return Content|null
+     */
+    public function getContent(): ?Content
     {
         return $this->content;
     }
-    
+
     /**
-     * @param object $content
+     * @param Content $content
      */
-    public function setContent(object $content): void
+    public function setContent(Content $content): void
     {
         $this->content = $content;
     }
-    
+
     /**
      * @return mixed
      */
@@ -39,31 +53,31 @@ class ContentResponse extends AbstractResponse
     {
         return $this->child;
     }
-    
+
     /**
-     * @param mixed $child
+     * @param $child
      */
     public function setChild($child): void
     {
         $this->child = $child;
     }
-    
+
     /**
-     * @return mixed
+     * @return object
      */
-    public function getGallery()
+    public function getGallery(): object
     {
         return $this->gallery;
     }
-    
+
     /**
-     * @param mixed $gallery
+     * @param object $gallery
      */
-    public function setGallery($gallery): void
+    public function setGallery(object $gallery): void
     {
         $this->gallery = $gallery;
     }
-    
+
     /**
      * @return array|null
      */
@@ -71,7 +85,7 @@ class ContentResponse extends AbstractResponse
     {
         return $this->categories;
     }
-    
+
     /**
      * @param array $categories
      */
@@ -79,5 +93,5 @@ class ContentResponse extends AbstractResponse
     {
         $this->categories = $categories;
     }
-    
+
 }

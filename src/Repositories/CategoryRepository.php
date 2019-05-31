@@ -7,6 +7,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\Category;
 use WebAppId\Content\Services\Params\AddCategoryParam;
@@ -32,7 +33,6 @@ class CategoryRepository
             $category->parent_id = $addCategoryParam->getParentId();
             $category->status_id = $addCategoryParam->getStatusId();
             $category->user_id = $addCategoryParam->getUserId();
-            
             $category->save();
             return $category;
         } catch (QueryException $e) {
@@ -40,7 +40,7 @@ class CategoryRepository
             return null;
         }
     }
-    
+
     /**
      * Method To Get Data Category
      *
@@ -52,7 +52,7 @@ class CategoryRepository
     {
         return $category->findOrFail($id);
     }
-    
+
     /**
      * Method To Update Category
      *
@@ -65,11 +65,11 @@ class CategoryRepository
     {
         try {
             $categoryData = $this->getOne($id, $category);
-            
+
             if (!empty($categoryData)) {
                 $categoryData->code = $addCategoryParam->getCode();
                 $categoryData->name = $addCategoryParam->getName();
-                if (isset($addCategoryParam->parent_id)) {
+                if (($addCategoryParam->getParentId() != null)) {
                     $category->parent_id = $addCategoryParam->getParentId();
                 } else {
                     $category->parent_id = null;
@@ -86,7 +86,7 @@ class CategoryRepository
             return null;
         }
     }
-    
+
     /**
      * Method to Delete category Data
      *
@@ -95,7 +95,7 @@ class CategoryRepository
      * @return bool
      * @throws \Exception
      */
-    
+
     public function deleteCategory(int $id, Category $category): bool
     {
         try {
@@ -105,33 +105,33 @@ class CategoryRepository
             return false;
         }
     }
-    
+
     /**
      * Get All Category
      *
      * @param Category $category
-     * @return Category|null
+     * @return Collection
      */
-    public function getAll(Category $category): ?object
+    public function getAll(Category $category): Collection
     {
         return $category->all();
     }
-    
+
     /**
      * Method For Get Data Category Use name like or code
      *
      * @param Category $category
      * @param String $search
-     * @return Category|null list category / empty object
+     * @return Collection list category / empty object
      */
-    public function getDataWhere(Category $category, $search = ""): ?object
+    public function getDataWhere(Category $category, $search = ""): Collection
     {
         return $category->where('code', $search)
             ->orWhere('name', 'LIKE', '%' . $search . '%')
             ->get();
     }
-    
-    
+
+
     /**
      * @param Category $category
      * @param $search
@@ -139,14 +139,14 @@ class CategoryRepository
      * @param $order_dir
      * @param $limit_start
      * @param $limit_length
-     * @return mixed
+     * @return Collection
      */
     public function getDatable(Category $category,
                                $search,
                                $order_column,
                                $order_dir,
                                $limit_start,
-                               $limit_length): ?object
+                               $limit_length): Collection
     {
         return $category
             ->select('id', 'code', 'name')
@@ -157,29 +157,29 @@ class CategoryRepository
             ->limit($limit_length)
             ->get();
     }
-    
+
     /**
      * @param string $search
      * @param Category $category
      * @return object
      */
-    private function getQueryCategory(string $search, Category $category): object
+    private function getQueryCategory(string $search, Category $category)
     {
         return $category->where('code', 'LIKE', '%' . $search . '%')
             ->orWhere('name', 'LIKE', '%' . $search . '%');
     }
-    
-    
+
+
     /**
      * @param Category $category
      * @param string $search
-     * @return object|null
+     * @return Collection
      */
-    public function getSearch(Category $category, string $search = ""): ?object
+    public function getSearch(Category $category, string $search = ""): Collection
     {
         return $this->getQueryCategory($search, $category)->get();
     }
-    
+
     /**
      * @param Category $category
      * @param string $search
@@ -189,7 +189,7 @@ class CategoryRepository
     {
         return $this->getQueryCategory($search, $category)->first();
     }
-    
+
     /**
      * @param Category $category
      * @return int
@@ -198,7 +198,7 @@ class CategoryRepository
     {
         return $category->count();
     }
-    
+
     /**
      * @param Category $category
      * @param string $search
@@ -208,7 +208,7 @@ class CategoryRepository
     {
         return $this->getQueryCategory($search, $category)->count();
     }
-    
+
     /**
      * @param string $code
      * @param Category $category
@@ -218,5 +218,5 @@ class CategoryRepository
     {
         return $category->where('code', $code)->first();
     }
-    
+
 }

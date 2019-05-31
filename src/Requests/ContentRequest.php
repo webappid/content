@@ -7,45 +7,19 @@
 
 namespace WebAppId\Content\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use WebAppId\DDD\Requests\AbstractFormRequest;
 
 /**
  * Class ContentRequest
  * @package WebAppId\Content\Requests
  */
-class ContentRequest extends FormRequest
+class ContentRequest extends AbstractFormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
     
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array
      */
-    public function rules()
-    {
-        return [
-            'title' => 'required|string|max:191|unique:contents,title',
-            'description' => 'required|string|max:191',
-            'content' => 'required|string'
-        ];
-    }
-    
-    /**
-     *  Custom error message.
-     *
-     * @return array
-     */
-    
-    public function messages()
+    public function messages(): array
     {
         return [
             'title.required' => 'Content title required',
@@ -54,5 +28,16 @@ class ContentRequest extends FormRequest
             'content.required' => 'Content should required'
         ];
     }
-    
+
+    /**
+     * @return array
+     */
+    function rules(): array
+    {
+        return [
+            'title' => 'required|string|max:191|unique:contents,title',
+            'description' => 'required|string|max:191',
+            'content' => 'required|string'
+        ];
+    }
 }

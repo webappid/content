@@ -7,48 +7,23 @@
 
 namespace WebAppId\Content\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use WebAppId\DDD\Requests\AbstractFormRequest;
 
 /**
  * Class CategoryRequest
  * @package WebAppId\Content\Requests
  */
-class CategoryRequest extends FormRequest
+class CategoryRequest extends AbstractFormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
-    
     
     /**
-     * Get the validation rules that apply to the request.
-     *
      * @return array
      */
-    public function rules()
+    public function messages(): array
     {
         return [
-            'name' => 'required|unique:categories|191'
-        ];
-    }
-    
-    /**
-     *  Custom error message.
-     *
-     * @return array
-     */
-    
-    public function messages()
-    {
-        return [
-            'name.required' => 'Cateogory name required',
-            'name.unique' => 'Cateogory name should unique'
+            'name.required' => 'Category name required',
+            'name.unique' => 'Category name should unique'
         ];
     }
     
@@ -62,5 +37,13 @@ class CategoryRequest extends FormRequest
         return [
             'name' => 'trim|escape'
         ];
+    }
+
+    /**
+     * @return mixed
+     */
+    function rules(): array
+    {
+        return ['name' => 'required|unique:categories|191'];
     }
 }
