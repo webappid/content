@@ -10,6 +10,7 @@ namespace WebAppId\Content\Services;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Repositories\CategoryRepository;
@@ -132,6 +133,7 @@ class ContentService extends BaseService
 
 
         $content = $this->getContainer()->call([$contentRepository, 'addContent'], ['addContentParam' => $request]);
+
         if ($content == null) {
             $contentResponse->setStatus(false);
             $contentResponse->setMessage('Save content failed');
@@ -145,8 +147,10 @@ class ContentService extends BaseService
             $contentChildRequest->setUserId($request->getUserId());
             $contentChildRequest->setContentParentId($request->getParentId());
             $contentChildRequest->setContentChildId($content->id);
-            $child = $this->getContainer()->call([$contentChildRepository, 'addContentChild'], ['addContentChildParam' => $contentChildRequest]);
-            $contentResponse->setChild($child);
+            $this->getContainer()->call([$contentChildRepository, 'addContentChild'], ['addContentChildParam' => $contentChildRequest]);
+            if (count($content->parents) > 0) {
+                $contentRepository->cleanCache($content->parents[0]['code']);
+            }
         }
 
         $galleries = $request->getGalleries();
@@ -191,11 +195,10 @@ class ContentService extends BaseService
      * @param string $paginate
      * @return LengthAwarePaginator|null
      */
-    public
-    function showPaginate(ContentSearchParam $contentSearchParam,
-                          ContentRepository $contentRepository,
-                          CategoryRepository $categoryRepository,
-                          $paginate = '12'): ?LengthAwarePaginator
+    public function showPaginate(ContentSearchParam $contentSearchParam,
+                                 ContentRepository $contentRepository,
+                                 CategoryRepository $categoryRepository,
+                                 $paginate = '12'): ?LengthAwarePaginator
     {
 
         $categoryName = $contentSearchParam->getCategory();
@@ -218,11 +221,10 @@ class ContentService extends BaseService
      * @param ContentSearchResponse $contentSearchResponse
      * @return mixed
      */
-    public
-    function show(ContentSearchParam $contentSearchParam,
-                  ContentRepository $contentRepository,
-                  CategoryRepository $categoryRepository,
-                  ContentSearchResponse $contentSearchResponse): ContentSearchResponse
+    public function show(ContentSearchParam $contentSearchParam,
+                         ContentRepository $contentRepository,
+                         CategoryRepository $categoryRepository,
+                         ContentSearchResponse $contentSearchResponse): ContentSearchResponse
     {
 
         $categoryName = $contentSearchParam->getCategory();
@@ -254,9 +256,8 @@ class ContentService extends BaseService
      * @param ContentRepository $contentRepository
      * @return Content|null
      */
-    public
-    function edit(string $code,
-                  ContentRepository $contentRepository): ?Content
+    public function edit(string $code,
+                         ContentRepository $contentRepository): ?Content
     {
         return $this->getContainer()->call([$contentRepository, 'getContentByCode'], ['code' => $code]);
     }
@@ -276,7 +277,13 @@ class ContentService extends BaseService
 
         $addContentParam = $this->getDefault($timeZoneRepository, $addContentParam);
 
-        return $this->getContainer()->call([$contentRepository, 'updateContentByCode'], ['addContentParam' => $addContentParam, 'code' => $code]);
+        $content = $this->getContainer()->call([$contentRepository, 'updateContentByCode'], ['addContentParam' => $addContentParam, 'code' => $code]);
+
+        if (count($content->parents) > 0) {
+            $contentRepository->cleanCache($content->parents[0]['code']);
+        }
+
+        return $content;
     }
 
     /**
@@ -284,9 +291,8 @@ class ContentService extends BaseService
      * @param ContentRepository $contentRepository
      * @return bool
      */
-    public
-    function destroy(string $code,
-                     ContentRepository $contentRepository): bool
+    public function destroy(string $code,
+                            ContentRepository $contentRepository): bool
     {
         return $this->getContainer()->call([$contentRepository, 'deleteContentByCode'], ['code' => $code]);
     }
@@ -297,16 +303,23 @@ class ContentService extends BaseService
      * @param ContentResponse $contentResponse
      * @return ContentResponse|null
      */
-    public
-    function detail(string $code,
-                    ContentRepository $contentRepository,
-                    ContentResponse $contentResponse): ?ContentResponse
+    public function detail(string $code,
+                           ContentRepository $contentRepository,
+                           ContentResponse $contentResponse): ?ContentResponse
     {
-        $content = $this->getContainer()->call([$contentRepository, 'getContentByCode'], ['code' => $code]);
-        $contentResponse->setStatus(true);
-        $contentResponse->setContent($content);
-        $contentResponse->setGallery($content->galleries);
-        $contentResponse->setChild($content->childs);
+        $contentResponse = Cache::rememberForever('content-' . $code, function () use ($contentRepository, $contentResponse, $code) {
+            $content = $this->getContainer()->call([$contentRepository, 'getContentByCode'], ['code' => $code]);
+            if ($content != null) {
+                $contentResponse->setStatus(true);
+                $contentResponse->setContent($content);
+                $contentResponse->setGallery($content->galleries);
+                $contentResponse->setChild($content->childs);
+            } else {
+                $contentResponse->setStatus(false);
+            }
+            return $contentResponse;
+        });
+
         return $contentResponse;
     }
 
@@ -316,10 +329,9 @@ class ContentService extends BaseService
      * @param ContentRepository $contentRepository
      * @return Content|null
      */
-    public
-    function updateContentStatusByCode(string $code,
-                                       int $status,
-                                       ContentRepository $contentRepository): ?Content
+    public function updateContentStatusByCode(string $code,
+                                              int $status,
+                                              ContentRepository $contentRepository): ?Content
     {
         return $this->getContainer()->call([$contentRepository, 'updateContentStatusByCode'], ['code' => $code, 'status_id' => $status]);
     }

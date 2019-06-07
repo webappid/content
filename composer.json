@@ -20,11 +20,11 @@
         }
     },
     "require": {
-        "php" : ">=7.1.0",
+      "php": ">=7.2.0",
         "illuminate/support": "~5.5",
         "doctrine/dbal": "^2.5",
         "gumlet/php-image-resize": "1.8.*",
-        "nesbot/carbon": "^1.33",
+      "nesbot/carbon": "1.38.*",
         "webappid/laravel-ddd": "1.0.1"
     },
     "require-dev": {

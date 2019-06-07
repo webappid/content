@@ -86,12 +86,13 @@ class ContentServiceTest extends TestCase
         
         $parentCode = $data->getCode();
         $parent = $this->getContainer()->call([$this->contentService(), 'detail'], ['code' => $parentCode]);
-        
+
         $dummy->setParentId($parent->getContent()->id);
+
         $this->getContainer()->call([$this->contentService(), 'store'], ['addContentParam' => $dummy]);
-        
+
         $parentChild = $this->getContainer()->call([$this->contentService(), 'detail'], ['code' => $parentCode]);
-        
+
         self::assertGreaterThanOrEqual(1, count($parentChild->getChild()));
     }
     

@@ -9,7 +9,9 @@
 namespace WebAppId\Content\Responses;
 
 
+use Illuminate\Database\Eloquent\Collection;
 use WebAppId\Content\Models\Content;
+use WebAppId\DDD\Responses\AbstractResponse;
 
 class ContentResponse extends AbstractResponse
 {
@@ -18,11 +20,11 @@ class ContentResponse extends AbstractResponse
      */
     private $content;
     /**
-     * @var mixed
+     * @var Collection | null
      */
     private $child;
     /**
-     * @var object
+     * @var object | null
      */
     private $gallery;
     /**
@@ -47,33 +49,33 @@ class ContentResponse extends AbstractResponse
     }
 
     /**
-     * @return mixed
+     * @return Collection|null
      */
-    public function getChild()
+    public function getChild(): ?Collection
     {
         return $this->child;
     }
 
     /**
-     * @param $child
+     * @param Collection $child
      */
-    public function setChild($child): void
+    public function setChild(Collection $child): void
     {
         $this->child = $child;
     }
 
     /**
-     * @return object
+     * @return object|null
      */
-    public function getGallery(): object
+    public function getGallery(): ?object
     {
         return $this->gallery;
     }
 
     /**
-     * @param object $gallery
+     * @param object|null $gallery
      */
-    public function setGallery(object $gallery): void
+    public function setGallery(?object $gallery): void
     {
         $this->gallery = $gallery;
     }
