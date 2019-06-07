@@ -9,6 +9,7 @@ namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Cache;
 use WebAppId\Content\Models\Category;
 use WebAppId\Content\Services\Params\AddCategoryParam;
 
@@ -34,6 +35,9 @@ class CategoryRepository
             $category->status_id = $addCategoryParam->getStatusId();
             $category->user_id = $addCategoryParam->getUserId();
             $category->save();
+            if ($addCategoryParam->getParentId() != null) {
+                $this->cleanCache($category->parent);
+            }
             return $category;
         } catch (QueryException $e) {
             report($e);
@@ -69,14 +73,13 @@ class CategoryRepository
             if (!empty($categoryData)) {
                 $categoryData->code = $addCategoryParam->getCode();
                 $categoryData->name = $addCategoryParam->getName();
-                if (($addCategoryParam->getParentId() != null)) {
-                    $category->parent_id = $addCategoryParam->getParentId();
-                } else {
-                    $category->parent_id = null;
-                }
+                $categoryData->parent_id = $addCategoryParam->getParentId();
                 $categoryData->status_id = $addCategoryParam->getStatusId();
                 $categoryData->user_id = $addCategoryParam->getUserId();
                 $categoryData->save();
+                if ($addCategoryParam->getParentId() != null) {
+                    $this->cleanCache($categoryData->parent);
+                }
                 return $categoryData;
             } else {
                 return null;
@@ -99,7 +102,11 @@ class CategoryRepository
     public function deleteCategory(int $id, Category $category): bool
     {
         try {
-            return $this->getOne($id, $category)->delete();
+            $category = $this->getOne($id, $category);
+            if ($category->parent_id != null) {
+                $this->cleanCache($category->parent);
+            }
+            return $category->delete();
         } catch (QueryException $e) {
             report($e);
             return false;
@@ -217,6 +224,17 @@ class CategoryRepository
     public function getCategoryByCode(string $code, Category $category): ?Category
     {
         return $category->where('code', $code)->first();
+    }
+
+    /**
+     * @param Category $category
+     */
+    private function cleanCache(Category $category): void
+    {
+        if ($category->parent_id != null) {
+            $this->cleanCache($category->parent);
+        }
+        Cache::forget('category-' . $category['code']);
     }
 
 }

@@ -9,11 +9,13 @@
 namespace WebAppId\Content\Responses;
 
 
+use WebAppId\DDD\Responses\AbstractResponse;
+
 class AbstractDataTableResponse extends AbstractResponse
 {
     private $recordsFiltered;
     private $recordsTotal;
-    
+
     /**
      * @return mixed
      */
@@ -21,7 +23,7 @@ class AbstractDataTableResponse extends AbstractResponse
     {
         return $this->recordsFiltered;
     }
-    
+
     /**
      * @param mixed $recordsFiltered
      */
@@ -29,7 +31,7 @@ class AbstractDataTableResponse extends AbstractResponse
     {
         $this->recordsFiltered = $recordsFiltered;
     }
-    
+
     /**
      * @return mixed
      */
@@ -37,7 +39,7 @@ class AbstractDataTableResponse extends AbstractResponse
     {
         return $this->recordsTotal;
     }
-    
+
     /**
      * @param mixed $recordsTotal
      */

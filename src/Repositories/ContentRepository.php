@@ -10,6 +10,7 @@ namespace WebAppId\Content\Repositories;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Services\Params\AddContentParam;
 
@@ -75,7 +76,6 @@ class ContentRepository
             $content->user_id = $addContentParam->getUserId();
             $content->creator_id = $addContentParam->getCreatorId();
             $content->save();
-
             return $content;
         } catch (QueryException $e) {
             report($e);
@@ -112,6 +112,7 @@ class ContentRepository
                 $result->owner_id = $addContentParam->getOwnerId();
                 $result->user_id = $addContentParam->getUserId();
                 $result->save();
+                $this->cleanCache($addContentParam->getCode());
                 return $result;
             } catch (QueryException $e) {
                 report($e);
@@ -253,6 +254,7 @@ class ContentRepository
         if ($content != null) {
             try {
                 $content->delete();
+                $this->cleanCache($code);
                 return true;
             } catch (QueryException $e) {
                 report($e);
@@ -276,6 +278,7 @@ class ContentRepository
             try {
                 $content->status_id = $status_id;
                 $content->save();
+                $this->cleanCache($code);
                 return $content;
             } catch (QueryException $e) {
                 report($e);
@@ -322,5 +325,13 @@ class ContentRepository
     public function getContentById(int $id, Content $content): ?Content
     {
         return $content->find($id);
+    }
+
+    /**
+     * @param string $code
+     */
+    public function cleanCache(string $code): void
+    {
+        Cache::forget('content-' . $code);
     }
 }
