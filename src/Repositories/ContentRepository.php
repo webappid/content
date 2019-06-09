@@ -24,7 +24,7 @@ class ContentRepository
      * @param $content
      * @return mixed
      */
-    private function getColumn($content)
+    protected function getColumn($content)
     {
         return $content
             ->select(
@@ -46,7 +46,11 @@ class ContentRepository
                 'time_zones.minute',
                 'time_zones.name AS time_zone_name',
                 'status.name AS status_name'
-            );
+            )
+            ->join('content_statuses AS status', 'contents.status_id', '=', 'status.id')
+            ->join('languages AS lang', 'contents.language_id', '=', 'lang.id')
+            ->join('content_categories AS cc', 'contents.id', '=', 'cc.content_id')
+            ->join('time_zones', 'time_zones.id', '=', 'contents.time_zone_id');
     }
 
     /**
@@ -178,10 +182,6 @@ class ContentRepository
     public function getDataForSearch(int $category_id, Content $content, string $search = "")
     {
         return $this->getColumn($content)
-            ->leftJoin('content_statuses AS status', 'contents.status_id', '=', 'status.id')
-            ->leftJoin('languages AS lang', 'contents.language_id', '=', 'lang.id')
-            ->leftJoin('content_categories AS cc', 'contents.id', '=', 'cc.content_id')
-            ->leftJoin('time_zones', 'time_zones.id', '=', 'contents.time_zone_id')
             ->where('cc.categories_id', '=', $category_id)
             ->where(function ($query) use ($search) {
                 $query
@@ -279,12 +279,12 @@ class ContentRepository
                 $content->status_id = $status_id;
                 $content->save();
                 $this->cleanCache($code);
-                return $content;
             } catch (QueryException $e) {
                 report($e);
-                return null;
             }
         }
+
+        return $content;
     }
 
     /**
