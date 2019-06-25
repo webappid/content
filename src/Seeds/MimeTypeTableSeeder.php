@@ -104,7 +104,7 @@ class MimeTypeTableSeeder extends Seeder
             $addMimeTypeParam->setName($key['name']);
             $addMimeTypeParam->setUserId(1);
 
-            if ($container->call([$mimeTypeRepository, 'getMimeByName'], ['name' => $addMimeTypeParam->getName()]) != null) {
+            if ($container->call([$mimeTypeRepository, 'getMimeByName'], ['name' => $addMimeTypeParam->getName()]) == null) {
                 $result = $container->call([$mimeTypeRepository, 'addMimeType'], ['addMimeTypeParam' => $addMimeTypeParam]);
                 if (!$result) {
                     $return = $result;
