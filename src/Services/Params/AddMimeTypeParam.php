@@ -14,8 +14,8 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddMimeTypeParam
 {
-    private $name;
-    private $userId;
+    public $name;
+    public $userId;
     
     /**
      * @return string

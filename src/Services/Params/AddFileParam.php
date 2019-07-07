@@ -14,13 +14,13 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddFileParam
 {
-    private $name;
-    private $description;
-    private $alt;
-    private $path;
-    private $mimeTypeId;
-    private $ownerId;
-    private $userId;
+    public $name;
+    public $description;
+    public $alt;
+    public $path;
+    public $mimeTypeId;
+    public $ownerId;
+    public $userId;
     
     /**
      * @return string

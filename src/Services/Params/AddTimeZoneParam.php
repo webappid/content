@@ -14,10 +14,10 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddTimeZoneParam
 {
-    private $code;
-    private $name;
-    private $minute;
-    private $userId;
+    public $code;
+    public $name;
+    public $minute;
+    public $userId;
     
     /**
      * @return string

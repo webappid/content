@@ -11,9 +11,9 @@ namespace WebAppId\Content\Services\Params;
 
 class AddContentChildParam
 {
-    private $contentParentId;
-    private $contentChildId;
-    private $userId;
+    public $contentParentId;
+    public $contentChildId;
+    public $userId;
     
     /**
      * @return int

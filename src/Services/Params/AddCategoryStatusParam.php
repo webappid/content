@@ -14,7 +14,7 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddCategoryStatusParam
 {
-    private $name;
+    public $name;
     
     /**
      * @return string

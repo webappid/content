@@ -11,8 +11,8 @@ namespace WebAppId\Content\Services\Params;
 
 class ContentSearchParam
 {
-    private $q;
-    private $category;
+    public $q;
+    public $category;
     
     /**
      * @return string|null

@@ -14,7 +14,7 @@ use WebAppId\DDD\Responses\AbstractResponse;
  */
 class ListResponse extends AbstractResponse
 {
-    private $list;
+    public $list;
 
     /**
      * @return mixed

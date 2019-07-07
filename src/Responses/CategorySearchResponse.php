@@ -11,7 +11,7 @@ namespace WebAppId\Content\Responses;
 
 class CategorySearchResponse extends AbstractDataTableResponse
 {
-    private $data;
+    public $data;
     
     /**
      * @return object

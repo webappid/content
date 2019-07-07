@@ -11,10 +11,10 @@ namespace WebAppId\Content\Services\Params;
 
 class AddContentGalleryParam
 {
-    private $contentId;
-    private $fileId;
-    private $userId;
-    private $description;
+    public $contentId;
+    public $fileId;
+    public $userId;
+    public $description;
     
     /**
      * @return int
