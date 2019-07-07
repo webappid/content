@@ -17,23 +17,23 @@ class AddCategoryParam
     /**
      * @var string
      */
-    private $code;
+    public $code;
     /**
      * @var string
      */
-    private $name;
+    public $name;
     /**
      * @var int
      */
-    private $status_id;
+    public $status_id;
     /**
      * @var int
      */
-    private $user_id;
+    public $user_id;
     /**
      * @var int|null
      */
-    private $parent_id;
+    public $parent_id;
 
     /**
      * @return string

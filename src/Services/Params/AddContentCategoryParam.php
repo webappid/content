@@ -14,9 +14,9 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddContentCategoryParam
 {
-    private $contentId;
-    private $categoryId;
-    private $userId;
+    public $contentId;
+    public $categoryId;
+    public $userId;
     
     /**
      * @return int

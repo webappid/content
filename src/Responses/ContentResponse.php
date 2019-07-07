@@ -18,19 +18,19 @@ class ContentResponse extends AbstractResponse
     /**
      * @var Content
      */
-    private $content;
+    public $content;
     /**
      * @var Collection | null
      */
-    private $child;
+    public $child;
     /**
      * @var object | null
      */
-    private $gallery;
+    public $gallery;
     /**
      * @var array
      */
-    private $categories;
+    public $categories;
 
     /**
      * @return Content|null

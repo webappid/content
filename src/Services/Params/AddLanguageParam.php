@@ -11,10 +11,10 @@ namespace WebAppId\Content\Services\Params;
 
 class AddLanguageParam
 {
-    private $code;
-    private $name;
-    private $imageId;
-    private $userId;
+    public $code;
+    public $name;
+    public $imageId;
+    public $userId;
     
     /**
      * @return string

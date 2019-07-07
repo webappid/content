@@ -14,25 +14,25 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddContentParam
 {
-    private $title;
-    private $code;
-    private $description;
-    private $keyword;
-    private $ogTitle;
-    private $ogDescription;
-    private $defaultImage;
-    private $statusId;
-    private $languageId;
-    private $publishDate;
-    private $additionalInfo;
-    private $content;
-    private $timeZoneId;
-    private $ownerId;
-    private $userId;
-    private $creatorId;
-    private $categories;
-    private $parentId;
-    private $galleries;
+    public $title;
+    public $code;
+    public $description;
+    public $keyword;
+    public $ogTitle;
+    public $ogDescription;
+    public $defaultImage;
+    public $statusId;
+    public $languageId;
+    public $publishDate;
+    public $additionalInfo;
+    public $content;
+    public $timeZoneId;
+    public $ownerId;
+    public $userId;
+    public $creatorId;
+    public $categories;
+    public $parentId;
+    public $galleries;
     
     /**
      * @return string

@@ -19,7 +19,7 @@ class SearchResponse extends AbstractResponse
     /**
      * @var Category|null
      */
-    private $category;
+    public $category;
 
     /**
      * @return Category|null

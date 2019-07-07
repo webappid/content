@@ -13,8 +13,8 @@ use WebAppId\DDD\Responses\AbstractResponse;
 
 class AbstractDataTableResponse extends AbstractResponse
 {
-    private $recordsFiltered;
-    private $recordsTotal;
+    public $recordsFiltered;
+    public $recordsTotal;
 
     /**
      * @return mixed
