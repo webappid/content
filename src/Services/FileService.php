@@ -142,14 +142,15 @@ class FileService extends BaseService
         if ($fileData != null && file_exists($path . $fileData->path . '/' . $fileData->name)) {
             $imageName = $fileData->name;
             $path .= $fileData->path;
-            $mimeType = $fileData->mime;
+            $mimeType = $fileData->mime->name;
         } else {
             $imageName = 'default.jpg';
             $mimeType = 'image/png';
             $path .= 'default';
         }
     
-        $isImage = strpos($mimeType, 'image');
+        $isImage = strpos($mimeType, 'image') !== false;
+        
         if ($isImage && !$download) {
             $image = new ImageResize($path . '/' . $imageName);
     
