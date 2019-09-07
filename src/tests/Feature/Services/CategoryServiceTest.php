@@ -72,4 +72,12 @@ class CategoryServiceTest extends TestCase
         Cache::forget($category['code']);
         self::assertTrue($result->isStatus());
     }
+
+    public function testGetSearchCategory()
+    {
+        $dummy = $this->getContainer()->call([$this->categoryRepositoryTest, 'getDummy']);
+        $this->categoryRepositoryTest->createCategory($dummy);
+        $result = $this->getContainer()->call([$this->categoryService, 'getSearchCategory'], ['q' => '']);
+        self::assertTrue($result->isStatus());
+    }
 }
