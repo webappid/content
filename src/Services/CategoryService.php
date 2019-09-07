@@ -81,4 +81,22 @@ class CategoryService extends BaseService
         }
         return $listResponse;
     }
+
+    /**
+     * @param string $q
+     * @param CategoryRepository $categoryRepository
+     * @param ListResponse $listResponse
+     * @return ListResponse
+     */
+    public function getSearchCategory(string $q, CategoryRepository $categoryRepository, ListResponse $listResponse): ListResponse
+    {
+        $list = $this->getContainer()->call([$categoryRepository, 'getSearch'], ['search' => $q]);
+        if (count($list) > 0) {
+            $listResponse->setStatus(true);
+            $listResponse->setList($list);
+        } else {
+            $listResponse->setStatus(false);
+        }
+        return $listResponse;
+    }
 }

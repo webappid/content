@@ -339,6 +339,6 @@ class AddContentParam
     {
         $this->galleries = $galleries;
     }
-    
-    
+
+
 }
