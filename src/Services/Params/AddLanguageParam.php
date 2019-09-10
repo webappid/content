@@ -11,10 +11,22 @@ namespace WebAppId\Content\Services\Params;
 
 class AddLanguageParam
 {
+    /**
+     * @var string
+     */
     public $code;
+    /**
+     * @var string
+     */
     public $name;
-    public $imageId;
-    public $userId;
+    /**
+     * @var int
+     */
+    public $image_id;
+    /**
+     * @var int
+     */
+    public $user_id;
     
     /**
      * @return string
@@ -53,15 +65,15 @@ class AddLanguageParam
      */
     public function getImageId(): int
     {
-        return $this->imageId;
+        return $this->image_id;
     }
     
     /**
-     * @param int $imageId
+     * @param int $image_id
      */
-    public function setImageId(int $imageId): void
+    public function setImageId(int $image_id): void
     {
-        $this->imageId = $imageId;
+        $this->image_id = $image_id;
     }
     
     /**
@@ -69,15 +81,15 @@ class AddLanguageParam
      */
     public function getUserId(): int
     {
-        return $this->userId;
+        return $this->user_id;
     }
     
     /**
-     * @param int $userId
+     * @param int $user_id
      */
-    public function setUserId(int $userId): void
+    public function setUserId(int $user_id): void
     {
-        $this->userId = $userId;
+        $this->user_id = $user_id;
     }
     
     

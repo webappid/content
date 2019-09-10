@@ -11,9 +11,21 @@ namespace WebAppId\Content\Services\Params;
 
 class AddContentGalleryParam
 {
-    public $contentId;
-    public $fileId;
-    public $userId;
+    /**
+     * @var int
+     */
+    public $content_id;
+    /**
+     * @var int
+     */
+    public $file_id;
+    /**
+     * @var int
+     */
+    public $user_id;
+    /**
+     * @var string
+     */
     public $description;
     
     /**
@@ -21,15 +33,15 @@ class AddContentGalleryParam
      */
     public function getContentId(): int
     {
-        return $this->contentId;
+        return $this->content_id;
     }
     
     /**
-     * @param int $contentId
+     * @param int $content_id
      */
-    public function setContentId(int $contentId): void
+    public function setContentId(int $content_id): void
     {
-        $this->contentId = $contentId;
+        $this->content_id = $content_id;
     }
     
     /**
@@ -37,15 +49,15 @@ class AddContentGalleryParam
      */
     public function getFileId(): int
     {
-        return $this->fileId;
+        return $this->file_id;
     }
     
     /**
-     * @param int $fileId
+     * @param int $file_id
      */
-    public function setFileId(int $fileId): void
+    public function setFileId(int $file_id): void
     {
-        $this->fileId = $fileId;
+        $this->file_id = $file_id;
     }
     
     /**
@@ -53,15 +65,15 @@ class AddContentGalleryParam
      */
     public function getUserId(): int
     {
-        return $this->userId;
+        return $this->user_id;
     }
     
     /**
-     * @param int $userId
+     * @param int $user_id
      */
-    public function setUserId(int $userId): void
+    public function setUserId(int $user_id): void
     {
-        $this->userId = $userId;
+        $this->user_id = $user_id;
     }
     
     /**

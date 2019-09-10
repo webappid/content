@@ -14,13 +14,34 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddFileParam
 {
+    /**
+     * @var string
+     */
     public $name;
+    /**
+     * @var string
+     */
     public $description;
+    /**
+     * @var string
+     */
     public $alt;
+    /**
+     * @var string
+     */
     public $path;
-    public $mimeTypeId;
-    public $ownerId;
-    public $userId;
+    /**
+     * @var int
+     */
+    public $mime_type_id;
+    /**
+     * @var int
+     */
+    public $owner_id;
+    /**
+     * @var int
+     */
+    public $user_id;
     
     /**
      * @return string
@@ -91,15 +112,15 @@ class AddFileParam
      */
     public function getMimeTypeId(): int
     {
-        return $this->mimeTypeId;
+        return $this->mime_type_id;
     }
     
     /**
-     * @param int $mimeTypeId
+     * @param int $mime_type_id
      */
-    public function setMimeTypeId(int $mimeTypeId): void
+    public function setMimeTypeId(int $mime_type_id): void
     {
-        $this->mimeTypeId = $mimeTypeId;
+        $this->mime_type_id = $mime_type_id;
     }
     
     /**
@@ -107,15 +128,15 @@ class AddFileParam
      */
     public function getOwnerId(): int
     {
-        return $this->ownerId;
+        return $this->owner_id;
     }
     
     /**
-     * @param int $ownerId
+     * @param int $owner_id
      */
-    public function setOwnerId(int $ownerId): void
+    public function setOwnerId(int $owner_id): void
     {
-        $this->ownerId = $ownerId;
+        $this->owner_id = $owner_id;
     }
     
     /**
@@ -123,15 +144,15 @@ class AddFileParam
      */
     public function getUserId(): int
     {
-        return $this->userId;
+        return $this->user_id;
     }
     
     /**
-     * @param int $userId
+     * @param int $user_id
      */
-    public function setUserId(int $userId): void
+    public function setUserId(int $user_id): void
     {
-        $this->userId = $userId;
+        $this->user_id = $user_id;
     }
     
     

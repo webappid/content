@@ -14,24 +14,81 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddContentParam
 {
+    /**
+     * @var string
+     */
     public $title;
+    /**
+     * @var string
+     */
     public $code;
+    /**
+     * @var string
+     */
     public $description;
+    /**
+     * @var string
+     */
     public $keyword;
-    public $ogTitle;
-    public $ogDescription;
-    public $defaultImage;
-    public $statusId;
-    public $languageId;
-    public $publishDate;
-    public $additionalInfo;
+    /**
+     * @var string
+     */
+    public $og_title;
+    /**
+     * @var string
+     */
+    public $og_description;
+    /**
+     * @var int
+     */
+    public $default_image;
+    /**
+     * @var int
+     */
+    public $status_id;
+    /**
+     * @var int
+     */
+    public $language_id;
+    /**
+     * @var string
+     */
+    public $publish_date;
+    /**
+     * @var string
+     */
+    public $additional_info;
+    /**
+     * @var string
+     */
     public $content;
-    public $timeZoneId;
-    public $ownerId;
-    public $userId;
-    public $creatorId;
+    /**
+     * @var int
+     */
+    public $time_zone_id;
+    /**
+     * @var int
+     */
+    public $owner_id;
+    /**
+     * @var int
+     */
+    public $user_id;
+    /**
+     * @var int
+     */
+    public $creator_id;
+    /**
+     * @var array
+     */
     public $categories;
-    public $parentId;
+    /**
+     * @var int
+     */
+    public $parent_id;
+    /**
+     * @var array
+     */
     public $galleries;
     
     /**
@@ -103,15 +160,15 @@ class AddContentParam
      */
     public function getOgTitle(): ?string
     {
-        return $this->ogTitle;
+        return $this->og_title;
     }
     
     /**
-     * @param string $ogTitle
+     * @param string $og_title
      */
-    public function setOgTitle(string $ogTitle): void
+    public function setOgTitle(string $og_title): void
     {
-        $this->ogTitle = $ogTitle;
+        $this->og_title = $og_title;
     }
     
     /**
@@ -119,15 +176,15 @@ class AddContentParam
      */
     public function getOgDescription(): ?string
     {
-        return $this->ogDescription;
+        return $this->og_description;
     }
     
     /**
-     * @param string $ogDescription
+     * @param string $og_description
      */
-    public function setOgDescription(string $ogDescription): void
+    public function setOgDescription(string $og_description): void
     {
-        $this->ogDescription = $ogDescription;
+        $this->og_description = $og_description;
     }
     
     /**
@@ -135,15 +192,15 @@ class AddContentParam
      */
     public function getDefaultImage(): ?int
     {
-        return $this->defaultImage;
+        return $this->default_image;
     }
     
     /**
-     * @param int $defaultImage
+     * @param int $default_image
      */
-    public function setDefaultImage(int $defaultImage): void
+    public function setDefaultImage(int $default_image): void
     {
-        $this->defaultImage = $defaultImage;
+        $this->default_image = $default_image;
     }
     
     /**
@@ -151,15 +208,15 @@ class AddContentParam
      */
     public function getStatusId(): ?int
     {
-        return $this->statusId;
+        return $this->status_id;
     }
     
     /**
-     * @param int $statusId
+     * @param int $status_id
      */
-    public function setStatusId(int $statusId): void
+    public function setStatusId(int $status_id): void
     {
-        $this->statusId = $statusId;
+        $this->status_id = $status_id;
     }
     
     /**
@@ -167,15 +224,15 @@ class AddContentParam
      */
     public function getLanguageId(): ?int
     {
-        return $this->languageId;
+        return $this->language_id;
     }
     
     /**
-     * @param int $languageId
+     * @param int $language_id
      */
-    public function setLanguageId(int $languageId): void
+    public function setLanguageId(int $language_id): void
     {
-        $this->languageId = $languageId;
+        $this->language_id = $language_id;
     }
     
     /**
@@ -183,15 +240,15 @@ class AddContentParam
      */
     public function getPublishDate(): ?string
     {
-        return $this->publishDate;
+        return $this->publish_date;
     }
     
     /**
-     * @param string $publishDate
+     * @param string $publish_date
      */
-    public function setPublishDate(string $publishDate): void
+    public function setPublishDate(string $publish_date): void
     {
-        $this->publishDate = $publishDate;
+        $this->publish_date = $publish_date;
     }
     
     /**
@@ -199,15 +256,15 @@ class AddContentParam
      */
     public function getAdditionalInfo(): ?string
     {
-        return $this->additionalInfo;
+        return $this->additional_info;
     }
     
     /**
-     * @param string $additionalInfo
+     * @param string $additional_info
      */
-    public function setAdditionalInfo(string $additionalInfo): void
+    public function setAdditionalInfo(string $additional_info): void
     {
-        $this->additionalInfo = $additionalInfo;
+        $this->additional_info = $additional_info;
     }
     
     
@@ -233,15 +290,15 @@ class AddContentParam
      */
     public function getTimeZoneId(): ?int
     {
-        return $this->timeZoneId;
+        return $this->time_zone_id;
     }
     
     /**
-     * @param int $timeZoneId
+     * @param int $time_zone_id
      */
-    public function setTimeZoneId(int $timeZoneId): void
+    public function setTimeZoneId(int $time_zone_id): void
     {
-        $this->timeZoneId = $timeZoneId;
+        $this->time_zone_id = $time_zone_id;
     }
     
     /**
@@ -249,15 +306,15 @@ class AddContentParam
      */
     public function getOwnerId(): ?int
     {
-        return $this->ownerId;
+        return $this->owner_id;
     }
     
     /**
-     * @param int $ownerId
+     * @param int $owner_id
      */
-    public function setOwnerId(int $ownerId): void
+    public function setOwnerId(int $owner_id): void
     {
-        $this->ownerId = $ownerId;
+        $this->owner_id = $owner_id;
     }
     
     /**
@@ -265,15 +322,15 @@ class AddContentParam
      */
     public function getUserId(): ?int
     {
-        return $this->userId;
+        return $this->user_id;
     }
     
     /**
-     * @param int $userId
+     * @param int $user_id
      */
-    public function setUserId(int $userId): void
+    public function setUserId(int $user_id): void
     {
-        $this->userId = $userId;
+        $this->user_id = $user_id;
     }
     
     /**
@@ -281,15 +338,15 @@ class AddContentParam
      */
     public function getCreatorId(): ?int
     {
-        return $this->creatorId;
+        return $this->creator_id;
     }
     
     /**
-     * @param int $creatorId
+     * @param int $creator_id
      */
-    public function setCreatorId(int $creatorId): void
+    public function setCreatorId(int $creator_id): void
     {
-        $this->creatorId = $creatorId;
+        $this->creator_id = $creator_id;
     }
     
     /**
@@ -313,15 +370,15 @@ class AddContentParam
      */
     public function getParentId(): ?int
     {
-        return $this->parentId;
+        return $this->parent_id;
     }
     
     /**
-     * @param int $parentId
+     * @param int $parent_id
      */
-    public function setParentId(int $parentId): void
+    public function setParentId(int $parent_id): void
     {
-        $this->parentId = $parentId;
+        $this->parent_id = $parent_id;
     }
     
     /**

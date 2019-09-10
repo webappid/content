@@ -11,7 +11,13 @@ namespace WebAppId\Content\Services\Params;
 
 class ContentSearchParam
 {
+    /**
+     * @var string
+     */
     public $q;
+    /**
+     * @var string
+     */
     public $category;
     
     /**

@@ -14,6 +14,9 @@ namespace WebAppId\Content\Responses;
  */
 class ContentSearchResponse extends AbstractDataTableResponse
 {
+    /**
+     * @var array
+     */
     public $data;
     
     /**

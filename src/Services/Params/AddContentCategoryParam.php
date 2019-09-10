@@ -14,24 +14,33 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddContentCategoryParam
 {
-    public $contentId;
-    public $categoryId;
-    public $userId;
+    /**
+     * @var int
+     */
+    public $content_id;
+    /**
+     * @var int
+     */
+    public $category_id;
+    /**
+     * @var int
+     */
+    public $user_id;
     
     /**
      * @return int
      */
     public function getContentId(): int
     {
-        return $this->contentId;
+        return $this->content_id;
     }
     
     /**
-     * @param int $contentId
+     * @param int $content_id
      */
-    public function setContentId(int $contentId): void
+    public function setContentId(int $content_id): void
     {
-        $this->contentId = $contentId;
+        $this->contentId = $content_id;
     }
     
     /**
@@ -39,15 +48,15 @@ class AddContentCategoryParam
      */
     public function getCategoryId(): int
     {
-        return $this->categoryId;
+        return $this->category_id;
     }
     
     /**
-     * @param int $categoryId
+     * @param int $category_id
      */
-    public function setCategoryId(int $categoryId): void
+    public function setCategoryId(int $category_id): void
     {
-        $this->categoryId = $categoryId;
+        $this->category_id = $category_id;
     }
     
     /**
@@ -55,15 +64,15 @@ class AddContentCategoryParam
      */
     public function getUserId(): int
     {
-        return $this->userId;
+        return $this->user_id;
     }
     
     /**
-     * @param int $userId
+     * @param int $user_id
      */
-    public function setUserId(int $userId): void
+    public function setUserId(int $user_id): void
     {
-        $this->userId = $userId;
+        $this->user_id = $user_id;
     }
     
     
