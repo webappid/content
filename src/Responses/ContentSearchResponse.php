@@ -8,6 +8,8 @@
 
 namespace WebAppId\Content\Responses;
 
+use Illuminate\Database\Eloquent\Collection;
+
 /**
  * Class ContentSearchResponse
  * @package WebAppId\Content\Responses
@@ -15,24 +17,24 @@ namespace WebAppId\Content\Responses;
 class ContentSearchResponse extends AbstractDataTableResponse
 {
     /**
-     * @var array
+     * @var Collection
      */
     public $data;
     
     /**
-     * @return array|null
+     * @return Collection
      */
-    public function getData(): ?array
+    public function getData(): ?Collection
     {
         return $this->data;
     }
-    
+
     /**
-     * @param array $data
+     * @param Collection $data
      */
-    public function setData(array $data): void
+    public function setData(Collection $data): void
     {
         $this->data = $data;
     }
-    
+
 }
