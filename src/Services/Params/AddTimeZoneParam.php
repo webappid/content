@@ -14,10 +14,22 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddTimeZoneParam
 {
+    /**
+     * @var string
+     */
     public $code;
+    /**
+     * @var string
+     */
     public $name;
+    /**
+     * @var string
+     */
     public $minute;
-    public $userId;
+    /**
+     * @var int
+     */
+    public $user_id;
     
     /**
      * @return string
@@ -72,15 +84,15 @@ class AddTimeZoneParam
      */
     public function getUserId(): int
     {
-        return $this->userId;
+        return $this->user_id;
     }
     
     /**
-     * @param int $userId
+     * @param int $user_id
      */
-    public function setUserId(int $userId): void
+    public function setUserId(int $user_id): void
     {
-        $this->userId = $userId;
+        $this->user_id = $user_id;
     }
     
     

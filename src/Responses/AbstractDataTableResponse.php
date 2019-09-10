@@ -13,7 +13,13 @@ use WebAppId\DDD\Responses\AbstractResponse;
 
 class AbstractDataTableResponse extends AbstractResponse
 {
+    /**
+     * @var int
+     */
     public $recordsFiltered;
+    /**
+     * @var int
+     */
     public $recordsTotal;
 
     /**

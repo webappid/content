@@ -11,9 +11,18 @@ namespace WebAppId\Content\Services\Params;
 
 class AddContentChildParam
 {
-    public $contentParentId;
-    public $contentChildId;
-    public $userId;
+    /**
+     * @var int
+     */
+    public $contentParent_id;
+    /**
+     * @var
+     */
+    public $content_child_id;
+    /**
+     * @var
+     */
+    public $user_id;
     
     /**
      * @return int
@@ -21,15 +30,15 @@ class AddContentChildParam
     public function getContentParentId(): int
     
     {
-        return $this->contentParentId;
+        return $this->contentParent_id;
     }
     
     /**
-     * @param int $contentParentId
+     * @param int $contentParent_id
      */
-    public function setContentParentId(int $contentParentId): void
+    public function setContentParentId(int $contentParent_id): void
     {
-        $this->contentParentId = $contentParentId;
+        $this->contentParent_id = $contentParent_id;
     }
     
     /**
@@ -37,15 +46,15 @@ class AddContentChildParam
      */
     public function getContentChildId(): int
     {
-        return $this->contentChildId;
+        return $this->content_child_id;
     }
     
     /**
-     * @param int $contentChildId
+     * @param int $content_child_id
      */
-    public function setContentChildId(int $contentChildId): void
+    public function setContentChildId(int $content_child_id): void
     {
-        $this->contentChildId = $contentChildId;
+        $this->content_child_id = $content_child_id;
     }
     
     /**
@@ -53,15 +62,15 @@ class AddContentChildParam
      */
     public function getUserId(): int
     {
-        return $this->userId;
+        return $this->user_id;
     }
     
     /**
-     * @param int $userId
+     * @param int $user_id
      */
-    public function setUserId(int $userId): void
+    public function setUserId(int $user_id): void
     {
-        $this->userId = $userId;
+        $this->user_id = $user_id;
     }
     
     

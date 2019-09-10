@@ -14,8 +14,14 @@ namespace WebAppId\Content\Services\Params;
  */
 class AddMimeTypeParam
 {
+    /**
+     * @var string
+     */
     public $name;
-    public $userId;
+    /**
+     * @var int
+     */
+    public $user_id;
     
     /**
      * @return string
@@ -38,15 +44,15 @@ class AddMimeTypeParam
      */
     public function getUserId(): int
     {
-        return $this->userId;
+        return $this->user_id;
     }
     
     /**
-     * @param int $userId
+     * @param int $user_id
      */
-    public function setUserId(int $userId): void
+    public function setUserId(int $user_id): void
     {
-        $this->userId = $userId;
+        $this->user_id = $user_id;
     }
     
     
