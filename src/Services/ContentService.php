@@ -312,6 +312,9 @@ class ContentService extends BaseService
             if ($content != null) {
                 $contentResponse->setStatus(true);
                 $contentResponse->setContent($content);
+                for ($i = 0; $i < count($content->galleries); $i++) {
+                    $content->galleries[$i]['mime_type'] = $content->galleries[$i]->mime->name;
+                }
                 $contentResponse->setGallery($content->galleries);
                 $contentResponse->setChild($content->childs);
             } else {
