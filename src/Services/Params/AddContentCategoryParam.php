@@ -40,7 +40,7 @@ class AddContentCategoryParam
      */
     public function setContentId(int $content_id): void
     {
-        $this->contentId = $content_id;
+        $this->content_id = $content_id;
     }
     
     /**
