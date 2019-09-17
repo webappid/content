@@ -158,26 +158,13 @@ class ContentService extends BaseService
             $galleries = [];
         }
 
-        foreach ($galleries as $gallery) {
-            $galleryData = new AddContentGalleryParam();
-            $galleryData->setContentId($content->id);
-            $galleryData->setUserId($request->getUserId());
-            $galleryData->setFileId($gallery);
-            $galleryData->setDescription('');
-            $galleries[] = $this->getContainer()->call([$contentGalleryRepository, 'addContentGallery'], ['addContentGalleryParam' => $galleryData]);
+        $galleries = $this->storeGalleries($galleries, $content, $request, $contentGalleryRepository);
 
-        }
         $contentResponse->setGallery((object)$galleries);
 
         $categories = $request->getCategories();
 
-        foreach ($categories as $category) {
-            $contentCategoryData = new AddContentCategoryParam();
-            $contentCategoryData->setUserId($request->getUserId());
-            $contentCategoryData->setContentId($content->id);
-            $contentCategoryData->setCategoryId($category);
-            $categories[] = $this->getContainer()->call([$contentCategoryRepository, 'addContentCategory'], ['addContentCategoryParam' => $contentCategoryData]);
-        }
+        $categories = $this->storeCategories($categories, $content, $request, $contentCategoryRepository);
 
         $contentResponse->setStatus(true);
 
@@ -186,6 +173,45 @@ class ContentService extends BaseService
         $contentResponse->setCategories($categories);
 
         return $contentResponse;
+    }
+
+    /**
+     * @param array $categories
+     * @param Content $content
+     * @param AddContentParam $request
+     * @param ContentCategoryRepository $contentCategoryRepository
+     * @return array
+     */
+    private function storeCategories(array $categories, Content $content, AddContentParam $request, ContentCategoryRepository $contentCategoryRepository): array
+    {
+        foreach ($categories as $category) {
+            $contentCategoryData = new AddContentCategoryParam();
+            $contentCategoryData->setUserId($request->getUserId());
+            $contentCategoryData->setContentId($content->id);
+            $contentCategoryData->setCategoryId($category);
+            $categories[] = $this->getContainer()->call([$contentCategoryRepository, 'addContentCategory'], ['addContentCategoryParam' => $contentCategoryData]);
+        }
+        return $categories;
+    }
+
+    /**
+     * @param array $galleries
+     * @param Content $content
+     * @param AddContentParam $request
+     * @param ContentGalleryRepository $contentGalleryRepository
+     * @return array
+     */
+    private function storeGalleries(array $galleries, Content $content, AddContentParam $request, ContentGalleryRepository $contentGalleryRepository): array
+    {
+        foreach ($galleries as $gallery) {
+            $galleryData = new AddContentGalleryParam();
+            $galleryData->setContentId($content->id);
+            $galleryData->setUserId($request->getUserId());
+            $galleryData->setFileId($gallery);
+            $galleryData->setDescription('');
+            $galleries[] = $this->getContainer()->call([$contentGalleryRepository, 'addContentGallery'], ['addContentGalleryParam' => $galleryData]);
+        }
+        return $galleries;
     }
 
     /**
@@ -267,23 +293,56 @@ class ContentService extends BaseService
      * @param AddContentParam $addContentParam
      * @param ContentRepository $contentRepository
      * @param TimeZoneRepository $timeZoneRepository
-     * @return Content|null
+     * @param ContentCategoryRepository $contentCategoryRepository
+     * @param ContentGalleryRepository $contentGalleryRepository
+     * @param ContentResponse $contentResponse
+     * @return ContentResponse|null
      */
     public function update(string $code,
                            AddContentParam $addContentParam,
                            ContentRepository $contentRepository,
-                           TimeZoneRepository $timeZoneRepository): ?Content
+                           TimeZoneRepository $timeZoneRepository,
+                           ContentCategoryRepository $contentCategoryRepository,
+                           ContentGalleryRepository $contentGalleryRepository,
+                           ContentResponse $contentResponse): ?ContentResponse
     {
 
         $addContentParam = $this->getDefault($timeZoneRepository, $addContentParam);
 
         $content = $this->getContainer()->call([$contentRepository, 'updateContentByCode'], ['addContentParam' => $addContentParam, 'code' => $code]);
 
-        if (count($content->parents) > 0) {
-            $contentRepository->cleanCache($content->parents[0]['code']);
+        if ($content != null) {
+            $this->getContainer()->call([$contentGalleryRepository, 'deleteContentGalleryByContentId'], ['content_id' => $content->id]);
+
+            $galleries = $addContentParam->getGalleries();
+            if ($galleries == null) {
+                $galleries = [];
+            }
+
+            $galleries = $this->storeGalleries($galleries, $content, $addContentParam, $contentGalleryRepository);
+
+            $contentResponse->setGallery((object)$galleries);
+            $contentResponse->setContent($content);
+
+            $categories = $addContentParam->getCategories();
+
+            $this->getContainer()->call([$contentCategoryRepository, 'deleteContentCategoryByContentId'], ['contentId' => $content->id]);
+
+            $categories = $this->storeCategories($categories, $content, $addContentParam, $contentCategoryRepository);
+
+            $contentResponse->setCategories($categories);
+
+            $contentResponse->setStatus(true);
+
+            if (count($content->parents) > 0) {
+                $contentRepository->cleanCache($content->parents[0]['code']);
+            }
+        } else {
+            $contentResponse->setStatus(false);
+            $contentResponse->setMessage('update failed');
         }
 
-        return $content;
+        return $contentResponse;
     }
 
     /**

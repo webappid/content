@@ -130,4 +130,15 @@ class ContentCategoryRepository
             ->where('categories_id', $categoryId)
             ->first();
     }
+
+    /**
+     * @param int $contentId
+     * @param ContentCategory $contentCategory
+     * @return bool|null
+     */
+    public function deleteContentCategoryByContentId(int $contentId,
+                                                     ContentCategory $contentCategory): ?bool
+    {
+        return $contentCategory->where('content_id', $contentId)->delete();
+    }
 }
