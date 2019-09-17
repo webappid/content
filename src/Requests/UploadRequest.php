@@ -33,7 +33,9 @@ class UploadRequest extends FormRequest{
     {
         return [
             'name' => 'required|string|max:191',
-            'upload_file' => 'required'
+            'upload_file' => 'required',
+            'alt' => 'string|max:191',
+            'description' => 'string|max:191'
         ];
     }
 }
