@@ -24,7 +24,7 @@
     "illuminate/support": "5.5.*|6.*",
     "doctrine/dbal": "^2.5",
     "gumlet/php-image-resize": "^1.9",
-    "nesbot/carbon": "1.38.*|2.22.*",
+    "nesbot/carbon": "2.22.*",
     "webappid/laravel-ddd": "^1.1"
   },
   "require-dev": {
