@@ -132,7 +132,7 @@ class ContentRepository
      * @param Content $content
      * @return mixed
      */
-    private function getQueryAllByCategory(int $category_id, Content $content)
+    private function getQueryAllByCategory(?int $category_id, Content $content)
     {
         return $content
             ->leftJoin('content_categories AS cc', 'contents.id', '=', 'cc.content_id')
