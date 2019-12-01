@@ -22,14 +22,12 @@ class CreateContentChildsTable extends Migration
     public function up()
     {
         Schema::create('content_childs', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('content_parent_id')
-                ->unsigned()
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('content_parent_id')
                 ->nullable(false);
-            $table->integer('content_child_id')
-                ->nullable(false)
-                ->unsigned();
-            $table->integer('user_id')
+            $table->unsignedBigInteger('content_child_id')
+                ->nullable(false);
+            $table->unsignedBigInteger('user_id')
                 ->nullable(false)
                 ->unsigned();
 

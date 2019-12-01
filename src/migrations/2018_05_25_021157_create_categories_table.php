@@ -5,9 +5,9 @@
  * @copyright @2018
  */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class CreateCategoriesTable
@@ -33,8 +33,7 @@ class CreateCategoriesTable extends Migration
                 ->nullable(false)
                 ->default('')
                 ->comment('category name');
-            $table->integer('user_id')
-                ->unsigned()
+            $table->unsignedBigInteger('user_id')
                 ->comment('who is the owner of the data');
             $table->timestamps();
 

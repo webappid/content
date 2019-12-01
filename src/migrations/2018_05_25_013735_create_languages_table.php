@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateLanguagesTable extends Migration
 {
@@ -23,11 +23,9 @@ class CreateLanguagesTable extends Migration
                 ->nullable(false)
                 ->default('')
                 ->comment('language name');
-            $table->integer('image_id')
-                ->nullable(true)
-                ->unsigned();
-            $table->integer('user_id')
-                ->unsigned();
+            $table->unsignedBigInteger('image_id')
+                ->nullable(true);
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
             /**

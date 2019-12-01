@@ -5,9 +5,9 @@
  * @copyright @2018
  */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class CreateTimeZonesTable
@@ -31,8 +31,7 @@ class CreateTimeZonesTable extends Migration
                 ->nullable(false);
             $table->integer('minute')
                 ->nullable(false);
-            $table->integer('user_id')
-                ->unsigned()
+            $table->unsignedBigInteger('user_id')
                 ->nullable(false);
             $table->timestamps();
 

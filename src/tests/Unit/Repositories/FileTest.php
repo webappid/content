@@ -28,6 +28,7 @@ class FileTest extends TestCase
         $addFileParam->setAlt($this->getFaker()->word);
         $addFileParam->setPath('');
         $addFileParam->setMimeTypeId($this->getFaker()->numberBetween(1, 61));
+        $addFileParam->setCreatorId(1);
         $addFileParam->setOwnerId(1);
         $addFileParam->setUserId(1);
         return $addFileParam;

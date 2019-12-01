@@ -37,6 +37,7 @@ class FileTableSeeder extends Seeder
             $addFileParam->setAlt('');
             $addFileParam->setPath('default');
             $addFileParam->setMimeTypeId('32');
+            $addFileParam->setCreatorId($user_id);
             $addFileParam->setOwnerId($user_id);
             $addFileParam->setUserId($user_id);
     
