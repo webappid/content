@@ -24,7 +24,7 @@ class CreateContentCategoriesTable extends Migration
     {
         Schema::create('content_categories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('content_id')
+            $table->unsignedBigInteger('content_id')
                     ->unsigned()
                     ->nullable(false);
             $table->integer('categories_id')

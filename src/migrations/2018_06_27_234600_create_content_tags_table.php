@@ -25,7 +25,7 @@ class CreateContentTagsTable extends Migration
     {
         Schema::create('content_tags', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('content_id')
+            $table->unsignedBigInteger('content_id')
                 ->unsigned()
                 ->comment('relation to content table');
             $table->unsignedBigInteger('tag_id')
