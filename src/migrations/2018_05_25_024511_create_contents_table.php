@@ -5,9 +5,9 @@
  * @copyright @2018
  */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class CreateContentsTable
@@ -23,7 +23,7 @@ class CreateContentsTable extends Migration
     public function up()
     {
         Schema::create('contents', function (Blueprint $table) {
-            $table->increments('id')
+            $table->bigIncrements('id')
                 ->comment('data for all content');
             $table->string('title')
                 ->nullable(false)
@@ -66,11 +66,11 @@ class CreateContentsTable extends Migration
                 ->comment('additional information of the content like term and condition ect');
             $table->text('content')
                 ->comment('content data');
-            $table->integer('owner_id')
-                ->unsigned()
-                ->comment('who is the owner of the files');
-            $table->integer('user_id')
-                ->unsigned()
+            $table->unsignedBigInteger('creator_id')
+                ->comment('who is the creator of the content');
+            $table->unsignedBigInteger('owner_id')
+                ->comment('who is the owner of the content');
+            $table->unsignedBigInteger('user_id')
                 ->comment('user change the files');
             $table->timestamps();
 
@@ -84,6 +84,11 @@ class CreateContentsTable extends Migration
                 ->onUpdate('cascade');
             
             $table->foreign('owner_id')
+                ->references('id')
+                ->on('users')
+                ->onUpdate('cascade');
+
+            $table->foreign('creator_id')
                 ->references('id')
                 ->on('users')
                 ->onUpdate('cascade');

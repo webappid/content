@@ -10,6 +10,7 @@ namespace WebAppId\Content\Repositories;
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\File;
 use WebAppId\Content\Services\Params\AddFileParam;
+use WebAppId\DDD\Tools\Lazy;
 
 /**
  * Class FileRepository
@@ -25,18 +26,21 @@ class FileRepository
     public function addFile(AddFileParam $addFileParam, File $file): ?File
     {
         try {
-            $file->name = $addFileParam->getName();
-            $file->description = $addFileParam->getDescription();
-            $file->alt = $addFileParam->getAlt();
-            $file->path = $addFileParam->getPath();
-            $file->mime_type_id = $addFileParam->getMimeTypeId();
-            $file->owner_id = $addFileParam->getOwnerId();
-            $file->user_id = $addFileParam->getUserId();
+//            $file->name = $addFileParam->getName();
+//            $file->description = $addFileParam->getDescription();
+//            $file->alt = $addFileParam->getAlt();
+//            $file->path = $addFileParam->getPath();
+//            $file->mime_type_id = $addFileParam->getMimeTypeId();
+//            $file->owner_id = $addFileParam->getOwnerId();
+//            $file->user_id = $addFileParam->getUserId();
+            $file = Lazy::copy($addFileParam, $file);
+
             $file->save();
             
             return $file;
         } catch (QueryException $e) {
             report($e);
+            dd($e);
             return null;
         }
     }

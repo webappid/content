@@ -5,9 +5,9 @@
  * @copyright @2018
  */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateFilesTable extends Migration
 {
@@ -19,7 +19,7 @@ class CreateFilesTable extends Migration
     public function up()
     {
         Schema::create('files', function (Blueprint $table) {
-            $table->increments('id')
+            $table->bigIncrements('id')
                 ->comment('Table to collect all files');
             $table->string('name')
                 ->index();
@@ -35,12 +35,12 @@ class CreateFilesTable extends Migration
             $table->integer('mime_type_id')
                 ->unsigned()
                 ->comment('Relation to mime type');
-            $table->integer('owner_id')
-                ->unsigned()
-                ->comment('who is the owner of the files');
-            $table->integer('user_id')
-                ->unsigned()
-                ->comment('user change the files');
+            $table->unsignedBigInteger('creator_id')
+                ->comment('who is creator the file');
+            $table->unsignedBigInteger('owner_id')
+                ->comment('who is the owner of the file');
+            $table->unsignedBigInteger('user_id')
+                ->comment('user change the file');
             $table->timestamps();
 
             /**
@@ -53,6 +53,11 @@ class CreateFilesTable extends Migration
                 ->onUpdate('cascade');
             
             $table->foreign('owner_id')
+                ->references('id')
+                ->on('users')
+                ->onUpdate('cascade');
+
+            $table->foreign('creator_id')
                 ->references('id')
                 ->on('users')
                 ->onUpdate('cascade');

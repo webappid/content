@@ -5,9 +5,9 @@
  * @copyright @2018
  */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class CreateTagsTable
@@ -23,12 +23,11 @@ class CreateTagsTable extends Migration
     public function up()
     {
         Schema::create('tags', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->string('name')
                 ->index()
                 ->nullable(false);
-            $table->integer('user_id')
-                ->unsigned()
+            $table->unsignedBigInteger('user_id')
                 ->comment('relation to users table');
             $table->timestamps();
 

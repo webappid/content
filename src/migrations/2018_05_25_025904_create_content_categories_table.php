@@ -5,9 +5,9 @@
  * @copyright @2018
  */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class CreateContentCategoriesTable
@@ -23,15 +23,14 @@ class CreateContentCategoriesTable extends Migration
     public function up()
     {
         Schema::create('content_categories', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
             $table->integer('content_id')
                     ->unsigned()
                     ->nullable(false);
             $table->integer('categories_id')
                     ->unsigned()
                     ->nullable(false);
-            $table->integer('user_id')
-                    ->unsigned()
+            $table->unsignedBigInteger('user_id')
                     ->nullable(false);
             $table->timestamps();
 
@@ -40,11 +39,13 @@ class CreateContentCategoriesTable extends Migration
                     ->on('contents')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
+
             $table->foreign('categories_id')
                     ->references('id')
                     ->on('categories')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
+
             $table->foreign('user_id')
                     ->references('id')
                     ->on('users')

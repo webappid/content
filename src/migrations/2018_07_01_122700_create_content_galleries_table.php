@@ -23,13 +23,10 @@ class CreateContentGalleriesTable extends Migration
     public function up()
     {
         Schema::create('content_galleries', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('content_id')
-                ->unsigned();
-            $table->integer('file_id')
-                ->unsigned();
-            $table->integer('user_id')
-                ->unsigned();
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('content_id');
+            $table->unsignedBigInteger('file_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('description',100)
                 ->comment('alt description')
                 ->nullable(false)

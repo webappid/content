@@ -35,6 +35,10 @@ class AddFileParam
      */
     public $mime_type_id;
     /**
+     * @var
+     */
+    public $creator_id;
+    /**
      * @var int
      */
     public $owner_id;
@@ -154,6 +158,20 @@ class AddFileParam
     {
         $this->user_id = $user_id;
     }
-    
-    
+
+    /**
+     * @return mixed
+     */
+    public function getCreatorId()
+    {
+        return $this->creator_id;
+    }
+
+    /**
+     * @param mixed $creator_id
+     */
+    public function setCreatorId($creator_id): void
+    {
+        $this->creator_id = $creator_id;
+    }
 }
