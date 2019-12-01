@@ -48,8 +48,7 @@ class CreateContentsTable extends Migration
                 ->nullable(false)
                 ->index()
                 ->comment('description for SEO');
-            $table->integer('default_image')
-                ->unsigned()
+            $table->unsignedBigInteger('default_image')
                 ->comment('relation to files table to get image');
             $table->integer('status_id')
                 ->unsigned()
