@@ -152,9 +152,7 @@ class FileService extends BaseService
             $mimeType = 'image/png';
             $path .= 'default';
         }
-
         $isImage = strpos($mimeType, 'image') !== false;
-
         if ($isImage && !$download) {
             $image = new ImageResize(storage_path() . '/app/' . $path . '/' . $imageName);
 
