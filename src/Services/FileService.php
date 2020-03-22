@@ -11,6 +11,7 @@ use Gumlet\ImageResizeException;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Repositories\MimeTypeRepository;
 use WebAppId\Content\Services\Params\AddFileParam;
@@ -25,7 +26,7 @@ use WebAppId\DDD\Services\BaseService;
  */
 class FileService extends BaseService
 {
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -40,7 +41,7 @@ class FileService extends BaseService
     {
         return $this->loadFile($name, '0', $file, $smartReadFile, $download);
     }
-    
+
     /**
      * @param string $path
      * @param $file
@@ -56,7 +57,7 @@ class FileService extends BaseService
                               AddFileParam $addFileParam)
     {
         $user_id = Auth::id() == null ? session('user_id') : Auth::id();
-        
+
         $path = str_replace('../', '', $path);
         $filename = $file->store($path);
         $fileData = explode('/', $filename);
@@ -69,24 +70,26 @@ class FileService extends BaseService
             $addMimeTypeParam->setName($file->getMimeType());
             $resultMimeType = $this->getContainer()->call([$mimeTypeRepository, 'addMimeType'], ['addMimeTypeParam' => $addMimeTypeParam]);
         }
-        
+
         if ($upload->description == null) {
             $upload->description = '';
         }
         if ($upload->alt == null) {
             $upload->alt = '';
         }
+
         $addFileParam->setName($fileData[1]);
         $addFileParam->setDescription($upload->description);
         $addFileParam->setAlt($upload->alt);
         $addFileParam->setPath($path);
         $addFileParam->setMimeTypeId($resultMimeType->id);
         $addFileParam->setUserId($user_id);
+        $addFileParam->setCreatorId($user_id);
         $addFileParam->setOwnerId($user_id);
 
         return $this->getContainer()->call([$fileRepository, 'addFile'], ['addFileParam' => $addFileParam]);
     }
-    
+
     /**
      * Show the form for creating a new resource.
      *
@@ -106,7 +109,7 @@ class FileService extends BaseService
         $result[0] = $this->saveFile($path, $upload->upload_file, $upload, $mimeTypeRepository, $fileRepository, $addFileParam);
         return $result;
     }
-    
+
     /**
      * @param string $path
      * @param $upload
@@ -124,8 +127,8 @@ class FileService extends BaseService
             $result[$i] = $this->saveFile($path, $upload->upload_files[$i], $upload, $mimeTypeRepository, $fileRepository, $addFileParam);
         }
     }
-    
-    
+
+
     /**
      * @param $name
      * @param $size
@@ -137,22 +140,24 @@ class FileService extends BaseService
      */
     private function loadFile($name, $size, $file, SmartReadFile $smartReadFile, bool $download = false)
     {
-        $path = '../storage/app/';
+        $path = '';
         $fileData = $this->getContainer()->call([$file, 'getFileByName'], ['name' => $name]);
-        if ($fileData != null && file_exists($path . $fileData->path . '/' . $fileData->name)) {
+
+        if ($fileData != null && Storage::exists($fileData->path . '/' . $fileData->name)) {
             $imageName = $fileData->name;
             $path .= $fileData->path;
-            $mimeType = $fileData->mime;
+            $mimeType = $fileData->mime->name;
         } else {
             $imageName = 'default.jpg';
             $mimeType = 'image/png';
             $path .= 'default';
         }
-    
-        $isImage = strpos($mimeType, 'image');
+
+        $isImage = strpos($mimeType, 'image') !== false;
+
         if ($isImage && !$download) {
-            $image = new ImageResize($path . '/' . $imageName);
-    
+            $image = new ImageResize(storage_path() . '/app/' . $path . '/' . $imageName);
+
             if ($size !== '0') {
                 $sizeData = explode('x', $size);
                 if ($sizeData[0] == $sizeData[1]) {
@@ -172,7 +177,7 @@ class FileService extends BaseService
             return $smartReadFile->getFile($path . '/' . $imageName, $imageName);
         }
     }
-    
+
     /**
      * Display the specified resource.
      *
