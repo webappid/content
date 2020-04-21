@@ -7,10 +7,10 @@
 
 namespace WebAppId\Content\Seeds;
 
-use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException as BindingResolutionExceptionAlias;
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\LanguageRepository;
-use WebAppId\Content\Services\Params\AddLanguageParam;
+use WebAppId\Content\Repositories\Requests\LanguageRepositoryRequest;
 
 /**
  * Class LanguageTableSeeder
@@ -21,14 +21,11 @@ class LanguageTableSeeder extends Seeder
     /**
      * Run the database seeds.
      *
-     * @param LanguageRepository $languages
-     * @param Container $container
-     * @param AddLanguageParam $addLanguageParam
+     * @param LanguageRepository $languageRepository
      * @return void
+     * @throws BindingResolutionExceptionAlias
      */
-    public function run(LanguageRepository $languages,
-                        Container $container,
-                        AddLanguageParam $addLanguageParam)
+    public function run(LanguageRepository $languageRepository)
     {
         $image_id = 1;
         $data = [
@@ -43,19 +40,20 @@ class LanguageTableSeeder extends Seeder
                 'image_id' => $image_id
             ]
         ];
-        
+
         foreach ($data as $key) {
-    
-            $addLanguageParam->setCode($key['code']);
-            $addLanguageParam->setName($key['name']);
-            $addLanguageParam->setImageId($key['image_id']);
-            $addLanguageParam->setUserId(1);
-            $addLanguageParam->setImageId(1);
-    
-            $resultLanguage = $container->call([$languages, 'getLanguageByName'], ['name' => $addLanguageParam->getName()]);
-            
+
+            $languageRepositoryRequest = $this->container->make(LanguageRepositoryRequest::class);
+
+            $languageRepositoryRequest->code = $key['code'];
+            $languageRepositoryRequest->name = $key['name'];
+            $languageRepositoryRequest->image_id = $key['image_id'];
+            $languageRepositoryRequest->user_id = 1;
+
+            $resultLanguage = $this->container->call([$languageRepository, 'getByName'], ['name' => $key['name']]);
+
             if ($resultLanguage === null) {
-                $container->call([$languages, 'addLanguage'], ['addLanguageParam' => $addLanguageParam]);
+                $this->container->call([$languageRepository, 'store'], compact('languageRepositoryRequest'));
             }
         }
     }

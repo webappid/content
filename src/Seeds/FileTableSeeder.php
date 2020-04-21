@@ -10,7 +10,7 @@ namespace WebAppId\Content\Seeds;
 use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\FileRepository;
-use WebAppId\Content\Services\Params\AddFileParam;
+use WebAppId\Content\Repositories\Requests\FileRepositoryRequest;
 
 /**
  * Class FileTableSeeder
@@ -22,26 +22,26 @@ class FileTableSeeder extends Seeder
      * Run the database seeds.
      *
      * @param FileRepository $file
-     * @param AddFileParam $addFileParam
+     * @param FileRepositoryRequest $fileRepositoryRequest
      * @param Container $container
      * @return void
      */
-    public function run(FileRepository $file, AddFileParam $addFileParam, Container $container)
+    public function run(FileRepository $file, FileRepositoryRequest $fileRepositoryRequest, Container $container)
     {
         //
         $user_id = '1';
-        if ($container->call([$file, 'getFileCount']) == 0) {
-    
-            $addFileParam->setName('default.png');
-            $addFileParam->setDescription('');
-            $addFileParam->setAlt('');
-            $addFileParam->setPath('default');
-            $addFileParam->setMimeTypeId('32');
-            $addFileParam->setCreatorId($user_id);
-            $addFileParam->setOwnerId($user_id);
-            $addFileParam->setUserId($user_id);
-    
-            $container->call([$file, 'addFile'], ['addFileParam' => $addFileParam]);
+        if ($container->call([$file, 'getCount']) == 0) {
+
+            $fileRepositoryRequest->name = 'default.png';
+            $fileRepositoryRequest->description = '';
+            $fileRepositoryRequest->alt = '';
+            $fileRepositoryRequest->path = 'default';
+            $fileRepositoryRequest->mime_type_id = '32';
+            $fileRepositoryRequest->creator_id = $user_id;
+            $fileRepositoryRequest->owner_id = $user_id;
+            $fileRepositoryRequest->user_id = $user_id;
+
+            $container->call([$file, 'store'], compact('fileRepositoryRequest'));
         }
     }
 }

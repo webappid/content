@@ -6,11 +6,10 @@
 
 namespace WebAppId\Content\Seeds;
 
-use Illuminate\Container\Container;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use WebAppId\Content\Repositories\Requests\TimeZoneRepositoryRequest;
 use WebAppId\Content\Repositories\TimeZoneRepository;
-use WebAppId\Content\Services\Params\AddTimeZoneParam;
 
 /**
  * Class TimeZoneTableSeeder
@@ -22,17 +21,14 @@ class TimeZoneTableSeeder extends Seeder
      * Run the database seeds.
      *
      * @param TimeZoneRepository $timeZoneRepository
-     * @param Container $container
-     * @param AddTimeZoneParam $addTimeZoneParam
      * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function run(TimeZoneRepository $timeZoneRepository,
-                        Container $container,
-                        AddTimeZoneParam $addTimeZoneParam)
+    public function run(TimeZoneRepository $timeZoneRepository)
     {
         $user_id = '1';
-        
-        $data = array(
+
+        $timeZones = array(
             array(
                 "code" => "CI",
                 "name" => "Africa/Abidjan",
@@ -2989,23 +2985,26 @@ class TimeZoneTableSeeder extends Seeder
                 "minute" => "-0"
             ),
         );
-        
+
         DB::beginTransaction();
         $return = true;
-        for ($i = 0; $i < count($data); $i++) {
-    
-            $addTimeZoneParam->setCode($data[$i]['code'] == "" ? $data[$i]['name'] : $data[$i]['code']);
-            $addTimeZoneParam->setName($data[$i]['name']);
-            $addTimeZoneParam->setMinute($data[$i]['minute']);
-            $addTimeZoneParam->setUserId($user_id);
-    
-            if (count($container->call([$timeZoneRepository, 'getTimeZoneByName'], ['name' => $addTimeZoneParam->getName()])) == 0) {
-                $result = $container->call([$timeZoneRepository, 'addTimeZone'], ['addTimeZoneParam' => $addTimeZoneParam]);
+        foreach ($timeZones as $timezone) {
+
+            $timeZoneRepositoryRequest = $this->container->make(TimeZoneRepositoryRequest::class);
+
+            $timeZoneRepositoryRequest->code = $timezone['code'] == "" ? $timezone['name'] : $timezone['code'];
+            $timeZoneRepositoryRequest->name = $timezone['name'];
+            $timeZoneRepositoryRequest->minute = $timezone['minute'];
+            $timeZoneRepositoryRequest->user_id = $user_id;
+
+            if ($this->container->call([$timeZoneRepository, 'getByName'], ['name' => $timezone['name']])) {
+                $result = $this->container->call([$timeZoneRepository, 'store'], compact('timeZoneRepositoryRequest'));
                 if (!$result) {
                     $return = $result;
                     break;
                 }
             }
+
         }
         if ($return) {
             DB::commit();

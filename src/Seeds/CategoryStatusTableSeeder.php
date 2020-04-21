@@ -9,9 +9,10 @@
 namespace WebAppId\Content\Seeds;
 
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\CategoryStatusRepository;
-use WebAppId\Content\Services\Params\AddCategoryStatusParam;
+use WebAppId\Content\Repositories\Requests\CategoryStatusRepositoryRequest;
 
 /**
  * Class CategoryStatusTableSeeder
@@ -21,22 +22,22 @@ class CategoryStatusTableSeeder extends Seeder
 {
     /**
      * @param CategoryStatusRepository $categoryStatusRepository
-     * @param AddCategoryStatusParam $addCategoryStatusParam
+     * @throws BindingResolutionException
      */
-    public function run(CategoryStatusRepository $categoryStatusRepository,
-                        AddCategoryStatusParam $addCategoryStatusParam)
+    public function run(CategoryStatusRepository $categoryStatusRepository)
     {
         $categoryStatuses = array(
             'active',
             'not active'
         );
-        
+
         foreach ($categoryStatuses as $categoryStatus) {
             $result = $this->container->call([$categoryStatusRepository, 'getByName'], ['name' => $categoryStatus]);
             if ($result == null) {
-                $addCategoryStatusParam->setName($categoryStatus);
-    
-                $this->container->call([$categoryStatusRepository, 'addCategoryStatus'], ['addCategoryStatusParam' => $addCategoryStatusParam]);
+                $categoryStatusRepositoryRequest = $this->container->make(CategoryStatusRepositoryRequest::class);
+                $categoryStatusRepositoryRequest->name = $categoryStatus;
+
+                $this->container->call([$categoryStatusRepository, 'store'], compact('categoryStatusRepositoryRequest'));
             }
         }
     }

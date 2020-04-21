@@ -2,12 +2,13 @@
 namespace WebAppId\Content;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use WebAppId\Content\Commands\SeedCommand;
 
 class ServiceProvider extends BaseServiceProvider
 {
     public function register()
     {
-        $this->commands(\WebAppId\Content\Commands\SeedCommand::class);
+        $this->commands(SeedCommand::class);
     }
     public function boot()
     {

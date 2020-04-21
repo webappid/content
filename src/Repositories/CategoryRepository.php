@@ -1,24 +1,167 @@
 <?php
 
 /**
- * @author @DyanGalih
- * @copyright @2018
+ * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
 namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use WebAppId\Content\Models\Category;
+use WebAppId\Content\Repositories\Contracts\CategoryRepositoryContract;
+use WebAppId\Content\Repositories\Requests\CategoryRepositoryRequest;
 use WebAppId\Content\Services\Params\AddCategoryParam;
+use WebAppId\DDD\Tools\Lazy;
 
 /**
+ * @author: Dyan Galih<dyan.galih@gmail.com>
+ * Date: 22/04/20
+ * Time: 00.15
  * Class CategoryRepository
  * @package WebAppId\Content\Repositories
  */
-class CategoryRepository
+class CategoryRepository implements CategoryRepositoryContract
 {
+    /**
+     * @inheritDoc
+     */
+    public function store(CategoryRepositoryRequest $categoryRepositoryRequest, Category $category): ?Category
+    {
+        try {
+            $category = Lazy::copy($categoryRepositoryRequest, $category);
+            $category->save();
+            if ($category->parent != null) {
+                $this->cleanCache($category->parent);
+            }
+            return $category;
+        } catch (QueryException $queryException) {
+            report($queryException);
+            return null;
+        }
+    }
+
+    protected function getColumn($content)
+    {
+        return $content
+            ->select
+            (
+                'categories.id',
+                'categories.code',
+                'categories.name',
+                'categories.user_id',
+                'categories.status_id',
+                'categories.parent_id',
+                'category_statuses.id',
+                'category_statuses.name',
+                'users.id',
+                'users.name',
+                'users.email'
+            )
+            ->join('category_statuses as category_statuses', 'categories.status_id', 'category_statuses.id')
+            ->join('users as users', 'categories.user_id', 'users.id');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(int $id, CategoryRepositoryRequest $categoryRepositoryRequest, Category $category): ?Category
+    {
+        $category = $this->getById($id, $category);
+        if ($category != null) {
+            try {
+                $category = Lazy::copy($categoryRepositoryRequest, $category);
+                if ($category->parent != null) {
+                    $this->cleanCache($category->parent);
+                }
+                $category->save();
+                return $category;
+            } catch (QueryException $queryException) {
+                report($queryException);
+            }
+        }
+        return $category;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getById(int $id, Category $category): ?Category
+    {
+        return $this->getColumn($category)->find($id);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getByCode(string $code, Category $category): ?Category
+    {
+        return $this->getColumn($category)->where('categories.code', $code)->first();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(int $id, Category $category): bool
+    {
+        $category = $this->getById($id, $category);
+        if ($category != null) {
+            if ($category->parent != null) {
+                $this->cleanCache($category->parent);
+            }
+            return $category->delete();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get(Category $category, int $length = 12): LengthAwarePaginator
+    {
+        return $this->getColumn($category)
+            ->orderBy('categories.name', 'asc')
+            ->paginate($length);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCount(Category $category): int
+    {
+        return $category->count();
+    }
+
+    private function getQueryWhere(string $q, Category $category)
+    {
+        return $this->getColumn($category)
+            ->where('code', 'LIKE', '%' . $q . '%');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getWhere(string $q, Category $category, int $length = 12): LengthAwarePaginator
+    {
+        return $this
+            ->getQueryWhere($q, $category)
+            ->orderBy('categories.name', 'asc')
+            ->paginate($length);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getWhereCount(string $q, Category $category, int $length = 12): int
+    {
+        return $this
+            ->getQueryWhere($q, $category)
+            ->count();
+    }
+
     /**
      * Method To Add Data Category
      *
@@ -231,9 +374,6 @@ class CategoryRepository
      */
     private function cleanCache(Category $category): void
     {
-        if ($category->parent_id != null) {
-            $this->cleanCache($category->parent);
-        }
         Cache::forget('category-' . $category['code']);
     }
 

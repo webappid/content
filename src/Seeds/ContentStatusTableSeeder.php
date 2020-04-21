@@ -7,12 +7,15 @@
 
 namespace WebAppId\Content\Seeds;
 
-use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\ContentStatusRepository;
-use WebAppId\Content\Services\Params\AddContentStatusParam;
+use WebAppId\Content\Repositories\Requests\ContentStatusRepositoryRequest;
 
 /**
+ * @author: Dyan Galih<dyan.galih@gmail.com>
+ * Date: 22/04/20
+ * Time: 05.35
  * Class ContentStatusTableSeeder
  * @package WebAppId\Content\Seeds
  */
@@ -21,14 +24,11 @@ class ContentStatusTableSeeder extends Seeder
     /**
      * Run the database seeds.
      *
-     * @param ContentStatusRepository $contentStatus
-     * @param AddContentStatusParam $addContentStatusParam
-     * @param Container $container
+     * @param ContentStatusRepository $contentStatusRepository
      * @return void
+     * @throws BindingResolutionException
      */
-    public function run(ContentStatusRepository $contentStatus,
-                        AddContentStatusParam $addContentStatusParam,
-                        Container $container)
+    public function run(ContentStatusRepository $contentStatusRepository)
     {
         $data = [
             [
@@ -47,14 +47,16 @@ class ContentStatusTableSeeder extends Seeder
                 'name' => 'Coming Soon',
             ],
         ];
-        
+
         foreach ($data as $key) {
-    
-            $addContentStatusParam->setName($key['name']);
-            $addContentStatusParam->setUserId(1);
-    
-            if (count($container->call([$contentStatus, 'getContentStatusesByName'], ['name' => $addContentStatusParam->getName()])) == 0) {
-                $container->call([$contentStatus, 'addContentStatus'], ['addContentStatusParam' => $addContentStatusParam]);
+
+            $contentStatusRepositoryRequest = $this->container->make(ContentStatusRepositoryRequest::class);
+
+            $contentStatusRepositoryRequest->name = $key['name'];
+            $contentStatusRepositoryRequest->user_id = 1;
+
+            if ($this->container->call([$contentStatusRepository, 'getByName'], ['name' => $contentStatusRepositoryRequest->name]) == null) {
+                $this->container->call([$contentStatusRepository, 'store'], compact('contentStatusRepositoryRequest'));
             }
         }
     }

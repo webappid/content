@@ -1,27 +1,171 @@
 <?php
 
 /**
- * @author @DyanGalih
- * @copyright @2018
+ * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
 namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\File;
+use WebAppId\Content\Repositories\Contracts\FileRepositoryContract;
+use WebAppId\Content\Repositories\Requests\FileRepositoryRequest;
 use WebAppId\Content\Services\Params\AddFileParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
+ * @author: Dyan Galih<dyan.galih@gmail.com>
+ * Date: 22/04/20
+ * Time: 04.13
  * Class FileRepository
  * @package WebAppId\Content\Repositories
  */
-class FileRepository
+class FileRepository implements FileRepositoryContract
 {
+    /**
+     * @inheritDoc
+     */
+    public function store(FileRepositoryRequest $fileRepositoryRequest, File $file): ?File
+    {
+        try {
+            $file = Lazy::copy($fileRepositoryRequest, $file);
+            $file->save();
+            return $file;
+        } catch (QueryException $queryException) {
+            report($queryException);
+            return null;
+        }
+    }
+
+    protected function getColumn($content)
+    {
+        return $content
+            ->select
+            (
+                'files.id',
+                'files.name',
+                'files.description',
+                'files.alt',
+                'files.path',
+                'files.mime_type_id',
+                'files.creator_id',
+                'files.owner_id',
+                'files.user_id',
+                'users.id',
+                'users.name',
+                'mime_types.id',
+                'mime_types.name',
+                'mime_types.user_id',
+                'owner_users.id AS owner_id',
+                'owner_users.name AS owner_name',
+                'user_users.id AS user_id',
+                'user_users.name AS user_name',
+                'user_users.email AS user_email'
+            )
+            ->join('users as users', 'files.creator_id', 'users.id')
+            ->join('mime_types as mime_types', 'files.mime_type_id', 'mime_types.id')
+            ->join('users as owner_users', 'files.owner_id', 'owner_users.id')
+            ->join('users as user_users', 'files.user_id', 'user_users.id');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(int $id, FileRepositoryRequest $fileRepositoryRequest, File $file): ?File
+    {
+        $file = $this->getById($id, $file);
+        if ($file != null) {
+            try {
+                $file = Lazy::copy($fileRepositoryRequest, $file);
+                $file->save();
+                return $file;
+            } catch (QueryException $queryException) {
+                report($queryException);
+            }
+        }
+        return $file;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getById(int $id, File $file): ?File
+    {
+        return $this->getColumn($file)->find($id);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(int $id, File $file): bool
+    {
+        $file = $this->getById($id, $file);
+        if ($file != null) {
+            return $file->delete();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get(File $file, int $length = 12): LengthAwarePaginator
+    {
+        return $this->getColumn($file)->paginate($length);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCount(File $file): int
+    {
+        return $file->count();
+    }
+
+    private function getQueryWhere(string $q, File $file)
+    {
+        return $this->getColumn($file)
+            ->orderBy('files.name', 'asc')
+            ->where('files.name', 'LIKE', '%' . $q . '%');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getWhere(string $q, File $file, int $length = 12): LengthAwarePaginator
+    {
+        return $this
+            ->getQueryWhere($q, $file)
+            ->paginate($length);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getWhereCount(string $q, File $file, int $length = 12): int
+    {
+        return $this
+            ->getQueryWhere($q, $file)
+            ->count();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFileByName(string $name, File $file): ?File
+    {
+        return $this->getColumn($file)
+            ->where('files.name', $name)
+            ->first();
+    }
+
     /**
      * @param AddFileParam $addFileParam
      * @param File $file
      * @return File|null
+     * @deprecated
      */
     public function addFile(AddFileParam $addFileParam, File $file): ?File
     {
@@ -29,35 +173,26 @@ class FileRepository
             $file = Lazy::copy($addFileParam, $file);
 
             $file->save();
-            
+
             return $file;
         } catch (QueryException $e) {
             report($e);
-            dd($e);
             return null;
         }
     }
-    
+
     /**
      * @param int $id
      * @param File $file
      * @return File|null
+     * @deprecated
      */
     public function getOne(int $id, File $file): ?File
     {
         return $file->findOrFail($id);
     }
-    
-    /**
-     * @param string $name
-     * @param File $file
-     * @return File|null
-     */
-    public function getFileByName(string $name, File $file): ?File
-    {
-        return $file->where('name', $name)->first();
-    }
-    
+
+
     /**
      * @param File $file
      * @return int
