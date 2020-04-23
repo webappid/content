@@ -90,6 +90,16 @@ class ContentStatusRepositoryTest extends TestCase
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
+    public function testGetCount()
+    {
+        for ($i = 0; $i < $this->getFaker()->numberBetween(50, $this->getFaker()->numberBetween(50, 100)); $i++) {
+            $this->testStore($i);
+        }
+
+        $result = $this->container->call([$this->contentStatusRepository, 'getCount']);
+        self::assertGreaterThanOrEqual(1, $result);
+    }
+
     public function testUpdate()
     {
         $contentStatus = $this->testStore();
@@ -100,23 +110,23 @@ class ContentStatusRepositoryTest extends TestCase
 
     public function testGetWhere()
     {
-        for ($i = 0; $i < $this->getFaker()->numberBetween(50, $this->getFaker()->numberBetween(50, 100)); $i++) {
+        for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 20)); $i++) {
             $this->testStore($i);
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->contentStatusRepository, 'getWhere'], ['q' => $q]);
+        $result = $this->container->call([$this->contentStatusRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
     public function testGetWhereCount()
     {
-        for ($i = 0; $i < $this->getFaker()->numberBetween(50, $this->getFaker()->numberBetween(50, 100)); $i++) {
+        for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++) {
             $this->testStore($i);
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->contentStatusRepository, 'getWhereCount'], ['q' => $q]);
+        $result = $this->container->call([$this->contentStatusRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

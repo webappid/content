@@ -41,9 +41,9 @@ class TimeZoneRepository implements TimeZoneRepositoryContract
         }
     }
 
-    protected function getColumn($content)
+    protected function getColumn($timeZone)
     {
-        return $content
+        return $timeZone
             ->select
             (
                 'time_zones.id',
@@ -98,42 +98,26 @@ class TimeZoneRepository implements TimeZoneRepositoryContract
     /**
      * @inheritDoc
      */
-    public function get(TimeZone $timeZone, int $length = 12): LengthAwarePaginator
-    {
-        return $this->getColumn($timeZone)->paginate($length);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCount(TimeZone $timeZone): int
-    {
-        return $timeZone->count();
-    }
-
-    private function getQueryWhere(string $q, TimeZone $timeZone)
-    {
-        return $this->getColumn($timeZone)
-            ->where('code', 'LIKE', '%' . $q . '%');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhere(string $q, TimeZone $timeZone, int $length = 12): LengthAwarePaginator
+    public function get(TimeZone $timeZone, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this
-            ->getQueryWhere($q, $timeZone)
+            ->getColumn($timeZone)
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('time_zones.name', 'LIKE', '%' . $q . '%');
+            })
+            ->orderBy('time_zones.name', 'asc')
             ->paginate($length);
     }
 
     /**
      * @inheritDoc
      */
-    public function getWhereCount(string $q, TimeZone $timeZone, int $length = 12): int
+    public function getCount(TimeZone $timeZone, string $q = null): int
     {
-        return $this
-            ->getQueryWhere($q, $timeZone)
+        return $timeZone
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('time_zones.name', 'LIKE', '%' . $q . '%');
+            })
             ->count();
     }
 

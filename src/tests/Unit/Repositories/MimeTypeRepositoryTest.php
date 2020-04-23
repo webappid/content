@@ -89,12 +89,22 @@ class MimeTypeRepositoryTest extends TestCase
 
     public function testGet()
     {
-        for ($i = 0; $i < $this->getFaker()->numberBetween(50, $this->getFaker()->numberBetween(50, 100)); $i++) {
+        for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++) {
             $this->testStore($i);
         }
 
         $resultList = $this->container->call([$this->mimeTypeRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
+    }
+
+    public function testGetCount()
+    {
+        for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++) {
+            $this->testStore($i);
+        }
+
+        $result = $this->container->call([$this->mimeTypeRepository, 'getCount']);
+        self::assertGreaterThanOrEqual(1, $result);
     }
 
     public function testUpdate()
@@ -107,23 +117,23 @@ class MimeTypeRepositoryTest extends TestCase
 
     public function testGetWhere()
     {
-        for ($i = 0; $i < $this->getFaker()->numberBetween(50, $this->getFaker()->numberBetween(50, 100)); $i++) {
+        for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++) {
             $this->testStore($i);
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->mimeTypeRepository, 'getWhere'], ['q' => $q]);
+        $result = $this->container->call([$this->mimeTypeRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
     public function testGetWhereCount()
     {
-        for ($i = 0; $i < $this->getFaker()->numberBetween(50, $this->getFaker()->numberBetween(50, 100)); $i++) {
+        for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++) {
             $this->testStore($i);
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->mimeTypeRepository, 'getWhereCount'], ['q' => $q]);
+        $result = $this->container->call([$this->mimeTypeRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

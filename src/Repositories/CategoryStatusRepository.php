@@ -9,6 +9,7 @@ namespace WebAppId\Content\Repositories;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\CategoryStatus;
+use WebAppId\Content\Repositories\Contracts\CategoryStatusRepositoryContract;
 use WebAppId\Content\Repositories\Requests\CategoryStatusRepositoryRequest;
 use WebAppId\Content\Services\Params\AddCategoryStatusParam;
 use WebAppId\DDD\Tools\Lazy;
@@ -20,7 +21,7 @@ use WebAppId\DDD\Tools\Lazy;
  * Class CategoryStatusRepository
  * @package WebAppId\Content\Repositories
  */
-class CategoryStatusRepository
+class CategoryStatusRepository implements CategoryStatusRepositoryContract
 {
     /**
      * @inheritDoc
@@ -37,9 +38,9 @@ class CategoryStatusRepository
         }
     }
 
-    protected function getColumn($content)
+    protected function getColumn($categoryStatus)
     {
-        return $content
+        return $categoryStatus
             ->select
             (
                 'category_statuses.id',
@@ -89,42 +90,26 @@ class CategoryStatusRepository
     /**
      * @inheritDoc
      */
-    public function get(CategoryStatus $categoryStatus, int $length = 12): LengthAwarePaginator
-    {
-        return $this->getColumn($categoryStatus)->paginate($length);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCount(CategoryStatus $categoryStatus): int
-    {
-        return $categoryStatus->count();
-    }
-
-    private function getQueryWhere(string $q, CategoryStatus $categoryStatus)
-    {
-        return $this->getColumn($categoryStatus)
-            ->where('name', 'LIKE', '%' . $q . '%');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhere(string $q, CategoryStatus $categoryStatus, int $length = 12): LengthAwarePaginator
+    public function get(CategoryStatus $categoryStatus, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this
-            ->getQueryWhere($q, $categoryStatus)
+            ->getColumn($categoryStatus)
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('category_statuses.name', 'LIKE', '%' . $q . '%');
+            })
+            ->orderBy('category_statuses.name', 'asc')
             ->paginate($length);
     }
 
     /**
      * @inheritDoc
      */
-    public function getWhereCount(string $q, CategoryStatus $categoryStatus, int $length = 12): int
+    public function getCount(CategoryStatus $categoryStatus, string $q = null): int
     {
-        return $this
-            ->getQueryWhere($q, $categoryStatus)
+        return $categoryStatus
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('category_statuses.name', 'LIKE', '%' . $q . '%');
+            })
             ->count();
     }
 

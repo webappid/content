@@ -50,31 +50,17 @@ interface LanguageRepositoryContract
     /**
      * @param Language $language
      * @param int $length
+     * @param string|null $q
      * @return LengthAwarePaginator
      */
-    public function get(Language $language, int $length = 12): LengthAwarePaginator;
+    public function get(Language $language, int $length = 12, string $q = null): LengthAwarePaginator;
 
     /**
      * @param Language $language
+     * @param string|null $q
      * @return int
      */
-    public function getCount(Language $language): int;
-
-    /**
-     * @param string $q
-     * @param Language $language
-     * @param int $length
-     * @return LengthAwarePaginator
-     */
-    public function getWhere(string $q, Language $language, int $length = 12): LengthAwarePaginator;
-
-    /**
-     * @param string $q
-     * @param Language $language
-     * @param int $length
-     * @return int
-     */
-    public function getWhereCount(string $q, Language $language, int $length = 12): int;
+    public function getCount(Language $language, string $q = null): int;
 
     /**
      * @param $name

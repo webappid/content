@@ -17,7 +17,7 @@ use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
  * Date: 22:58:42
  * Time: 2020/04/21
  * Class CategoryServiceResponseList
- * @package Tests\Unit\Repositories
+ * @package WebAppId\Content\Tests\Unit\Repositories
  */
 class CategoryRepositoryTest extends TestCase
 {
@@ -101,6 +101,16 @@ class CategoryRepositoryTest extends TestCase
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
+    public function testGetCount()
+    {
+        for ($i = 0; $i < $this->getFaker()->numberBetween(50, $this->getFaker()->numberBetween(50, 100)); $i++) {
+            $this->testStore($i);
+        }
+
+        $result = $this->container->call([$this->categoryRepository, 'getCount']);
+        self::assertGreaterThanOrEqual(1, $result);
+    }
+
     public function testUpdate()
     {
         $category = $this->testStore();
@@ -116,7 +126,7 @@ class CategoryRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->categoryRepository, 'getWhere'], ['q' => $q]);
+        $result = $this->container->call([$this->categoryRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -127,7 +137,7 @@ class CategoryRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->categoryRepository, 'getWhereCount'], ['q' => $q]);
+        $result = $this->container->call([$this->categoryRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

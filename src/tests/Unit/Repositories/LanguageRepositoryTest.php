@@ -6,26 +6,26 @@
 namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use WebAppId\Content\Models\File;
-use WebAppId\Content\Repositories\FileRepository;
-use WebAppId\Content\Repositories\Requests\FileRepositoryRequest;
+use WebAppId\Content\Models\Language;
+use WebAppId\Content\Repositories\LanguageRepository;
+use WebAppId\Content\Repositories\Requests\LanguageRepositoryRequest;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
- * Date: 04:10:49
+ * Date: 17:23:06
  * Time: 2020/04/22
- * Class FileServiceResponseList
- * @package Tests\Unit\Repositories
+ * Class LanguageServiceResponseList
+ * @package WebAppId\Content\Tests\Unit\Repositories
  */
-class FileRepositoryTest extends TestCase
+class LanguageRepositoryTest extends TestCase
 {
 
     /**
-     * @var FileRepository
+     * @var LanguageRepository
      */
-    private $fileRepository;
+    private $languageRepository;
 
     /**
      * @var UserRepositoryTest
@@ -33,36 +33,32 @@ class FileRepositoryTest extends TestCase
     private $userRepositoryTest;
 
     /**
-     * @var MimeTypeRepositoryTest
+     * @var FileRepositoryTest
      */
-    private $mimeTypeRepositoryTest;
+    private $fileRepositoryTest;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->fileRepository = $this->container->make(FileRepository::class);
+            $this->languageRepository = $this->container->make(LanguageRepository::class);
             $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
-            $this->mimeTypeRepositoryTest = $this->container->make(MimeTypeRepositoryTest::class);
+            $this->fileRepositoryTest = $this->container->make(FileRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
     }
 
-    public function getDummy(int $no = 0): ?FileRepositoryRequest
+    public function getDummy(int $no = 0): ?LanguageRepositoryRequest
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(FileRepositoryRequest::class);
+            $dummy = $this->container->make(LanguageRepositoryRequest::class);
             $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
-            $mimeType = $this->container->call([$this->mimeTypeRepositoryTest, 'testStore']);
-            $dummy->name = $this->getFaker()->text(255);
-            $dummy->description = $this->getFaker()->text(255);
-            $dummy->alt = $this->getFaker()->text(100);
-            $dummy->path = $this->getFaker()->text(255);
-            $dummy->mime_type_id = $mimeType->id;
-            $dummy->creator_id = $user->id;
-            $dummy->owner_id = $user->id;
+            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
+            $dummy->code = $this->getFaker()->text(5);
+            $dummy->name = $this->getFaker()->text(20);
+            $dummy->image_id = $file->id;
             $dummy->user_id = $user->id;
 
         } catch (BindingResolutionException $e) {
@@ -71,25 +67,25 @@ class FileRepositoryTest extends TestCase
         return $dummy;
     }
 
-    public function testStore(int $no = 0): ?File
+    public function testStore(int $no = 0): ?Language
     {
-        $fileRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->fileRepository, 'store'], ['fileRepositoryRequest' => $fileRepositoryRequest]);
+        $languageRepositoryRequest = $this->getDummy($no);
+        $result = $this->container->call([$this->languageRepository, 'store'], ['languageRepositoryRequest' => $languageRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
 
     public function testGetById()
     {
-        $file = $this->testStore();
-        $result = $this->container->call([$this->fileRepository, 'getById'], ['id' => $file->id]);
+        $language = $this->testStore();
+        $result = $this->container->call([$this->languageRepository, 'getById'], ['id' => $language->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
-        $file = $this->testStore();
-        $result = $this->container->call([$this->fileRepository, 'delete'], ['id' => $file->id]);
+        $language = $this->testStore();
+        $result = $this->container->call([$this->languageRepository, 'delete'], ['id' => $language->id]);
         self::assertTrue($result);
     }
 
@@ -99,7 +95,7 @@ class FileRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->fileRepository, 'get']);
+        $resultList = $this->container->call([$this->languageRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -109,15 +105,15 @@ class FileRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->fileRepository, 'getCount']);
+        $result = $this->container->call([$this->languageRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
     public function testUpdate()
     {
-        $file = $this->testStore();
-        $fileRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->fileRepository, 'update'], ['id' => $file->id, 'fileRepositoryRequest' => $fileRepositoryRequest]);
+        $language = $this->testStore();
+        $languageRepositoryRequest = $this->getDummy(1);
+        $result = $this->container->call([$this->languageRepository, 'update'], ['id' => $language->id, 'languageRepositoryRequest' => $languageRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -128,7 +124,7 @@ class FileRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->fileRepository, 'get'], ['q' => $q]);
+        $result = $this->container->call([$this->languageRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -139,7 +135,7 @@ class FileRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->fileRepository, 'getCount'], ['q' => $q]);
+        $result = $this->container->call([$this->languageRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

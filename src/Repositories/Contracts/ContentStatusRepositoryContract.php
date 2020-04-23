@@ -50,31 +50,17 @@ interface ContentStatusRepositoryContract
     /**
      * @param ContentStatus $contentStatus
      * @param int $length
+     * @param string|null $q
      * @return LengthAwarePaginator
      */
-    public function get(ContentStatus $contentStatus, int $length = 12): LengthAwarePaginator;
+    public function get(ContentStatus $contentStatus, int $length = 12, string $q = null): LengthAwarePaginator;
 
     /**
      * @param ContentStatus $contentStatus
+     * @param string|null $q
      * @return int
      */
-    public function getCount(ContentStatus $contentStatus): int;
-
-    /**
-     * @param string $q
-     * @param ContentStatus $contentStatus
-     * @param int $length
-     * @return LengthAwarePaginator
-     */
-    public function getWhere(string $q, ContentStatus $contentStatus, int $length = 12): LengthAwarePaginator;
-
-    /**
-     * @param string $q
-     * @param ContentStatus $contentStatus
-     * @param int $length
-     * @return int
-     */
-    public function getWhereCount(string $q, ContentStatus $contentStatus, int $length = 12): int;
+    public function getCount(ContentStatus $contentStatus, string $q = null): int;
 
     /**
      * @param string $name

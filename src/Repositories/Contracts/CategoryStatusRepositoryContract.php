@@ -50,29 +50,15 @@ interface CategoryStatusRepositoryContract
     /**
      * @param CategoryStatus $categoryStatus
      * @param int $length
+     * @param string|null $q
      * @return LengthAwarePaginator
      */
-    public function get(CategoryStatus $categoryStatus, int $length = 12): LengthAwarePaginator;
+    public function get(CategoryStatus $categoryStatus, int $length = 12, string $q = null): LengthAwarePaginator;
 
     /**
      * @param CategoryStatus $categoryStatus
+     * @param string|null $q
      * @return int
      */
-    public function getCount(CategoryStatus $categoryStatus): int;
-
-    /**
-     * @param string $q
-     * @param CategoryStatus $categoryStatus
-     * @param int $length
-     * @return LengthAwarePaginator
-     */
-    public function getWhere(string $q, CategoryStatus $categoryStatus, int $length = 12): LengthAwarePaginator;
-
-    /**
-     * @param string $q
-     * @param CategoryStatus $categoryStatus
-     * @param int $length
-     * @return int
-     */
-    public function getWhereCount(string $q, CategoryStatus $categoryStatus, int $length = 12): int;
+    public function getCount(CategoryStatus $categoryStatus, string $q = null): int;
 }

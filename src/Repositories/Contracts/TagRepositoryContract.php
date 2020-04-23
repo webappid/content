@@ -61,22 +61,6 @@ interface TagRepositoryContract
     public function getCount(Tag $tag): int;
 
     /**
-     * @param string $q
-     * @param Tag $tag
-     * @param int $length
-     * @return LengthAwarePaginator
-     */
-    public function getWhere(string $q, Tag $tag, int $length = 12): LengthAwarePaginator;
-
-    /**
-     * @param string $q
-     * @param Tag $tag
-     * @param int $length
-     * @return int
-     */
-    public function getWhereCount(string $q, Tag $tag, int $length = 12): int;
-
-    /**
      * @param string $name
      * @param Tag $tag
      * @return Tag|null

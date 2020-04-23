@@ -39,9 +39,9 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
         }
     }
 
-    protected function getColumn($content)
+    protected function getColumn($contentStatus)
     {
-        return $content
+        return $contentStatus
             ->select
             (
                 'content_statuses.id',
@@ -91,42 +91,25 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
     /**
      * @inheritDoc
      */
-    public function get(ContentStatus $contentStatus, int $length = 12): LengthAwarePaginator
-    {
-        return $this->getColumn($contentStatus)->paginate($length);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCount(ContentStatus $contentStatus): int
-    {
-        return $contentStatus->count();
-    }
-
-    private function getQueryWhere(string $q, ContentStatus $contentStatus)
-    {
-        return $this->getColumn($contentStatus)
-            ->where('name', 'LIKE', '%' . $q . '%');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhere(string $q, ContentStatus $contentStatus, int $length = 12): LengthAwarePaginator
+    public function get(ContentStatus $contentStatus, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this
-            ->getQueryWhere($q, $contentStatus)
+            ->getColumn($contentStatus)
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('content_statuses.name', 'LIKE', '%' . $q . '%');
+            })
             ->paginate($length);
     }
 
     /**
      * @inheritDoc
      */
-    public function getWhereCount(string $q, ContentStatus $contentStatus, int $length = 12): int
+    public function getCount(ContentStatus $contentStatus, string $q = null): int
     {
-        return $this
-            ->getQueryWhere($q, $contentStatus)
+        return $contentStatus
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('content_statuses.name', 'LIKE', '%' . $q . '%');
+            })
             ->count();
     }
 

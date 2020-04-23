@@ -43,9 +43,9 @@ class CategoryRepository implements CategoryRepositoryContract
         }
     }
 
-    protected function getColumn($content)
+    protected function getColumn($category)
     {
-        return $content
+        return $category
             ->select
             (
                 'categories.id',
@@ -120,45 +120,25 @@ class CategoryRepository implements CategoryRepositoryContract
     /**
      * @inheritDoc
      */
-    public function get(Category $category, int $length = 12): LengthAwarePaginator
+    public function get(Category $category, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this->getColumn($category)
             ->orderBy('categories.name', 'asc')
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('categories.code', 'LIKE', '%' . $q . '%');
+            })
             ->paginate($length);
     }
 
     /**
      * @inheritDoc
      */
-    public function getCount(Category $category): int
+    public function getCount(Category $category, string $q = null): int
     {
-        return $category->count();
-    }
-
-    private function getQueryWhere(string $q, Category $category)
-    {
-        return $this->getColumn($category)
-            ->where('code', 'LIKE', '%' . $q . '%');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhere(string $q, Category $category, int $length = 12): LengthAwarePaginator
-    {
-        return $this
-            ->getQueryWhere($q, $category)
-            ->orderBy('categories.name', 'asc')
-            ->paginate($length);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhereCount(string $q, Category $category, int $length = 12): int
-    {
-        return $this
-            ->getQueryWhere($q, $category)
+        return $category
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('categories.code', 'LIKE', '%' . $q . '%');
+            })
             ->count();
     }
 

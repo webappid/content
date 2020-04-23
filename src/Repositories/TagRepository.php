@@ -36,9 +36,9 @@ class TagRepository implements TagRepositoryContract
         }
     }
 
-    protected function getColumn($content)
+    protected function getColumn($tag)
     {
-        return $content
+        return $tag
             ->select
             (
                 'tags.id',
@@ -92,42 +92,25 @@ class TagRepository implements TagRepositoryContract
     /**
      * @inheritDoc
      */
-    public function get(Tag $tag, int $length = 12): LengthAwarePaginator
-    {
-        return $this->getColumn($tag)->paginate($length);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCount(Tag $tag): int
-    {
-        return $tag->count();
-    }
-
-    private function getQueryWhere(string $q, Tag $tag)
-    {
-        return $this->getColumn($tag)
-            ->where('tags.name', 'LIKE', '%' . $q . '%');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhere(string $q, Tag $tag, int $length = 12): LengthAwarePaginator
+    public function get(Tag $tag, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this
-            ->getQueryWhere($q, $tag)
+            ->getColumn($tag)
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('tags.name', 'LIKE', '%' . $q . '%');
+            })
             ->paginate($length);
     }
 
     /**
      * @inheritDoc
      */
-    public function getWhereCount(string $q, Tag $tag, int $length = 12): int
+    public function getCount(Tag $tag, string $q = null): int
     {
-        return $this
-            ->getQueryWhere($q, $tag)
+        return $tag
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('tags.name', 'LIKE', '%' . $q . '%');
+            })
             ->count();
     }
 

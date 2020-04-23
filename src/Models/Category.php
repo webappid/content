@@ -7,8 +7,8 @@
 
 namespace WebAppId\Content\Models;
 
-use App\Http\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use WebAppId\User\Models\User;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>

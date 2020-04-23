@@ -8,8 +8,7 @@
 namespace WebAppId\Content\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
-use App\Http\Models\User;
+use WebAppId\User\Models\User;
 
 /**
  * Class File

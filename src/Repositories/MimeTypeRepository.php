@@ -40,9 +40,9 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
         }
     }
 
-    protected function getColumn($content)
+    protected function getColumn($mimeType)
     {
-        return $content
+        return $mimeType
             ->select
             (
                 'mime_types.id',
@@ -95,9 +95,12 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
     /**
      * @inheritDoc
      */
-    public function get(MimeType $mimeType, int $length = 12): LengthAwarePaginator
+    public function get(MimeType $mimeType, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this->getColumn($mimeType)
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('mime_types.name', 'LIKE', '%' . $q . '%');
+            })
             ->orderBy('mime_types.name', 'asc')
             ->paginate($length);
     }
@@ -105,35 +108,12 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
     /**
      * @inheritDoc
      */
-    public function getCount(MimeType $mimeType): int
+    public function getCount(MimeType $mimeType, string $q = null): int
     {
-        return $mimeType->count();
-    }
-
-    private function getQueryWhere(string $q, MimeType $mimeType)
-    {
-        return $this->getColumn($mimeType)
-            ->orderBy('mime_types.name', 'asc')
-            ->where('mime_types.name', 'LIKE', '%' . $q . '%');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhere(string $q, MimeType $mimeType, int $length = 12): LengthAwarePaginator
-    {
-        return $this
-            ->getQueryWhere($q, $mimeType)
-            ->paginate($length);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhereCount(string $q, MimeType $mimeType, int $length = 12): int
-    {
-        return $this
-            ->getQueryWhere($q, $mimeType)
+        return $mimeType
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('mime_types.name', 'LIKE', '%' . $q . '%');
+            })
             ->count();
     }
 

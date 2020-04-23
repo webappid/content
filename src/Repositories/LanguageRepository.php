@@ -40,9 +40,9 @@ class LanguageRepository implements LanguageRepositoryContract
         }
     }
 
-    protected function getColumn($content)
+    protected function getColumn($language)
     {
-        return $content
+        return $language
             ->select
             (
                 'languages.id',
@@ -105,42 +105,25 @@ class LanguageRepository implements LanguageRepositoryContract
     /**
      * @inheritDoc
      */
-    public function get(Language $language, int $length = 12): LengthAwarePaginator
-    {
-        return $this->getColumn($language)->paginate($length);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCount(Language $language): int
-    {
-        return $language->count();
-    }
-
-    private function getQueryWhere(string $q, Language $language)
-    {
-        return $this->getColumn($language)
-            ->where('languages.code', 'LIKE', '%' . $q . '%');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhere(string $q, Language $language, int $length = 12): LengthAwarePaginator
+    public function get(Language $language, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this
-            ->getQueryWhere($q, $language)
+            ->getColumn($language)
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('languages.name', 'LIKE', '%' . $q . '%');
+            })
             ->paginate($length);
     }
 
     /**
      * @inheritDoc
      */
-    public function getWhereCount(string $q, Language $language, int $length = 12): int
+    public function getCount(Language $language, string $q = null): int
     {
-        return $this
-            ->getQueryWhere($q, $language)
+        return $language
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('languages.name', 'LIKE', '%' . $q . '%');
+            })
             ->count();
     }
 

@@ -50,31 +50,17 @@ interface MimeTypeRepositoryContract
     /**
      * @param MimeType $mimeType
      * @param int $length
+     * @param string|null $q
      * @return LengthAwarePaginator
      */
-    public function get(MimeType $mimeType, int $length = 12): LengthAwarePaginator;
+    public function get(MimeType $mimeType, int $length = 12, string $q = null): LengthAwarePaginator;
 
     /**
      * @param MimeType $mimeType
+     * @param string|null $q
      * @return int
      */
-    public function getCount(MimeType $mimeType): int;
-
-    /**
-     * @param string $q
-     * @param MimeType $mimeType
-     * @param int $length
-     * @return LengthAwarePaginator
-     */
-    public function getWhere(string $q, MimeType $mimeType, int $length = 12): LengthAwarePaginator;
-
-    /**
-     * @param string $q
-     * @param MimeType $mimeType
-     * @param int $length
-     * @return int
-     */
-    public function getWhereCount(string $q, MimeType $mimeType, int $length = 12): int;
+    public function getCount(MimeType $mimeType, string $q = null): int;
 
     /**
      * @param string $name

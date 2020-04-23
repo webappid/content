@@ -17,7 +17,7 @@ use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
  * Date: 05:01:58
  * Time: 2020/04/22
  * Class TagServiceResponseList
- * @package Tests\Unit\Repositories
+ * @package WebAppId\Content\Tests\Unit\Repositories
  */
 class TagRepositoryTest extends TestCase
 {
@@ -97,6 +97,16 @@ class TagRepositoryTest extends TestCase
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
+    public function testGetCount()
+    {
+        for ($i = 0; $i < $this->getFaker()->numberBetween(50, $this->getFaker()->numberBetween(50, 100)); $i++) {
+            $this->testStore($i);
+        }
+
+        $result = $this->container->call([$this->tagRepository, 'getCount']);
+        self::assertGreaterThanOrEqual(1, $result);
+    }
+
     public function testUpdate()
     {
         $tag = $this->testStore();
@@ -112,7 +122,7 @@ class TagRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->tagRepository, 'getWhere'], ['q' => $q]);
+        $result = $this->container->call([$this->tagRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -123,7 +133,7 @@ class TagRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->tagRepository, 'getWhereCount'], ['q' => $q]);
+        $result = $this->container->call([$this->tagRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

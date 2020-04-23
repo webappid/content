@@ -38,9 +38,9 @@ class FileRepository implements FileRepositoryContract
         }
     }
 
-    protected function getColumn($content)
+    protected function getColumn($file)
     {
-        return $content
+        return $file
             ->select
             (
                 'files.id',
@@ -111,43 +111,25 @@ class FileRepository implements FileRepositoryContract
     /**
      * @inheritDoc
      */
-    public function get(File $file, int $length = 12): LengthAwarePaginator
-    {
-        return $this->getColumn($file)->paginate($length);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCount(File $file): int
-    {
-        return $file->count();
-    }
-
-    private function getQueryWhere(string $q, File $file)
+    public function get(File $file, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this->getColumn($file)
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('files.name', 'LIKE', '%' . $q . '%');
+            })
             ->orderBy('files.name', 'asc')
-            ->where('files.name', 'LIKE', '%' . $q . '%');
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhere(string $q, File $file, int $length = 12): LengthAwarePaginator
-    {
-        return $this
-            ->getQueryWhere($q, $file)
             ->paginate($length);
     }
 
     /**
      * @inheritDoc
      */
-    public function getWhereCount(string $q, File $file, int $length = 12): int
+    public function getCount(File $file, string $q = null): int
     {
-        return $this
-            ->getQueryWhere($q, $file)
+        return $file
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('files.name', 'LIKE', '%' . $q . '%');
+            })
             ->count();
     }
 

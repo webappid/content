@@ -50,31 +50,17 @@ interface TimeZoneRepositoryContract
     /**
      * @param TimeZone $timeZone
      * @param int $length
+     * @param string|null $q
      * @return LengthAwarePaginator
      */
-    public function get(TimeZone $timeZone, int $length = 12): LengthAwarePaginator;
+    public function get(TimeZone $timeZone, int $length = 12, string $q = null): LengthAwarePaginator;
 
     /**
      * @param TimeZone $timeZone
+     * @param string|null $q
      * @return int
      */
-    public function getCount(TimeZone $timeZone): int;
-
-    /**
-     * @param string $q
-     * @param TimeZone $timeZone
-     * @param int $length
-     * @return LengthAwarePaginator
-     */
-    public function getWhere(string $q, TimeZone $timeZone, int $length = 12): LengthAwarePaginator;
-
-    /**
-     * @param string $q
-     * @param TimeZone $timeZone
-     * @param int $length
-     * @return int
-     */
-    public function getWhereCount(string $q, TimeZone $timeZone, int $length = 12): int;
+    public function getCount(TimeZone $timeZone, string $q = null): int;
 
     /**
      * @param string $name
