@@ -1,14 +1,12 @@
 <?php
 
 /**
- * @author @DyanGalih
- * @copyright @2018
+ * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
 namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\DB;
 use WebAppId\Content\Models\ContentTag;
 use WebAppId\Content\Repositories\Contracts\ContentTagRepositoryContract;
 use WebAppId\Content\Repositories\Requests\ContentTagRepositoryRequest;
@@ -90,53 +88,5 @@ class ContentTagRepository implements ContentTagRepositoryContract
         } else {
             return false;
         }
-    }
-
-    /**
-     * @param $response
-     * @param ContentTag $contentTag
-     * @return ContentTag|null
-     * @deprecated
-     */
-    public function addContentTag($response, ContentTag $contentTag): ?ContentTag
-    {
-        try {
-            $contentTag->content_id = $response->content_id;
-            $contentTag->tag_id = $response->tag_id;
-            $contentTag->user_id = $response->user_id;
-            $contentTag->save();
-            return $contentTag;
-        } catch (QueryException $e) {
-            report($e);
-            return null;
-        }
-    }
-
-    /**
-     * @param $contentId
-     * @param ContentTag $contentTag
-     * @return bool
-     * @deprecated
-     */
-    public function deleteContentTagByContentId($contentId, ContentTag $contentTag): bool
-    {
-        $resultContentTag = $contentTag->where('content_id', $contentId)->get();
-        DB::beginTransaction();
-        $result = true;
-        if (count($resultContentTag) > 0) {
-            for ($i = 0; $i < count($resultContentTag); $i++) {
-                if (!$resultContentTag[$i]->delete()) {
-                    $result = false;
-                    break;
-                }
-            }
-        }
-        if ($result) {
-            DB::commit();
-        } else {
-            DB::rollBack();
-        }
-
-        return $result;
     }
 }

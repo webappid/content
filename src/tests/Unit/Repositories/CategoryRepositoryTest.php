@@ -45,7 +45,6 @@ class CategoryRepositoryTest extends TestCase
             $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
             $this->categoryStatusRepositoryTest = $this->container->make(CategoryStatusRepositoryTest::class);
         } catch (BindingResolutionException $e) {
-            dd($e);
             report($e);
         }
     }
@@ -81,6 +80,20 @@ class CategoryRepositoryTest extends TestCase
     {
         $category = $this->testStore();
         $result = $this->container->call([$this->categoryRepository, 'getById'], ['id' => $category->id]);
+        self::assertNotEquals(null, $result);
+    }
+
+    public function testGetByName()
+    {
+        $category = $this->testStore();
+        $result = $this->container->call([$this->categoryRepository, 'getByName'], ['name' => $category->name]);
+        self::assertNotEquals(null, $result);
+    }
+
+    public function testGetByCode()
+    {
+        $category = $this->testStore();
+        $result = $this->container->call([$this->categoryRepository, 'getByCode'], ['code' => $category->code]);
         self::assertNotEquals(null, $result);
     }
 

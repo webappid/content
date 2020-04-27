@@ -61,4 +61,11 @@ interface CategoryStatusRepositoryContract
      * @return int
      */
     public function getCount(CategoryStatus $categoryStatus, string $q = null): int;
+
+    /**
+     * @param string $name
+     * @param CategoryStatus $categoryStatus
+     * @return CategoryStatus|null
+     */
+    public function getByName(string $name, CategoryStatus $categoryStatus): ?CategoryStatus;
 }

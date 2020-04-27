@@ -67,5 +67,5 @@ interface FileRepositoryContract
      * @param File $file
      * @return File|null
      */
-    public function getFileByName(string $name, File $file): ?File;
+    public function getByName(string $name, File $file): ?File;
 }

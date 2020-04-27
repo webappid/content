@@ -14,28 +14,25 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Repositories\MimeTypeRepository;
-use WebAppId\Content\Services\Params\AddFileParam;
-use WebAppId\Content\Services\Params\AddMimeTypeParam;
+use WebAppId\Content\Repositories\Requests\FileRepositoryRequest;
+use WebAppId\Content\Repositories\Requests\MimeTypeRepositoryRequest;
+use WebAppId\Content\Services\Contracts\FileServiceContract;
 use WebAppId\Content\Tools\ImageResize;
 use WebAppId\Content\Tools\SmartReadFile;
 use WebAppId\DDD\Services\BaseService;
 
 /**
+ * @author: Dyan Galih<dyan.galih@gmail.com>
+ * Date: 25/04/20
+ * Time: 14.31
  * Class FileService
  * @package WebAppId\Content\Services
  */
-class FileService extends BaseService
+class FileService extends BaseService implements FileServiceContract
 {
 
     /**
-     * Display a listing of the resource.
-     *
-     * @param string $name
-     * @param bool $download
-     * @param FileRepository $file
-     * @param SmartReadFile $smartReadFile
-     * @return Response
-     * @throws ImageResizeException
+     * @inheritDoc
      */
     public function index(string $name, FileRepository $file, SmartReadFile $smartReadFile, bool $download = false)
     {
@@ -46,15 +43,19 @@ class FileService extends BaseService
      * @param string $path
      * @param $file
      * @param $upload
+     * @param MimeTypeRepositoryRequest $mimeTypeRepositoryRequest
      * @param MimeTypeRepository $mimeTypeRepository
+     * @param FileRepositoryRequest $fileRepositoryRequest
      * @param FileRepository $fileRepository
-     * @param AddFileParam $addFileParam
      * @return mixed
      */
-    private function saveFile(string $path, $file, $upload,
+    private function saveFile(string $path,
+                              $file,
+                              $upload,
+                              MimeTypeRepositoryRequest $mimeTypeRepositoryRequest,
                               MimeTypeRepository $mimeTypeRepository,
-                              FileRepository $fileRepository,
-                              AddFileParam $addFileParam)
+                              FileRepositoryRequest $fileRepositoryRequest,
+                              FileRepository $fileRepository)
     {
         $user_id = Auth::id() == null ? session('user_id') : Auth::id();
 
@@ -62,13 +63,12 @@ class FileService extends BaseService
         $filename = $file->store($path);
         $fileData = explode('/', $filename);
 
-        $resultMimeType = $this->getContainer()->call([$mimeTypeRepository, 'getMimeByName'], ['name' => $file->getMimeType()]);
+        $resultMimeType = $this->getContainer()->call([$mimeTypeRepository, 'getByName'], ['name' => $file->getMimeType()]);
 
         if ($resultMimeType == null) {
-            $addMimeTypeParam = new AddMimeTypeParam();
-            $addMimeTypeParam->setUserId($user_id);
-            $addMimeTypeParam->setName($file->getMimeType());
-            $resultMimeType = $this->getContainer()->call([$mimeTypeRepository, 'addMimeType'], ['addMimeTypeParam' => $addMimeTypeParam]);
+            $mimeTypeRepositoryRequest->name = $file->getMimeType();
+            $mimeTypeRepositoryRequest->user_id = $user_id;
+            $resultMimeType = $this->getContainer()->call([$mimeTypeRepository, 'store'], compact('mimeTypeRepositoryRequest'));
         }
 
         if ($upload->description == null) {
@@ -78,53 +78,44 @@ class FileService extends BaseService
             $upload->alt = '';
         }
 
-        $addFileParam->setName($fileData[1]);
-        $addFileParam->setDescription($upload->description);
-        $addFileParam->setAlt($upload->alt);
-        $addFileParam->setPath($path);
-        $addFileParam->setMimeTypeId($resultMimeType->id);
-        $addFileParam->setUserId($user_id);
-        $addFileParam->setCreatorId($user_id);
-        $addFileParam->setOwnerId($user_id);
+        $fileRepositoryRequest->name = $fileData[1];
+        $fileRepositoryRequest->description = $upload->description;
+        $fileRepositoryRequest->alt = $upload->alt;
+        $fileRepositoryRequest->path = $path;
+        $fileRepositoryRequest->mime_type_id = $resultMimeType->id;
+        $fileRepositoryRequest->user_id = $user_id;
+        $fileRepositoryRequest->creator_id = $user_id;
+        $fileRepositoryRequest->owner_id = $user_id;
 
-        return $this->getContainer()->call([$fileRepository, 'addFile'], ['addFileParam' => $addFileParam]);
+        return $this->getContainer()->call([$fileRepository, 'store'], compact('fileRepositoryRequest'));
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @param string $path
-     * @param $upload
-     * @param MimeTypeRepository $mimeTypeRepository
-     * @param FileRepository $fileRepository
-     * @param AddFileParam $addFileParam
-     * @return array
+     * @inheritDoc
      */
     public function store(string $path,
                           $upload,
+                          MimeTypeRepositoryRequest $mimeTypeRepositoryRequest,
                           MimeTypeRepository $mimeTypeRepository,
-                          FileRepository $fileRepository,
-                          AddFileParam $addFileParam)
+                          FileRepositoryRequest $fileRepositoryRequest,
+                          FileRepository $fileRepository)
     {
-        $result[0] = $this->saveFile($path, $upload->upload_file, $upload, $mimeTypeRepository, $fileRepository, $addFileParam);
+        $result[0] = $this->saveFile($path, $upload->upload_file, $upload, $mimeTypeRepositoryRequest, $mimeTypeRepository, $fileRepositoryRequest, $fileRepository);
         return $result;
     }
 
     /**
-     * @param string $path
-     * @param $upload
-     * @param MimeTypeRepository $mimeTypeRepository
-     * @param FileRepository $fileRepository
-     * @param AddFileParam $addFileParam
+     * @inheritDoc
      */
     public function storeMulti(string $path,
                                $upload,
+                               MimeTypeRepositoryRequest $mimeTypeRepositoryRequest,
                                MimeTypeRepository $mimeTypeRepository,
-                               FileRepository $fileRepository,
-                               AddFileParam $addFileParam)
+                               FileRepositoryRequest $fileRepositoryRequest,
+                               FileRepository $fileRepository)
     {
         for ($i = 0; $i < count($upload->upload_files); $i++) {
-            $result[$i] = $this->saveFile($path, $upload->upload_files[$i], $upload, $mimeTypeRepository, $fileRepository, $addFileParam);
+            $result[$i] = $this->saveFile($path, $upload->upload_file, $upload, $mimeTypeRepositoryRequest, $mimeTypeRepository, $fileRepositoryRequest, $fileRepository);
         }
     }
 
@@ -132,16 +123,16 @@ class FileService extends BaseService
     /**
      * @param $name
      * @param $size
-     * @param FileRepository $file
-     * @param bool $download
+     * @param FileRepository $fileRepository
      * @param SmartReadFile $smartReadFile
+     * @param bool $download
      * @return ResponseFactory|Response|void
      * @throws ImageResizeException
      */
-    private function loadFile($name, $size, $file, SmartReadFile $smartReadFile, bool $download = false)
+    private function loadFile($name, $size, FileRepository $fileRepository, SmartReadFile $smartReadFile, bool $download = false)
     {
         $path = '';
-        $fileData = $this->getContainer()->call([$file, 'getFileByName'], ['name' => $name]);
+        $fileData = $this->getContainer()->call([$fileRepository, 'getByName'], ['name' => $name]);
 
         if ($fileData != null && Storage::exists($fileData->path . '/' . $fileData->name)) {
             $imageName = $fileData->name;
@@ -172,21 +163,15 @@ class FileService extends BaseService
             }
             return response($image->output())->header('Cache-Control', 'max-age=2592000')->header('Content-Type', $mimeType);
         } else {
-            return $smartReadFile->getFile($path . '/' . $imageName, $imageName);
+            $smartReadFile->getFile($path . '/' . $imageName, $imageName);
+            return null;
         }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param $name
-     * @param $size
-     * @param FileRepository $file
-     * @param SmartReadFile $smartReadFile
-     * @return Response
-     * @throws ImageResizeException
+     * @inheritDoc
      */
-    public function show($name, $size, FileRepository $file, SmartReadFile $smartReadFile)
+    public function get($name, $size, FileRepository $file, SmartReadFile $smartReadFile)
     {
         return $this->loadFile($name, $size, $file, $smartReadFile, false);
     }

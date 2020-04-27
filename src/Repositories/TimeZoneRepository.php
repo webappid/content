@@ -1,19 +1,16 @@
 <?php
 
 /**
- * @author @DyanGalih
- * @copyright @2018
+ * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
 namespace WebAppId\Content\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\TimeZone;
 use WebAppId\Content\Repositories\Contracts\TimeZoneRepositoryContract;
 use WebAppId\Content\Repositories\Requests\TimeZoneRepositoryRequest;
-use WebAppId\Content\Services\Params\AddTimeZoneParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
@@ -129,59 +126,5 @@ class TimeZoneRepository implements TimeZoneRepositoryContract
         return $this
             ->getColumn($timezone)
             ->where('time_zones.name', $name)->first();
-    }
-
-    /**
-     * @param AddTimeZoneParam $addTimeZoneParam
-     * @param TimeZone $timezone
-     * @return TimeZone|null
-     * @deprecated
-     */
-    public function addTimeZone(AddTimeZoneParam $addTimeZoneParam, TimeZone $timezone): ?TimeZone
-    {
-        try {
-            $timezone->code = $addTimeZoneParam->getCode();
-            $timezone->name = $addTimeZoneParam->getName();
-            $timezone->minute = $addTimeZoneParam->getMinute();
-            $timezone->user_id = $addTimeZoneParam->getUserId();
-            $timezone->save();
-
-            return $timezone;
-        } catch (QueryException $e) {
-            report($e);
-            return null;
-        }
-    }
-
-    /**
-     * @param string $name
-     * @param TimeZone $timezone
-     * @return Collection
-     * @deprecated
-     */
-    public function getTimeZoneByName(string $name, TimeZone $timezone): Collection
-    {
-        return $timezone->where('name', $name)->get();
-    }
-
-    /**
-     * @param TimeZone $timeZone
-     * @return Collection
-     * @deprecated
-     */
-    public function getAllTimeZone(TimeZone $timeZone): Collection
-    {
-        return $timeZone->get();
-    }
-
-    /**
-     * @param $id
-     * @param TimeZone $timezone
-     * @return TimeZone|null
-     * @deprecated
-     */
-    public function getTimeZoneById(int $id, TimeZone $timezone): ?TimeZone
-    {
-        return $timezone->findOrFail($id);
     }
 }

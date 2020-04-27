@@ -6,13 +6,11 @@
 
 namespace WebAppId\Content\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\Language;
 use WebAppId\Content\Repositories\Contracts\LanguageRepositoryContract;
 use WebAppId\Content\Repositories\Requests\LanguageRepositoryRequest;
-use WebAppId\Content\Services\Params\AddLanguageParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
@@ -134,38 +132,4 @@ class LanguageRepository implements LanguageRepositoryContract
     {
         return $language->where('languages.name', $name)->first();
     }
-
-    /**
-     * @param AddLanguageParam $addLanguageParam
-     * @param Language $language
-     * @return Language|null
-     * @deprecated
-     */
-    public function addLanguage(AddLanguageParam $addLanguageParam, Language $language): ?Language
-    {
-        try {
-            $language->code = $addLanguageParam->getCode();
-            $language->name = $addLanguageParam->getName();
-            $language->image_id = $addLanguageParam->getImageId();
-            $language->user_id = $addLanguageParam->getUserId();
-            $language->save();
-
-            return $language;
-        } catch (QueryException $e) {
-            report($e);
-            return null;
-        }
-    }
-
-    /**
-     * @param Language $language
-     * @return Collection
-     * @deprecated
-     */
-    public function getLanguage(Language $language): Collection
-    {
-        return $language->get();
-    }
-
-
 }

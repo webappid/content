@@ -25,12 +25,12 @@ class Content extends Model
 
     public function childs()
     {
-        return $this->belongsToMany(Content::class, 'content_childs', 'content_parent_id', 'content_child_id');
+        return $this->belongsToMany(Content::class, 'content_children', 'content_parent_id', 'content_child_id');
     }
 
     public function parents()
     {
-        return $this->belongsToMany(Content::class, 'content_childs', 'content_child_id', 'content_parent_id');
+        return $this->belongsToMany(Content::class, 'content_children', 'content_child_id', 'content_parent_id');
     }
 
     public function categories()

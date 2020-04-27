@@ -2,11 +2,17 @@
 
 namespace WebAppId\Content\Services;
 
+use WebAppId\Content\Repositories\Requests\CategoryRepositoryRequest;
+use WebAppId\Content\Services\Contracts\CategoryServiceContract;
+use WebAppId\Content\Services\Requests\CategoryServiceRequest;
+use WebAppId\Content\Services\Responses\CategoryServiceResponse;
+use WebAppId\Content\Services\Responses\CategoryServiceResponseList;
 use Illuminate\Support\Facades\Cache;
 use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Responses\Categories\ListResponse;
 use WebAppId\Content\Responses\Categories\SearchResponse;
 use WebAppId\DDD\Services\BaseService;
+use WebAppId\DDD\Tools\Lazy;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
@@ -15,88 +21,51 @@ use WebAppId\DDD\Services\BaseService;
  * Class CategoryService
  * @package WebAppId\Content\Services
  */
-class CategoryService extends BaseService
+class CategoryService extends BaseService implements CategoryServiceContract
 {
+
     /**
-     * @param string $code
-     * @param CategoryRepository $categoryRepository
-     * @param SearchResponse $searchResponse
-     * @return SearchResponse
+     * @inheritDoc
      */
-    public function getByCode(string $code, CategoryRepository $categoryRepository, SearchResponse $searchResponse): SearchResponse
+    public function getById(int $id, CategoryRepository $categoryRepository, CategoryServiceResponse $categoryServiceResponse): CategoryServiceResponse
     {
-        $result = $this->getContainer()->call([$categoryRepository, 'getCategoryByCode'], ['code' => $code]);
+        $result = $this->container->call([$categoryRepository, 'getById'], ['id' => $id]);
         if ($result != null) {
-            $searchResponse->setStatus(true);
-            $searchResponse->setCategory($result);
+            $categoryServiceResponse->status = true;
+            $categoryServiceResponse->message = 'Data Found';
+            $categoryServiceResponse->category = $result;
         } else {
-            $searchResponse->setStatus(false);
+            $categoryServiceResponse->status = false;
+            $categoryServiceResponse->message = 'Data Not Found';
         }
-        return $searchResponse;
+
+        return $categoryServiceResponse;
     }
 
     /**
-     * @param string $code
-     * @param CategoryRepository $categoryRepository
-     * @param ListResponse $listResponse
-     * @return ListResponse
+     * @inheritDoc
      */
-    public function getChildByParentCode(string $code, CategoryRepository $categoryRepository, ListResponse $listResponse): ListResponse
+    public function get(CategoryRepository $categoryRepository, CategoryServiceResponseList $categoryServiceResponseList, int $length = 12, string $q = null): CategoryServiceResponseList
     {
-        $list = Cache::rememberForever('category-' . $code, function () use ($code, $categoryRepository) {
-            $category = $this->getContainer()->call([$categoryRepository, 'getCategoryByCode'], ['code' => $code]);
-            return $category->childs;
-        });
-        if (count($list) > 0) {
-            $listResponse->setStatus(true);
-            $listResponse->setList($list);
+        $result = $this->container->call([$categoryRepository, 'get'], ['q' => $q]);
+        if (count($result) > 0) {
+            $categoryServiceResponseList->status = true;
+            $categoryServiceResponseList->message = 'Data Found';
+            $categoryServiceResponseList->categoryList = $result;
+            $categoryServiceResponseList->count = $this->container->call([$categoryRepository, 'getCount']);
+            $categoryServiceResponseList->countFiltered = $this->container->call([$categoryRepository, 'getCount'], ['q' => $q]);
         } else {
-            $listResponse->setStatus(false);
+            $categoryServiceResponseList->status = false;
+            $categoryServiceResponseList->message = 'Data Not Found';
         }
-        return $listResponse;
+        return $categoryServiceResponseList;
     }
 
     /**
-     * @param string $code
-     * @param CategoryRepository $categoryRepository
-     * @param ListResponse $listResponse
-     * @return ListResponse
+     * @inheritDoc
      */
-    public function getChildAndGrandByParentCode(string $code, CategoryRepository $categoryRepository, ListResponse $listResponse): ListResponse
+    public function getCount(CategoryRepository $categoryRepository, string $q = null): int
     {
-        $list = Cache::rememberForever('category-' . $code, function () use ($code, $categoryRepository) {
-            $category = $this->getContainer()->call([$categoryRepository, 'getCategoryByCode'], ['code' => $code]);
-            $childs = [];
-            for ($i = 0; $i < count($category->childs); $i++) {
-                $childs[$i] = $category->childs[$i];
-                $childs[$i]['grand'] = $category->childs[$i]->childs;
-            }
-            return $childs;
-        });
-        if (count($list) > 0) {
-            $listResponse->setStatus(true);
-            $listResponse->setList($list);
-        } else {
-            $listResponse->setStatus(false);
-        }
-        return $listResponse;
-    }
-
-    /**
-     * @param string $q
-     * @param CategoryRepository $categoryRepository
-     * @param ListResponse $listResponse
-     * @return ListResponse
-     */
-    public function getSearchCategory(string $q, CategoryRepository $categoryRepository, ListResponse $listResponse): ListResponse
-    {
-        $list = $this->getContainer()->call([$categoryRepository, 'getSearch'], ['search' => $q]);
-        if (count($list) > 0) {
-            $listResponse->setStatus(true);
-            $listResponse->setList($list);
-        } else {
-            $listResponse->setStatus(false);
-        }
-        return $listResponse;
+        return $this->container->call([$categoryRepository, 'getCount'], ['q' => $q]);
     }
 }

@@ -3,10 +3,12 @@
 
 namespace WebAppId\Content\Tests\Feature\Services;
 
-use Illuminate\Support\Facades\Cache;
+use WebAppId\Content\Services\Requests\CategoryServiceRequest;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use WebAppId\Content\Tests\Unit\Repositories\CategoryRepositoryTest;
 use WebAppId\Content\Services\CategoryService;
 use WebAppId\Content\Tests\TestCase;
-use WebAppId\Content\Tests\Unit\Repositories\CategoryTest;
+use WebAppId\DDD\Tools\Lazy;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
@@ -20,64 +22,87 @@ class CategoryServiceTest extends TestCase
     /**
      * @var CategoryService
      */
-    private $categoryService;
+    protected $categoryService;
 
     /**
-     * @var CategoryTest
+     * @var CategoryRepositoryTest
      */
-    private $categoryRepositoryTest;
+    protected $categoryRepositoryTest;
 
     public function __construct($name = null, array $data = [], $dataName = '')
     {
-        $this->categoryService = $this->getContainer()->make(CategoryService::class);
-        $this->categoryRepositoryTest = $this->getContainer()->make(CategoryTest::class);
         parent::__construct($name, $data, $dataName);
+        try {
+            $this->categoryService = $this->container->make(CategoryService::class);
+            $this->categoryRepositoryTest = $this->container->make(CategoryRepositoryTest::class);
+        } catch (BindingResolutionException $e) {
+        }
+
     }
 
-    public function testGetCategoryByCode()
+    public function testGetById()
     {
-        $dummy = $this->getContainer()->call([$this->categoryRepositoryTest, 'getDummy']);
-        $category = $this->categoryRepositoryTest->createCategory($dummy);
-        $result = $this->getContainer()->call([$this->categoryService, 'getByCode'], ['code' => $category['code']]);
+        $contentServiceResponse = $this->testStore();
+        $result = $this->container->call([$this->categoryService, 'getById'], ['id' => $contentServiceResponse->id]);
         self::assertTrue($result->isStatus());
     }
 
-    public function testGetCategoryByParentCode()
+    private function getDummy(int $number = 0): CategoryServiceRequest
     {
-        $dummy = $this->getContainer()->call([$this->categoryRepositoryTest, 'getDummy']);
-        $category = $this->categoryRepositoryTest->createCategory($dummy);
+        $categoryRepositoryRequest = $this->container->call([$this->categoryRepositoryTest, 'getDummy'], ['no' => $number]);
+        $categoryServiceRequest = null;
+        try {
+            $categoryServiceRequest = $this->container->make(CategoryServiceRequest::class);
+        } catch (BindingResolutionException $e) {
+            report($e);
+        }
+        return Lazy::copy($categoryRepositoryRequest, $categoryServiceRequest);
+    }
 
-        $dummy = $this->getContainer()->call([$this->categoryRepositoryTest, 'getDummy']);
-        $dummy->setParentId($category->id);
-        $this->categoryRepositoryTest->createCategory($dummy);
-        $result = $this->getContainer()->call([$this->categoryService, 'getChildByParentCode'], ['code' => $category['code']]);
-        Cache::forget($category['code']);
+    public function testStore(int $number = 0)
+    {
+        $result = $this->container->call([$this->categoryRepositoryTest, 'testStore']);
+        self::assertNotEquals(null,$result);
+        return $result;
+    }
+
+    public function testGet()
+    {
+        for ($i=0; $i<$this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++){
+            $this->testStore($i);
+        }
+        $result = $this->container->call([$this->categoryService, 'get']);
         self::assertTrue($result->isStatus());
     }
 
-    public function testGetCategoryGrandByParentCode()
+    public function testGetCount()
     {
-        $dummy = $this->getContainer()->call([$this->categoryRepositoryTest, 'getDummy']);
-        $category = $this->categoryRepositoryTest->createCategory($dummy);
+        for ($i=0; $i<$this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++){
+            $this->testStore($i);
+        }
+        $result = $this->container->call([$this->categoryService, 'getCount']);
+        self::assertGreaterThanOrEqual(1, $result);
+    }
 
-        $dummyChild = $this->getContainer()->call([$this->categoryRepositoryTest, 'getDummy']);
-        $dummyChild->setParentId($category->id);
-        $categoryChild = $this->categoryRepositoryTest->createCategory($dummyChild);
-
-        $dummyGrandChild = $this->getContainer()->call([$this->categoryRepositoryTest, 'getDummy']);
-        $dummyGrandChild->setParentId($categoryChild->id);
-        $this->categoryRepositoryTest->createCategory($dummyGrandChild);
-
-        $result = $this->getContainer()->call([$this->categoryService, 'getChildAndGrandByParentCode'], ['code' => $category['code']]);
-        Cache::forget($category['code']);
+    public function testGetWhere()
+    {
+        for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++) {
+            $this->testStore($i);
+        }
+        $string = 'aiueo';
+        $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
+        $result = $this->container->call([$this->categoryService, 'get'], ['q' => $q]);
         self::assertTrue($result->isStatus());
     }
 
-    public function testGetSearchCategory()
+    public function testGetWhereCount()
     {
-        $dummy = $this->getContainer()->call([$this->categoryRepositoryTest, 'getDummy']);
-        $this->categoryRepositoryTest->createCategory($dummy);
-        $result = $this->getContainer()->call([$this->categoryService, 'getSearchCategory'], ['q' => '']);
-        self::assertTrue($result->isStatus());
+        for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++) {
+            $this->testStore($i);
+        }
+        $string = 'aiueo';
+        $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
+        $result = $this->container->call([$this->categoryService, 'getCount'], ['q' => $q]);
+        self::assertGreaterThanOrEqual(1, $result);
     }
 }

@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @author @DyanGalih
- * @copyright @2018
+ * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
 namespace WebAppId\Content\Repositories;
@@ -12,7 +11,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\Tag;
 use WebAppId\Content\Repositories\Contracts\TagRepositoryContract;
 use WebAppId\Content\Repositories\Requests\TagRepositoryRequest;
-use WebAppId\Content\Services\Params\AddTagParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
@@ -121,24 +119,5 @@ class TagRepository implements TagRepositoryContract
     {
         return $this->getColumn($tag)
             ->where('tags.name', $name)->first();
-    }
-
-    /**
-     * @param AddTagParam $addTagParam
-     * @param Tag $tag
-     * @return Tag|null
-     * @deprecated
-     */
-    public function addTag(AddTagParam $addTagParam, Tag $tag): ?Tag
-    {
-        try {
-            $tag->name = $addTagParam->getName();
-            $tag->user_id = $addTagParam->getUserId();
-            $tag->save();
-            return $tag;
-        } catch (QueryException $e) {
-            report($e);
-            return null;
-        }
     }
 }

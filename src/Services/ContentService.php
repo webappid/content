@@ -7,7 +7,7 @@
 
 namespace WebAppId\Content\Services;
 
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -18,29 +18,36 @@ use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Repositories\ContentChildRepository;
 use WebAppId\Content\Repositories\ContentGalleryRepository;
 use WebAppId\Content\Repositories\ContentRepository;
+use WebAppId\Content\Repositories\Requests\CategoryRepositoryRequest;
+use WebAppId\Content\Repositories\Requests\ContentGalleryRepositoryRequest;
+use WebAppId\Content\Repositories\Requests\ContentRepositoryRequest;
 use WebAppId\Content\Repositories\TimeZoneRepository;
-use WebAppId\Content\Responses\ContentResponse;
-use WebAppId\Content\Responses\ContentSearchResponse;
-use WebAppId\Content\Services\Params\AddContentCategoryParam;
-use WebAppId\Content\Services\Params\AddContentChildParam;
-use WebAppId\Content\Services\Params\AddContentGalleryParam;
-use WebAppId\Content\Services\Params\AddContentParam;
-use WebAppId\Content\Services\Params\ContentSearchParam;
+use WebAppId\Content\Services\Contracts\ContentServiceContract;
+use WebAppId\Content\Services\Requests\ContentChildServiceRequest;
+use WebAppId\Content\Services\Requests\ContentServiceRequest;
+use WebAppId\Content\Services\Requests\ContentServiceSearchRequest;
+use WebAppId\Content\Services\Responses\ContentServiceResponse;
+use WebAppId\Content\Services\Responses\ContentServiceResponseList;
 use WebAppId\DDD\Services\BaseService;
+use WebAppId\DDD\Tools\Lazy;
 
 /**
+ * @author: Dyan Galih<dyan.galih@gmail.com>
+ * Date: 25/04/20
+ * Time: 20.52
  * Class ContentService
  * @package WebAppId\Content\Services
  */
-class ContentService extends BaseService
+class ContentService extends BaseService implements ContentServiceContract
 {
 
     /**
      * @param TimeZoneRepository $timeZoneRepository
-     * @param AddContentParam $addContentParam
-     * @return mixed
+     * @param ContentServiceRequest $contentServiceRequest
+     * @return ContentServiceRequest
      */
-    private function getDefault(TimeZoneRepository $timeZoneRepository, AddContentParam $addContentParam): AddContentParam
+    private function getDefault(TimeZoneRepository $timeZoneRepository,
+                                ContentServiceRequest $contentServiceRequest): ContentServiceRequest
     {
 
         $user_id = Auth::id() == null ? session('user_id') : Auth::id();
@@ -51,145 +58,149 @@ class ContentService extends BaseService
             $zone = session('timezone');
         }
 
-        $addContentParam->setUserId($user_id);
+        $contentServiceRequest->user_id = $user_id;
 
-        $timeZoneData = $this->getContainer()->call([$timeZoneRepository, 'getOneTimeZoneByName'], ['name' => $zone]);
+        $timeZoneData = $this->getContainer()->call([$timeZoneRepository, 'getByName'], ['name' => $zone]);
 
-        $addContentParam->setCode(str::slug($addContentParam->getTitle()));
 
-        if ($addContentParam->getKeyword() == null) {
-            $addContentParam->setKeyword($addContentParam->getTitle());
+        $contentServiceRequest->code = str::slug($contentServiceRequest->title);
+
+        if ($contentServiceRequest->keyword == null) {
+            $contentServiceRequest->keyword = $contentServiceRequest->title;
         }
 
-        if ($addContentParam->getOgTitle() == null) {
-            $addContentParam->setOgTitle($addContentParam->getTitle() . ' - ' . env('APP_NAME'));
+        if ($contentServiceRequest->og_title == null) {
+            $contentServiceRequest->og_title = $contentServiceRequest->title . ' - ' . env('APP_NAME');
         }
 
-        if ($addContentParam->getOgDescription() == null) {
-            $addContentParam->setOgDescription($addContentParam->getDescription());
+        if ($contentServiceRequest->og_description == null) {
+            $contentServiceRequest->og_description = $contentServiceRequest->description;
         }
 
-        if ($addContentParam->getDefaultImage() == null) {
-            $addContentParam->setDefaultImage(1);
+        if ($contentServiceRequest->default_image == null) {
+            $contentServiceRequest->default_image = 1;
         }
 
-        if ($addContentParam->getStatusId() == null) {
-            $addContentParam->setStatusId(1);
+        if ($contentServiceRequest->status_id == null) {
+            $contentServiceRequest->status_id = 1;
         }
 
-        if ($addContentParam->getLanguageId() == null) {
-            $addContentParam->setLanguageId(1);
+        if ($contentServiceRequest->language_id == null) {
+            $contentServiceRequest->language_id = 1;
         }
 
-        if ($addContentParam->getPublishDate() == null) {
-            $addContentParam->setPublishDate(Carbon::now('UTC'));
+        if ($contentServiceRequest->publish_date == null) {
+            $contentServiceRequest->publish_date = Carbon::now('UTC');
         }
 
-        if ($addContentParam->getAdditionalInfo() == null) {
-            $addContentParam->setAdditionalInfo("");
+        if ($contentServiceRequest->additional_info == null) {
+            $contentServiceRequest->additional_info = "";
         }
 
-        if ($addContentParam->getTimeZoneId() == null) {
-            $addContentParam->setTimeZoneId(isset($timeZoneData) ? $timeZoneData->id : 1);
+        if ($contentServiceRequest->time_zone_id == null) {
+            $contentServiceRequest->time_zone_id = isset($timeZoneData) ? $timeZoneData->id : 1;
         }
 
-        if ($addContentParam->getCreatorId() == null) {
-            $addContentParam->setCreatorId($addContentParam->getUserId());
+        if ($contentServiceRequest->creator_id == null) {
+            $contentServiceRequest->creator_id = $contentServiceRequest->user_id;
         }
 
-        if ($addContentParam->getOwnerId() == null) {
-            $addContentParam->setOwnerId($addContentParam->getUserId());
+        if ($contentServiceRequest->owner_id == null) {
+            $contentServiceRequest->owner_id = $contentServiceRequest->user_id;
         }
 
-        return $addContentParam;
+        return $contentServiceRequest;
     }
 
     /**
-     * @param AddContentParam $addContentParam
-     * @param ContentRepository $contentRepository
-     * @param TimeZoneRepository $timeZoneRepository
-     * @param ContentCategoryRepository $contentCategoryRepository
-     * @param ContentChildRepository $contentChildRepository
-     * @param ContentGalleryRepository $contentGalleryRepository
-     * @param ContentResponse $contentResponse
-     * @return ContentResponse|null
+     * @inheritDoc
+     * @throws BindingResolutionException
      */
-    public function store(AddContentParam $addContentParam,
-                          ContentRepository $contentRepository,
-                          TimeZoneRepository $timeZoneRepository,
-                          ContentCategoryRepository $contentCategoryRepository,
-                          ContentChildRepository $contentChildRepository,
-                          ContentGalleryRepository $contentGalleryRepository,
-                          ContentResponse $contentResponse): ?ContentResponse
+    public function store(
+        ContentChildServiceRequest $contentChildServiceRequest,
+        ContentServiceRequest $contentServiceRequest,
+        ContentRepositoryRequest $contentRepositoryRequest,
+        ContentRepository $contentRepository,
+        TimeZoneRepository $timeZoneRepository,
+        ContentCategoryRepository $contentCategoryRepository,
+        ContentChildRepository $contentChildRepository,
+        ContentGalleryRepository $contentGalleryRepository,
+        ContentServiceResponse $contentServiceResponse): ContentServiceResponse
     {
 
-        if ($addContentParam->getCategories() == null || count($addContentParam->getCategories()) == 0) {
-            $contentResponse->setStatus(false);
-            $contentResponse->setMessage("categories data required");
-            return $contentResponse;
+        if (count($contentServiceRequest->categories) == 0) {
+            $contentServiceResponse->status = false;
+            $contentServiceResponse->message = "categories data required";
+            return $contentServiceResponse;
         }
 
-        $request = $this->getDefault($timeZoneRepository, $addContentParam);
+        $contentServiceRequest = $this->getDefault($timeZoneRepository, $contentServiceRequest);
 
+        $contentRepositoryRequest = Lazy::copy($contentServiceRequest, $contentRepositoryRequest);
 
-        $content = $this->getContainer()->call([$contentRepository, 'addContent'], ['addContentParam' => $request]);
+        unset($contentRepositoryRequest->categories);
+
+        unset($contentRepositoryRequest->parent_id);
+
+        unset($contentRepositoryRequest->galleries);
+
+        $content = $this->container->call([$contentRepository, 'store'], compact('contentRepositoryRequest'));
 
         if ($content == null) {
-            $contentResponse->setStatus(false);
-            $contentResponse->setMessage('Save content failed');
-            return $contentResponse;
+            $contentServiceResponse->status = false;
+            $contentServiceResponse->message = 'Save content failed';
+            return $contentServiceResponse;
         }
 
-        $contentResponse->setContent($content);
+        $contentServiceResponse->content = $content;
 
-        if ($addContentParam->getParentId() != null) {
-            $contentChildRequest = new AddContentChildParam();
-            $contentChildRequest->setUserId($request->getUserId());
-            $contentChildRequest->setContentParentId($request->getParentId());
-            $contentChildRequest->setContentChildId($content->id);
-            $this->getContainer()->call([$contentChildRepository, 'addContentChild'], ['addContentChildParam' => $contentChildRequest]);
+        if ($contentServiceRequest->parent_id != null) {
+            $contentChildServiceRequest->user_id = $contentRepositoryRequest->user_id;
+            $contentChildServiceRequest->content_parent_id = $contentRepositoryRequest->parent_id;
+            $contentChildServiceRequest->content_child_id = $content->id;
+            $this->getContainer()->call([$contentChildRepository, 'store'], compact('contentChildServiceRequest'));
             if (count($content->parents) > 0) {
                 $contentRepository->cleanCache($content->parents[0]['code']);
             }
         }
 
-        $galleries = $request->getGalleries();
-        if ($galleries == null) {
-            $galleries = [];
-        }
+        $galleries = $contentServiceRequest->galleries;
 
-        $galleries = $this->storeGalleries($galleries, $content, $request, $contentGalleryRepository);
+        $galleries = $this->storeGalleries($galleries, $content, $contentServiceRequest, $contentGalleryRepository);
 
-        $contentResponse->setGallery((object)$galleries);
+        $contentServiceResponse->galleries = $galleries;
 
-        $categories = $request->getCategories();
+        $categories = $contentServiceRequest->categories;
 
-        $categories = $this->storeCategories($categories, $content, $request, $contentCategoryRepository);
+        $categories = $this->storeCategories($categories, $content, $contentServiceRequest, $contentCategoryRepository);
 
-        $contentResponse->setStatus(true);
+        $contentServiceResponse->status = true;
 
-        $contentResponse->setMessage('store data success');
+        $contentServiceResponse->message = 'store data success';
 
-        $contentResponse->setCategories($categories);
+        $contentServiceResponse->categories = $categories;
 
-        return $contentResponse;
+        return $contentServiceResponse;
     }
 
     /**
      * @param array $categories
      * @param Content $content
-     * @param AddContentParam $request
+     * @param ContentServiceRequest $contentServiceRequest
      * @param ContentCategoryRepository $contentCategoryRepository
      * @return array
+     * @throws BindingResolutionException
      */
-    private function storeCategories(array $categories, Content $content, AddContentParam $request, ContentCategoryRepository $contentCategoryRepository): array
+    private function storeCategories(array $categories, Content $content,
+                                     ContentServiceRequest $contentServiceRequest,
+                                     ContentCategoryRepository $contentCategoryRepository): array
     {
         foreach ($categories as $category) {
-            $contentCategoryData = new AddContentCategoryParam();
-            $contentCategoryData->setUserId($request->getUserId());
-            $contentCategoryData->setContentId($content->id);
-            $contentCategoryData->setCategoryId($category);
-            $categories[] = $this->getContainer()->call([$contentCategoryRepository, 'addContentCategory'], ['addContentCategoryParam' => $contentCategoryData]);
+            $categoryRepositoryRequest = $this->container->make(CategoryRepositoryRequest::class);
+            $categoryRepositoryRequest->user_id = $contentServiceRequest->user_id;
+            $categoryRepositoryRequest->content_id = $content->id;
+            $categoryRepositoryRequest->category_id = $category;
+            $categories[] = $this->getContainer()->call([$contentCategoryRepository, 'store'], compact('categoryRepositoryRequest'));
         }
         return $categories;
     }
@@ -197,152 +208,118 @@ class ContentService extends BaseService
     /**
      * @param array $galleries
      * @param Content $content
-     * @param AddContentParam $request
+     * @param ContentServiceRequest $contentServiceRequest
      * @param ContentGalleryRepository $contentGalleryRepository
      * @return array
+     * @throws BindingResolutionException
      */
-    private function storeGalleries(array $galleries, Content $content, AddContentParam $request, ContentGalleryRepository $contentGalleryRepository): array
+    private function storeGalleries(array $galleries, Content $content, ContentServiceRequest $contentServiceRequest, ContentGalleryRepository $contentGalleryRepository): array
     {
         foreach ($galleries as $gallery) {
-            $galleryData = new AddContentGalleryParam();
-            $galleryData->setContentId($content->id);
-            $galleryData->setUserId($request->getUserId());
-            $galleryData->setFileId($gallery);
-            $galleryData->setDescription('');
-            $galleries[] = $this->getContainer()->call([$contentGalleryRepository, 'addContentGallery'], ['addContentGalleryParam' => $galleryData]);
+            $contentGalleryRepositoryRequest = $this->container->make(ContentGalleryRepositoryRequest::class);
+            $contentGalleryRepositoryRequest->content_id = $content->id;
+            $contentGalleryRepositoryRequest->user_id = $contentServiceRequest->user_id;
+            $contentGalleryRepositoryRequest->file_id = $gallery;
+            $contentGalleryRepositoryRequest->description = '';
+            $galleries[] = $this->getContainer()->call([$contentGalleryRepository, 'store'], compact('contentGalleryRepositoryRequest'));
         }
         return $galleries;
     }
 
     /**
-     * @param ContentSearchParam $contentSearchParam
-     * @param ContentRepository $contentRepository
-     * @param CategoryRepository $categoryRepository
-     * @param string $paginate
-     * @return LengthAwarePaginator|null
+     * @inheritDoc
      */
-    public function showPaginate(ContentSearchParam $contentSearchParam,
-                                 ContentRepository $contentRepository,
-                                 CategoryRepository $categoryRepository,
-                                 $paginate = '12'): ?LengthAwarePaginator
+    public function get(ContentServiceSearchRequest $contentServiceSearchRequest,
+                        ContentRepository $contentRepository,
+                        CategoryRepository $categoryRepository,
+                        ContentServiceResponseList $contentServiceResponseList): ContentServiceResponseList
     {
 
-        $categoryName = $contentSearchParam->getCategory();
-        if ($categoryName == null) {
-            $categoryName = '';
-        }
-        $search = $contentSearchParam->getQ();
-        if ($search == null) {
-            $search = '';
-        }
-        $categoryData = $this->getContainer()->call([$categoryRepository, 'getSearchOne'], ['search' => $categoryName]);
+        $categoryName = $contentServiceSearchRequest->category == null ? '' : $contentServiceSearchRequest->category;
 
-        return $this->getContainer()->call([$contentRepository, 'getSearchPaginate'], ['search' => $search, 'category_id' => $categoryData->id, 'paginate' => $paginate]);
-    }
+        $categoryResult = $this->getContainer()->call([$categoryRepository, 'getByName'], ['name' => $categoryName]);
 
-    /**
-     * @param ContentSearchParam $contentSearchParam
-     * @param ContentRepository $contentRepository
-     * @param CategoryRepository $categoryRepository
-     * @param ContentSearchResponse $contentSearchResponse
-     * @return mixed
-     */
-    public function show(ContentSearchParam $contentSearchParam,
-                         ContentRepository $contentRepository,
-                         CategoryRepository $categoryRepository,
-                         ContentSearchResponse $contentSearchResponse): ContentSearchResponse
-    {
-
-        $categoryName = $contentSearchParam->getCategory();
-        if ($categoryName == null) {
-            $categoryName = '';
-        }
-        $categoryData = $this->getContainer()->call([$categoryRepository, 'getSearchOne'], ['search' => $categoryName]);
-        $search = $contentSearchParam->getQ();
-        if ($search == null) {
-            $search = '';
-        }
-        $content = $this->getContainer()->call([$contentRepository, 'getSearch'], ['search' => $search, 'category_id' => $categoryData->id]);
-        if ($content != null) {
-            $contentSearchResponse->setStatus(true);
-            $contentSearchResponse->setData($content);
-            $recordsTotal = $this->getContainer()->call([$contentRepository, 'getAllCount'], ['category_id' => $categoryData->id]);
-            $contentSearchResponse->setRecordsTotal($recordsTotal);
-            $recordsFiltered = $this->getContainer()->call([$contentRepository, 'getSearchCount'], ['search' => $search, 'category_id' => $categoryData->id]);
-            $contentSearchResponse->setRecordsFiltered($recordsFiltered);
+        if ($categoryResult == null) {
+            $categoryId = null;
         } else {
-            $contentSearchResponse->setStatus(false);
+            $categoryId = $categoryResult->id;
         }
 
-        return $contentSearchResponse;
+        $q = $contentServiceSearchRequest->q;
+
+        $content = $this->getContainer()->call([$contentRepository, 'get'], ['q' => $q, 'category_id' => $categoryId]);
+
+        if ($content != null) {
+            $contentServiceResponseList->status = true;
+            $contentServiceResponseList->contentList = $content;
+            $recordsTotal = $this->getContainer()->call([$contentRepository, 'getCount'], ['category_id' => $categoryId]);
+            $contentServiceResponseList->count = $recordsTotal;
+            $recordsFiltered = $this->getContainer()->call([$contentRepository, 'getCount'], ['q' => $q, 'category_id' => $categoryId]);
+            $contentServiceResponseList->countFiltered = $recordsFiltered;
+        } else {
+            $contentServiceResponseList->status = false;
+        }
+
+        return $contentServiceResponseList;
     }
 
     /**
-     * @param string $code
-     * @param ContentRepository $contentRepository
-     * @return Content|null
-     */
-    public function edit(string $code,
-                         ContentRepository $contentRepository): ?Content
-    {
-        return $this->getContainer()->call([$contentRepository, 'getContentByCode'], ['code' => $code]);
-    }
-
-    /**
-     * @param string $code
-     * @param AddContentParam $addContentParam
-     * @param ContentRepository $contentRepository
-     * @param TimeZoneRepository $timeZoneRepository
-     * @param ContentCategoryRepository $contentCategoryRepository
-     * @param ContentGalleryRepository $contentGalleryRepository
-     * @param ContentResponse $contentResponse
-     * @return ContentResponse|null
+     * @inheritDoc
+     * @throws BindingResolutionException
      */
     public function update(string $code,
-                           AddContentParam $addContentParam,
+                           ContentServiceRequest $contentServiceRequest,
+                           ContentRepositoryRequest $contentRepositoryRequest,
                            ContentRepository $contentRepository,
                            TimeZoneRepository $timeZoneRepository,
                            ContentCategoryRepository $contentCategoryRepository,
                            ContentGalleryRepository $contentGalleryRepository,
-                           ContentResponse $contentResponse): ?ContentResponse
+                           ContentServiceResponse $contentServiceResponse): ContentServiceResponse
     {
 
-        $addContentParam = $this->getDefault($timeZoneRepository, $addContentParam);
+        $contentServiceRequest = $this->getDefault($timeZoneRepository, $contentServiceRequest);
 
-        $content = $this->getContainer()->call([$contentRepository, 'updateContentByCode'], ['addContentParam' => $addContentParam, 'code' => $code]);
+        $contentRepositoryRequest = Lazy::copy($contentServiceRequest, $contentRepositoryRequest);
+
+        unset($contentRepositoryRequest->categories);
+
+        unset($contentRepositoryRequest->parent_id);
+
+        unset($contentRepositoryRequest->galleries);
+
+        $content = $this->getContainer()->call([$contentRepository, 'update'], compact('contentRepositoryRequest', 'code'));
 
         if ($content != null) {
-            $this->getContainer()->call([$contentGalleryRepository, 'deleteContentGalleryByContentId'], ['content_id' => $content->id]);
+            $this->getContainer()->call([$contentGalleryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
 
-            $galleries = $addContentParam->getGalleries();
-            if ($galleries == null) {
-                $galleries = [];
-            }
+            $galleries = $contentServiceRequest->galleries;
 
-            $galleries = $this->storeGalleries($galleries, $content, $addContentParam, $contentGalleryRepository);
+            $galleries = $this->storeGalleries($galleries, $content, $contentServiceRequest, $contentGalleryRepository);
 
-            $contentResponse->setGallery((object)$galleries);
-            $contentResponse->setContent($content);
+            $contentServiceResponse->galleries = $galleries;
 
-            $categories = $addContentParam->getCategories();
+            $contentServiceResponse->content = $content;
 
-            $this->getContainer()->call([$contentCategoryRepository, 'deleteContentCategoryByContentId'], ['contentId' => $content->id]);
+            $categories = $contentServiceRequest->categories;
 
-            $categories = $this->storeCategories($categories, $content, $addContentParam, $contentCategoryRepository);
+            $this->getContainer()->call([$contentCategoryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
 
-            $contentResponse->setCategories($categories);
+            $categories = $this->storeCategories($categories, $content, $contentServiceRequest, $contentCategoryRepository);
 
-            $contentResponse->setStatus(true);
+
+            $contentServiceResponse->categories = $categories;
+
+            $contentServiceResponse->status = true;
 
             if (count($content->parents) > 0) {
                 $contentRepository->cleanCache($content->parents[0]['code']);
             }
         } else {
-            $contentResponse->setStatus(false);
-            $contentResponse->setMessage('update failed');
+            $contentServiceResponse->status = false;
+            $contentServiceResponse->message = 'Update Failed';
         }
 
-        return $contentResponse;
+        return $contentServiceResponse;
     }
 
     /**
@@ -353,48 +330,67 @@ class ContentService extends BaseService
     public function destroy(string $code,
                             ContentRepository $contentRepository): bool
     {
-        return $this->getContainer()->call([$contentRepository, 'deleteContentByCode'], ['code' => $code]);
+        return $this->getContainer()->call([$contentRepository, 'delete'], ['code' => $code]);
     }
 
     /**
      * @param string $code
      * @param ContentRepository $contentRepository
-     * @param ContentResponse $contentResponse
-     * @return ContentResponse|null
+     * @param ContentServiceResponse $contentServiceResponse
+     * @return ContentServiceResponse|null
      */
     public function detail(string $code,
                            ContentRepository $contentRepository,
-                           ContentResponse $contentResponse): ?ContentResponse
+                           ContentServiceResponse $contentServiceResponse): ?ContentServiceResponse
     {
-        $contentResponse = Cache::rememberForever('content-' . $code, function () use ($contentRepository, $contentResponse, $code) {
-            $content = $this->getContainer()->call([$contentRepository, 'getContentByCode'], ['code' => $code]);
+        $contentServiceResponse = Cache::rememberForever('content-' . $code, function () use ($contentRepository, $contentServiceResponse, $code) {
+            $content = $this->getContainer()->call([$contentRepository, 'getByCode'], ['code' => $code]);
             if ($content != null) {
-                $contentResponse->setStatus(true);
-                $contentResponse->setContent($content);
-                for ($i = 0; $i < count($content->galleries); $i++) {
-                    $content->galleries[$i]['mime_type'] = $content->galleries[$i]->mime->name;
-                }
-                $contentResponse->setGallery($content->galleries);
-                $contentResponse->setChild($content->childs);
+                $contentServiceResponse->status = true;
+                $contentServiceResponse = $this->getContentDetailComplete($content, $contentServiceResponse);
             } else {
-                $contentResponse->setStatus(false);
+                $contentServiceResponse->status = false;
             }
-            return $contentResponse;
+            return $contentServiceResponse;
         });
 
-        return $contentResponse;
+        return $contentServiceResponse;
+    }
+
+
+    private function getContentDetailComplete(Content $content,
+                                              ContentServiceResponse $contentServiceResponse): ContentServiceResponse
+    {
+        $contentServiceResponse->content = $content;
+        for ($i = 0; $i < count($content->galleries); $i++) {
+            $content->galleries[$i]['mime_type'] = $content->galleries[$i]->mime->name;
+        }
+        $contentServiceResponse->galleries = $content->galleries;
+        $contentServiceResponse->children = $content->childs;
+        return $contentServiceResponse;
     }
 
     /**
      * @param string $code
      * @param int $status
      * @param ContentRepository $contentRepository
-     * @return Content|null
+     * @param ContentServiceResponse $contentServiceResponse
+     * @return ContentServiceResponse
      */
-    public function updateContentStatusByCode(string $code,
-                                              int $status,
-                                              ContentRepository $contentRepository): ?Content
+    public function updateStatusByCode(string $code,
+                                       int $status,
+                                       ContentRepository $contentRepository,
+                                       ContentServiceResponse $contentServiceResponse): ContentServiceResponse
     {
-        return $this->getContainer()->call([$contentRepository, 'updateContentStatusByCode'], ['code' => $code, 'status_id' => $status]);
+        $result = $this->getContainer()->call([$contentRepository, 'updateStatusByCode'], ['code' => $code, 'status_id' => $status]);
+        if ($result != null) {
+            $contentServiceResponse->status = true;
+            $contentServiceResponse->message = "Update Status Success";
+            $contentServiceResponse = $this->getContentDetailComplete($result, $contentServiceResponse);
+        } else {
+            $contentServiceResponse->status = false;
+            $contentServiceResponse->message = "Update Status Failed";
+        }
+        return $contentServiceResponse;
     }
 }

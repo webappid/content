@@ -5,13 +5,11 @@
 
 namespace WebAppId\Content\Repositories;
 
-
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\CategoryStatus;
 use WebAppId\Content\Repositories\Contracts\CategoryStatusRepositoryContract;
 use WebAppId\Content\Repositories\Requests\CategoryStatusRepositoryRequest;
-use WebAppId\Content\Services\Params\AddCategoryStatusParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
@@ -114,26 +112,7 @@ class CategoryStatusRepository implements CategoryStatusRepositoryContract
     }
 
     /**
-     * @param AddCategoryStatusParam $addCategoryStatusParam
-     * @param CategoryStatus $categoryStatus
-     * @return null|CategoryStatus
-     */
-    public function addCategoryStatus(AddCategoryStatusParam $addCategoryStatusParam, CategoryStatus $categoryStatus): ?CategoryStatus
-    {
-        try {
-            $categoryStatus->name = $addCategoryStatusParam->getName();
-            $categoryStatus->save();
-            return $categoryStatus;
-        } catch (QueryException $queryException) {
-            report($queryException);
-            return null;
-        }
-    }
-
-    /**
-     * @param string $name
-     * @param CategoryStatus $categoryStatus
-     * @return CategoryStatus|null
+     * @inheritDoc
      */
     public function getByName(string $name, CategoryStatus $categoryStatus): ?CategoryStatus
     {

@@ -136,7 +136,7 @@ class FileRepository implements FileRepositoryContract
     /**
      * @inheritDoc
      */
-    public function getFileByName(string $name, File $file): ?File
+    public function getByName(string $name, File $file): ?File
     {
         return $this->getColumn($file)
             ->where('files.name', $name)
