@@ -12,41 +12,55 @@ use WebAppId\Content\ServiceProvider;
 abstract class TestCase extends BaseTestCase
 {
     private $faker;
-    
+
     protected $prefix_route = "/test";
-    
-    private $container;
-    
+
+    /**
+     * @var Container
+     */
+    protected $container;
+
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
+        $this->container = new Container();
+        parent::__construct($name, $data, $dataName);
+    }
+
     /**
      * Set up the test
      */
     public function setUp(): void
     {
         parent::setUp();
-        
+
         $this->loadMigrationsFrom([
             '--realpath' => realpath(__DIR__ . '/../src/migrations'),
         ]);
+
+        $migrator = $this->app->make('migrator');
+
+        $migrator->run(__DIR__ . '/../../vendor/webappid/laravel-user/src/migrations');
+
         $this->artisan('webappid:content:seed');
-        
+
     }
-    
+
     protected function getFaker()
     {
         if ($this->faker == null) {
             $this->faker = new Faker;
         }
-        
+
         return $this->faker->create('id_ID');
     }
-    
+
     protected function getPackageProviders($app)
     {
         return [
             ServiceProvider::class
         ];
     }
-    
+
     protected function getPackageAliases($app)
     {
         return [
@@ -59,7 +73,7 @@ abstract class TestCase extends BaseTestCase
         Artisan::call('migrate:reset');
         parent::tearDown();
     }
-    
+
     protected function getContainer()
     {
         if ($this->container == null) {
@@ -67,7 +81,7 @@ abstract class TestCase extends BaseTestCase
         }
         return $this->container;
     }
-    
+
     protected function getEnvironmentSetUp($app)
     {
         $app['config']->set('database.default', 'sqlite');

@@ -21,7 +21,7 @@ class CreateContentChildsTable extends Migration
      */
     public function up()
     {
-        Schema::create('content_childs', function (Blueprint $table) {
+        Schema::create('content_children', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('content_parent_id')
                 ->nullable(false);
@@ -31,13 +31,13 @@ class CreateContentChildsTable extends Migration
                 ->nullable(false)
                 ->unsigned();
 
-            
+
             $table->foreign('content_parent_id')
                 ->on('contents')
                 ->references('id')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            
+
             $table->foreign('content_child_id')
                 ->on('contents')
                 ->references('id')
@@ -48,7 +48,7 @@ class CreateContentChildsTable extends Migration
                 ->on('users')
                 ->references('id')
                 ->onUpdate('cascade');
-            
+
             $table->timestamps();
         });
     }
@@ -61,6 +61,6 @@ class CreateContentChildsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('content_childs');
+        Schema::dropIfExists('content_children');
     }
 }

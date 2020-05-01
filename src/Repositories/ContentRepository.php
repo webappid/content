@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @author @DyanGalih
- * @copyright @2018
+ * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
 namespace WebAppId\Content\Repositories;
@@ -12,19 +11,171 @@ use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use WebAppId\Content\Models\Content;
+use WebAppId\Content\Repositories\Contracts\ContentRepositoryContract;
+use WebAppId\Content\Repositories\Requests\ContentRepositoryRequest;
 use WebAppId\Content\Services\Params\AddContentParam;
+use WebAppId\DDD\Tools\Lazy;
 
 /**
  * Class ContentRepository
  * @package WebAppId\Content\Repositories
  */
-class ContentRepository
+class ContentRepository implements ContentRepositoryContract
 {
+    /**
+     * @inheritDoc
+     */
+    public function store(ContentRepositoryRequest $contentRepositoryRequest, Content $content): ?Content
+    {
+        try {
+            $content = Lazy::copy($contentRepositoryRequest, $content);
+            $content->save();
+            $this->cleanCache($content->code);
+            return $content;
+        } catch (QueryException $queryException) {
+            report($queryException);
+            return null;
+        }
+    }
+
+    protected function getColumn($content)
+    {
+        return $content
+            ->select
+            (
+                'contents.id',
+                'contents.title',
+                'contents.code',
+                'contents.description',
+                'contents.keyword',
+                'contents.og_title',
+                'contents.og_description',
+                'contents.default_image',
+                'contents.status_id',
+                'contents.language_id',
+                'contents.time_zone_id',
+                'contents.publish_date',
+                'contents.additional_info',
+                'contents.content',
+                'users.id',
+                'users.name',
+                'files.name',
+                'files.description',
+                'files.alt',
+                'files.path',
+                'languages.code',
+                'languages.name',
+                'owner_users.id AS owner_id',
+                'owner_users.name AS owner_name',
+                'content_statuses.id',
+                'content_statuses.name',
+                'time_zones.id',
+                'time_zones.code',
+                'time_zones.name',
+                'time_zones.minute',
+                'user_users.id AS user_id',
+                'user_users.name AS user_name'
+            )
+            ->join('users as users', 'contents.creator_id', 'users.id')
+            ->join('files as files', 'contents.default_image', 'files.id')
+            ->join('languages as languages', 'contents.language_id', 'languages.id')
+            ->join('users as owner_users', 'contents.owner_id', 'owner_users.id')
+            ->join('content_statuses as content_statuses', 'contents.status_id', 'content_statuses.id')
+            ->join('time_zones as time_zones', 'contents.time_zone_id', 'time_zones.id')
+            ->join('users as user_users', 'contents.user_id', 'user_users.id');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(string $code, ContentRepositoryRequest $contentRepositoryRequest, Content $content): ?Content
+    {
+        $content = $this->getByCode($code, $content);
+        if ($content != null) {
+            try {
+                $content = Lazy::copy($contentRepositoryRequest, $content);
+                $this->cleanCache($content->code);
+                $content->save();
+                return $content;
+            } catch (QueryException $queryException) {
+                report($queryException);
+            }
+        }
+        return $content;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getById(int $id, Content $content): ?Content
+    {
+        return $this->getColumn($content)->find($id);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(string $code, Content $content): bool
+    {
+        $content = $this->getByCode($code, $content);
+        if ($content != null) {
+            return $content->delete();
+        } else {
+            return false;
+        }
+    }
+
+    private function getWhere(Content $content, int $category_id = null, string $q = null)
+    {
+        return $this->getColumn($content)
+            ->when($category_id != null, function ($query) use ($category_id) {
+                return $query->where('category_id', $category_id);
+            })
+            ->when($q != null, function ($query) use ($q) {
+                return $query->where('contents.code', 'LIKE', $q . '%')
+                    ->orWhere('contents.title', 'LIKE', '%' . $q . '%')
+                    ->orWhere('contents.description', 'LIKE', '%' . $q . '%')
+                    ->orWhere('contents.additional_info', 'LIKE', '%' . $q . '%')
+                    ->orWhere('contents.og_title', 'LIKE', '%' . $q . '%');
+            });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function get(Content $content, int $length = 12, int $category_id = null, string $q = null): LengthAwarePaginator
+    {
+        return $this->getWhere($content, $category_id, $q)
+            ->orderBy('contents.id', 'desc')
+            ->paginate($length);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCount(Content $content, int $category_id = null, string $q = null): int
+    {
+        return $this
+            ->getWhere($content, $category_id, $q)
+            ->count();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getByCode(string $code, Content $content): ?Content
+    {
+        return $content
+            ->where('code', $code)
+            ->first();
+    }
+
     /**
      * @param $content
      * @return mixed
+     * @deprecated
      */
-    protected function getColumn($content)
+    protected function getColumnOld($content)
     {
         return $content
             ->select(
@@ -59,6 +210,7 @@ class ContentRepository
      * @param AddContentParam $addContentParam
      * @param Content $content
      * @return Content|null
+     * @deprecated
      */
     public function addContent(AddContentParam $addContentParam, Content $content): ?Content
     {
@@ -92,6 +244,7 @@ class ContentRepository
      * @param $code
      * @param Content $content
      * @return Content|null
+     * @deprecated
      */
     public function updateContentByCode(AddContentParam $addContentParam,
                                         string $code,
@@ -131,6 +284,7 @@ class ContentRepository
      * @param int $category_id
      * @param Content $content
      * @return mixed
+     * @deprecated
      */
     private function getQueryAllByCategory(?int $category_id, Content $content)
     {
@@ -147,6 +301,7 @@ class ContentRepository
      * @param Content $content
      * @param integer $category_id
      * @return Collection
+     * @deprecated
      */
     public function getAll(Content $content, int $category_id = null): Collection
     {
@@ -157,6 +312,7 @@ class ContentRepository
      * @param integer $category_id
      * @param Content $content
      * @return int
+     * @deprecated
      */
     public function getAllCount(Content $content, int $category_id = null): int
     {
@@ -167,6 +323,7 @@ class ContentRepository
      * @param $code
      * @param Content $content
      * @return Content|null
+     * @deprecated
      */
     public function getContentByCode(string $code, Content $content): ?Content
     {
@@ -178,6 +335,7 @@ class ContentRepository
      * @param $category_id
      * @param $content
      * @return mixed
+     * @deprecated
      */
     public function getDataForSearch(int $category_id, Content $content, string $search = "")
     {
@@ -206,6 +364,7 @@ class ContentRepository
      * @param Content $content
      * @param string $search
      * @return Collection
+     * @deprecated
      */
     public function getSearch(int $category_id, Content $content, string $search = ""): Collection
     {
@@ -220,6 +379,7 @@ class ContentRepository
      * @param int $paginate
      * @param string $search
      * @return LengthAwarePaginator
+     * @deprecated
      */
     public function getSearchPaginate(int $category_id, Content $content, int $paginate = 12, string $search = ""): LengthAwarePaginator
     {
@@ -234,6 +394,7 @@ class ContentRepository
      * @param $category_id
      * @param Content $content
      * @return int
+     * @deprecated
      */
     public function getSearchCount(int $category_id, Content $content, string $search = ""): int
     {
@@ -247,6 +408,7 @@ class ContentRepository
      * @param Content $content
      * @return bool
      * @throws \Exception
+     * @deprecated
      */
     public function deleteContentByCode(string $code, Content $content): bool
     {
@@ -270,6 +432,7 @@ class ContentRepository
      * @param $status_id
      * @param Content $content
      * @return Content|null
+     * @deprecated
      */
     public function updateContentStatusByCode(string $code, int $status_id, Content $content): ?Content
     {
@@ -291,6 +454,7 @@ class ContentRepository
      * @param $keyword
      * @param $content
      * @return mixed
+     * @deprecated
      */
     public function getQueryContentByKeyword(string $keyword, Content $content)
     {
@@ -301,6 +465,7 @@ class ContentRepository
      * @param Content $content
      * @param $keyword
      * @return Collection
+     * @deprecated
      */
     public function getContentByKeyword(Content $content, string $keyword): Collection
     {
@@ -311,6 +476,7 @@ class ContentRepository
      * @param $keyword
      * @param Content $content
      * @return int
+     * @deprecated
      */
     public function getContentByKeywordCount(string $keyword, Content $content): int
     {
@@ -321,6 +487,7 @@ class ContentRepository
      * @param $id
      * @param Content $content
      * @return Content|null
+     * @deprecated
      */
     public function getContentById(int $id, Content $content): ?Content
     {

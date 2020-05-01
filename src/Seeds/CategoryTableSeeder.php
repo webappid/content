@@ -7,11 +7,15 @@
 
 namespace WebAppId\Content\Seeds;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Seeder;
 use WebAppId\Content\Repositories\CategoryRepository;
-use WebAppId\Content\Services\Params\AddCategoryParam;
+use WebAppId\Content\Repositories\Requests\CategoryRepositoryRequest;
 
 /**
+ * @author: Dyan Galih<dyan.galih@gmail.com>
+ * Date: 22/04/20
+ * Time: 05.40
  * Class CategoryTableSeeder
  * @package WebAppId\Content\Seeds
  */
@@ -20,24 +24,25 @@ class CategoryTableSeeder extends Seeder
     /**
      * Run the database seeds.
      *
-     * @param CategoryRepository $category
-     * @param AddCategoryParam $addCategoryParam
+     * @param CategoryRepository $categoryRepository
      * @return void
+     * @throws BindingResolutionException
      */
-    public function run(CategoryRepository $category, AddCategoryParam $addCategoryParam)
+    public function run(CategoryRepository $categoryRepository)
     {
-        
+
         $categories[] = array('name' => 'page', 'code' => 'page', 'status_id' => '1', 'user_id' => '1');
-        
-        for ($i = 0; $i < count($categories); $i++) {
-            $result = $this->container->call([$category, 'getCategoryByCode'], ['code' => $categories[$i]['code']]);
-            
+
+        foreach ($categories as $category) {
+            $result = $this->container->call([$categoryRepository, 'getByCode'], ['code' => $category['code']]);
             if ($result === null) {
-                $addCategoryParam->setName($categories[$i]['name']);
-                $addCategoryParam->setCode($categories[$i]['code']);
-                $addCategoryParam->setStatusId($categories[$i]['status_id']);
-                $addCategoryParam->setUserId($categories[$i]['user_id']);
-                $this->container->call([$category, 'addCategory'], ['addCategoryParam' => $addCategoryParam]);
+                $categoryRepositoryRequest = $this->container->make(CategoryRepositoryRequest::class);
+
+                $categoryRepositoryRequest->name = $category['name'];
+                $categoryRepositoryRequest->code = $category['code'];
+                $categoryRepositoryRequest->status_id = $category['status_id'];
+                $categoryRepositoryRequest->user_id = $category['user_id'];
+                $this->container->call([$categoryRepository, 'store'], compact('categoryRepositoryRequest'));
             }
         }
     }
