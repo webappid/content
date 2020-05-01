@@ -1,20 +1,20 @@
 {
-    "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-        "This file is @generated automatically"
-    ],
-    "content-hash": "e947d21e222cbf9ce2e064251f245602",
-    "packages": [
-        {
-            "name": "brick/math",
-            "version": "0.8.15",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/brick/math.git",
-                "reference": "9b08d412b9da9455b210459ff71414de7e6241cd"
-            },
-            "dist": {
+  "_readme": [
+    "This file locks the dependencies of your project to a known state",
+    "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+    "This file is @generated automatically"
+  ],
+  "content-hash": "e9146d50a196425eacc08a0d53e48ace",
+  "packages": [
+    {
+      "name": "brick/math",
+      "version": "0.8.15",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/brick/math.git",
+        "reference": "9b08d412b9da9455b210459ff71414de7e6241cd"
+      },
+      "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/brick/math/zipball/9b08d412b9da9455b210459ff71414de7e6241cd",
                 "reference": "9b08d412b9da9455b210459ff71414de7e6241cd",
@@ -605,13 +605,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "67ee6499f0cdde8010d0337ae41eab24de9b4cca"
+              "reference": "ab037ca2aa3f0992b8535071bd005ce97db23d92"
             },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/67ee6499f0cdde8010d0337ae41eab24de9b4cca",
-                "reference": "67ee6499f0cdde8010d0337ae41eab24de9b4cca",
-                "shasum": ""
+              "type": "zip",
+              "url": "https://api.github.com/repos/laravel/framework/zipball/ab037ca2aa3f0992b8535071bd005ce97db23d92",
+              "reference": "ab037ca2aa3f0992b8535071bd005ce97db23d92",
+              "shasum": ""
             },
             "require": {
                 "doctrine/inflector": "^1.1",
@@ -749,7 +749,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2020-04-26T15:15:23+00:00"
+          "time": "2020-05-01T14:39:39+00:00"
         },
         {
             "name": "league/commonmark",
@@ -1991,13 +1991,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "e4d30f6f9587524672551e45d66e686fe34e3642"
+              "reference": "6dade4a3e30d6f592484cd5a736b8e11ba94e351"
             },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/e4d30f6f9587524672551e45d66e686fe34e3642",
-                "reference": "e4d30f6f9587524672551e45d66e686fe34e3642",
-                "shasum": ""
+              "type": "zip",
+              "url": "https://api.github.com/repos/symfony/http-foundation/zipball/6dade4a3e30d6f592484cd5a736b8e11ba94e351",
+              "reference": "6dade4a3e30d6f592484cd5a736b8e11ba94e351",
+              "shasum": ""
             },
             "require": {
                 "php": "^7.2.5",
@@ -2034,17 +2034,31 @@
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                  "name": "Fabien Potencier",
+                  "email": "fabien@symfony.com"
                 },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
+              {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+              }
             ],
-            "description": "Symfony HttpFoundation Component",
-            "homepage": "https://symfony.com",
-            "time": "2020-04-18T20:50:29+00:00"
+          "description": "Symfony HttpFoundation Component",
+          "homepage": "https://symfony.com",
+          "funding": [
+            {
+              "url": "https://symfony.com/sponsor",
+              "type": "custom"
+            },
+            {
+              "url": "https://github.com/fabpot",
+              "type": "github"
+            },
+            {
+              "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+              "type": "tidelift"
+            }
+          ],
+          "time": "2020-04-30T16:01:38+00:00"
         },
         {
             "name": "symfony/http-kernel",
@@ -2052,13 +2066,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "d00202a22a0615d709368f4f331dd082c53727be"
+              "reference": "a9de0aa32887ed64d648f2f8c8ecc559d1e761fe"
             },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/d00202a22a0615d709368f4f331dd082c53727be",
-                "reference": "d00202a22a0615d709368f4f331dd082c53727be",
-                "shasum": ""
+              "type": "zip",
+              "url": "https://api.github.com/repos/symfony/http-kernel/zipball/a9de0aa32887ed64d648f2f8c8ecc559d1e761fe",
+              "reference": "a9de0aa32887ed64d648f2f8c8ecc559d1e761fe",
+              "shasum": ""
             },
             "require": {
                 "php": "^7.2.5",
@@ -2133,17 +2147,31 @@
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                  "name": "Fabien Potencier",
+                  "email": "fabien@symfony.com"
                 },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
+              {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+              }
             ],
-            "description": "Symfony HttpKernel Component",
-            "homepage": "https://symfony.com",
-            "time": "2020-04-23T22:29:19+00:00"
+          "description": "Symfony HttpKernel Component",
+          "homepage": "https://symfony.com",
+          "funding": [
+            {
+              "url": "https://symfony.com/sponsor",
+              "type": "custom"
+            },
+            {
+              "url": "https://github.com/fabpot",
+              "type": "github"
+            },
+            {
+              "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+              "type": "tidelift"
+            }
+          ],
+          "time": "2020-04-30T17:42:17+00:00"
         },
         {
             "name": "symfony/mime",
@@ -3417,20 +3445,20 @@
             "description": "Laravel DDD",
             "time": "2020-04-26T06:50:16+00:00"
         },
-        {
-            "name": "webappid/laravel-user",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webappid/laravel-user.git",
-                "reference": "5accc49af2a0674eb3fefbdd6512bde2cda22eb9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webappid/laravel-user/zipball/5accc49af2a0674eb3fefbdd6512bde2cda22eb9",
-                "reference": "5accc49af2a0674eb3fefbdd6512bde2cda22eb9",
-                "shasum": ""
-            },
+    {
+      "name": "webappid/laravel-user",
+      "version": "4.2.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/webappid/laravel-user.git",
+        "reference": "eba0cedd973c5ee9dd0851dcfad2bc48c528df2d"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/webappid/laravel-user/zipball/eba0cedd973c5ee9dd0851dcfad2bc48c528df2d",
+        "reference": "eba0cedd973c5ee9dd0851dcfad2bc48c528df2d",
+        "shasum": ""
+      },
             "require": {
                 "doctrine/dbal": "^2.5",
                 "illuminate/support": "^6.0|^7.0",
@@ -3472,7 +3500,7 @@
                 }
             ],
             "description": "Core simple user management for laravel",
-            "time": "2020-04-21T14:26:45+00:00"
+      "time": "2020-05-01T08:32:37+00:00"
         },
         {
             "name": "webpatser/laravel-uuid",
@@ -3803,13 +3831,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench.git",
-                "reference": "2eaf98d4279b105a98c9678ea7185a93d2c8e5ad"
+              "reference": "e2e493e8fdb043cdb4ab97560b4ce53d21313c40"
             },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench/zipball/2eaf98d4279b105a98c9678ea7185a93d2c8e5ad",
-                "reference": "2eaf98d4279b105a98c9678ea7185a93d2c8e5ad",
-                "shasum": ""
+              "type": "zip",
+              "url": "https://api.github.com/repos/orchestral/testbench/zipball/e2e493e8fdb043cdb4ab97560b4ce53d21313c40",
+              "reference": "e2e493e8fdb043cdb4ab97560b4ce53d21313c40",
+              "shasum": ""
             },
             "require": {
                 "laravel/framework": "^7.1",
@@ -3835,17 +3863,27 @@
                     "homepage": "https://github.com/crynobone"
                 }
             ],
-            "description": "Laravel Testing Helper for Packages Development",
-            "homepage": "http://orchestraplatform.com/docs/latest/components/testbench/",
-            "keywords": [
-                "BDD",
-                "TDD",
-                "laravel",
-                "orchestra-platform",
-                "orchestral",
-                "testing"
-            ],
-            "time": "2020-04-26T01:01:28+00:00"
+          "description": "Laravel Testing Helper for Packages Development",
+          "homepage": "http://orchestraplatform.com/docs/latest/components/testbench/",
+          "keywords": [
+            "BDD",
+            "TDD",
+            "laravel",
+            "orchestra-platform",
+            "orchestral",
+            "testing"
+          ],
+          "funding": [
+            {
+              "url": "https://paypal.me/crynobone",
+              "type": "custom"
+            },
+            {
+              "url": "https://www.patreon.com/crynobone",
+              "type": "patreon"
+            }
+          ],
+          "time": "2020-04-28T01:11:20+00:00"
         },
         {
             "name": "orchestra/testbench-core",
@@ -3853,13 +3891,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench-core.git",
-                "reference": "5cd9a852c9d80c48cbfa9da61f56e2382709a846"
+              "reference": "d575dfc59599102c225f46b64a8771c4c00e4e34"
             },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/5cd9a852c9d80c48cbfa9da61f56e2382709a846",
-                "reference": "5cd9a852c9d80c48cbfa9da61f56e2382709a846",
-                "shasum": ""
+              "type": "zip",
+              "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/d575dfc59599102c225f46b64a8771c4c00e4e34",
+              "reference": "d575dfc59599102c225f46b64a8771c4c00e4e34",
+              "shasum": ""
             },
             "require": {
                 "fzaninotto/faker": "^1.9.1",
@@ -3901,17 +3939,27 @@
                     "homepage": "https://github.com/crynobone"
                 }
             ],
-            "description": "Testing Helper for Laravel Development",
-            "homepage": "http://orchestraplatform.com/docs/latest/components/testbench/",
-            "keywords": [
-                "BDD",
-                "TDD",
-                "laravel",
-                "orchestra-platform",
-                "orchestral",
-                "testing"
-            ],
-            "time": "2020-04-17T01:48:20+00:00"
+          "description": "Testing Helper for Laravel Development",
+          "homepage": "http://orchestraplatform.com/docs/latest/components/testbench/",
+          "keywords": [
+            "BDD",
+            "TDD",
+            "laravel",
+            "orchestra-platform",
+            "orchestral",
+            "testing"
+          ],
+          "funding": [
+            {
+              "url": "https://paypal.me/crynobone",
+              "type": "custom"
+            },
+            {
+              "url": "https://www.patreon.com/crynobone",
+              "type": "patreon"
+            }
+          ],
+          "time": "2020-05-01T15:23:16+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -4025,19 +4073,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionCommon.git",
-                "reference": "74a67151cce1fe4aa5960636ae510ddf1faefdb3"
+              "reference": "985f414b55eca4296ffc99db960a97b3cc8fbcea"
             },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/74a67151cce1fe4aa5960636ae510ddf1faefdb3",
-                "reference": "74a67151cce1fe4aa5960636ae510ddf1faefdb3",
-                "shasum": ""
+              "type": "zip",
+              "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/985f414b55eca4296ffc99db960a97b3cc8fbcea",
+              "reference": "985f414b55eca4296ffc99db960a97b3cc8fbcea",
+              "shasum": ""
             },
             "require": {
                 "php": ">=7.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~6"
             },
             "type": "library",
             "extra": {
@@ -4069,7 +4114,7 @@
                 "reflection",
                 "static analysis"
             ],
-            "time": "2020-04-10T20:41:10+00:00"
+          "time": "2020-04-27T09:34:19+00:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -4130,13 +4175,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "d6b5291650d058fe1162a54fee9d923de19bcda2"
+              "reference": "6be94d5733839a52492da96f57c6a3b062a8f97a"
             },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/d6b5291650d058fe1162a54fee9d923de19bcda2",
-                "reference": "d6b5291650d058fe1162a54fee9d923de19bcda2",
-                "shasum": ""
+              "type": "zip",
+              "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/6be94d5733839a52492da96f57c6a3b062a8f97a",
+              "reference": "6be94d5733839a52492da96f57c6a3b062a8f97a",
+              "shasum": ""
             },
             "require": {
                 "php": "^7.2",
@@ -4168,7 +4213,7 @@
                 }
             ],
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
-            "time": "2020-03-06T17:11:40+00:00"
+          "time": "2020-04-27T19:13:53+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -4491,13 +4536,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "ac702d70957611fc03763608ee620ec1d0f0fb59"
+              "reference": "5a8f1452cb7028e7c7173e430264c07fbc6fe858"
             },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/ac702d70957611fc03763608ee620ec1d0f0fb59",
-                "reference": "ac702d70957611fc03763608ee620ec1d0f0fb59",
-                "shasum": ""
+              "type": "zip",
+              "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5a8f1452cb7028e7c7173e430264c07fbc6fe858",
+              "reference": "5a8f1452cb7028e7c7173e430264c07fbc6fe858",
+              "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.2.0",
@@ -4556,17 +4601,27 @@
                 {
                     "name": "Sebastian Bergmann",
                     "email": "sebastian@phpunit.de",
-                    "role": "lead"
+                  "role": "lead"
                 }
             ],
-            "description": "The PHP Unit Testing framework.",
-            "homepage": "https://phpunit.de/",
-            "keywords": [
-                "phpunit",
-                "testing",
-                "xunit"
-            ],
-            "time": "2020-04-24T05:02:47+00:00"
+          "description": "The PHP Unit Testing framework.",
+          "homepage": "https://phpunit.de/",
+          "keywords": [
+            "phpunit",
+            "testing",
+            "xunit"
+          ],
+          "funding": [
+            {
+              "url": "https://phpunit.de/donate.html",
+              "type": "custom"
+            },
+            {
+              "url": "https://github.com/sebastianbergmann",
+              "type": "github"
+            }
+          ],
+          "time": "2020-04-27T05:03:54+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -5189,13 +5244,13 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "73e2e7f57d958e7228fce50dc0c61f58f017f9f6"
+              "reference": "ce62dee92da3b038a399a99353fc055b39d2853e"
             },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/73e2e7f57d958e7228fce50dc0c61f58f017f9f6",
-                "reference": "73e2e7f57d958e7228fce50dc0c61f58f017f9f6",
-                "shasum": ""
+              "type": "zip",
+              "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/ce62dee92da3b038a399a99353fc055b39d2853e",
+              "reference": "ce62dee92da3b038a399a99353fc055b39d2853e",
+              "shasum": ""
             },
             "require": {
                 "ext-simplexml": "*",
@@ -5232,7 +5287,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2020-04-17T01:09:41+00:00"
+          "time": "2020-05-01T04:18:46+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -5315,23 +5370,22 @@
                 }
             ],
             "description": "Assertions to validate method input/output with nice error messages.",
-            "keywords": [
-                "assert",
-                "check",
-                "validate"
-            ],
-            "time": "2020-04-18T12:12:48+00:00"
+          "keywords": [
+            "assert",
+            "check",
+            "validate"
+          ],
+          "time": "2020-04-18T12:12:48+00:00"
         }
     ],
-    "aliases": [],
-    "minimum-stability": "dev",
-    "stability-flags": {
-        "webappid/laravel-user": 20
-    },
-    "prefer-stable": false,
-    "prefer-lowest": false,
-    "platform": {
-        "php": ">=7.2.0"
-    },
-    "platform-dev": []
+  "aliases": [],
+  "minimum-stability": "dev",
+  "stability-flags": [],
+  "prefer-stable": false,
+  "prefer-lowest": false,
+  "platform": {
+    "php": ">=7.2.0"
+  },
+  "platform-dev": [],
+  "plugin-api-version": "1.1.0"
 }
