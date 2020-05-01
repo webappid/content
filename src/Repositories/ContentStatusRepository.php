@@ -6,13 +6,11 @@
 
 namespace WebAppId\Content\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\ContentStatus;
 use WebAppId\Content\Repositories\Contracts\ContentStatusRepositoryContract;
 use WebAppId\Content\Repositories\Requests\ContentStatusRepositoryRequest;
-use WebAppId\Content\Services\Params\AddContentStatusParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
@@ -123,75 +121,5 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
     {
         return $contentStatus->where('content_statuses.name', $name)
             ->first();
-    }
-
-    /**
-     * @param AddContentStatusParam $addContentStatusParam
-     * @param ContentStatus $contentStatus
-     * @return ContentStatus|null
-     * @deprecated
-     */
-    public function addContentStatus(AddContentStatusParam $addContentStatusParam,
-                                     ContentStatus $contentStatus): ?ContentStatus
-    {
-        try {
-            $contentStatus->name = $addContentStatusParam->getName();
-            $contentStatus->user_id = $addContentStatusParam->getUserId();
-            $contentStatus->save();
-            return $contentStatus;
-        } catch (QueryException $e) {
-            report($e);
-            return null;
-        }
-
-    }
-
-    /**
-     * @param ContentStatus $contentStatus
-     * @return Collection
-     * @deprecated
-     */
-    public function getContentStatus(ContentStatus $contentStatus): Collection
-    {
-        return $contentStatus->get();
-    }
-
-    /**
-     * @param int $id
-     * @param AddContentStatusParam $addContentStatusParam
-     * @param ContentStatus $contentStatus
-     * @return ContentStatus|null
-     * @deprecated
-     */
-    public function updateContentStatus(int $id,
-                                        AddContentStatusParam $addContentStatusParam,
-                                        ContentStatus $contentStatus): ?ContentStatus
-    {
-        try {
-            $result = $contentStatus->find($id);
-            if (!empty($result)) {
-                $result->name = $addContentStatusParam->getName();
-                $result->user_id = $addContentStatusParam->getUserId();
-                $result->save();
-                return $result;
-            } else {
-                return null;
-            }
-        } catch (QueryException $e) {
-            report($e);
-            return null;
-        }
-    }
-
-    /**
-     * @param $id
-     * @param ContentStatus $contentStatus
-     * @return ContentStatus|null
-     * @deprecated
-     */
-    public function getContentStatusById(int $id,
-                                         ContentStatus $contentStatus): ?ContentStatus
-    {
-        return $contentStatus->find($id);
     }
 }

@@ -12,7 +12,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\ContentGallery;
 use WebAppId\Content\Repositories\Contracts\ContentGalleryRepositoryContract;
 use WebAppId\Content\Repositories\Requests\ContentGalleryRepositoryRequest;
-use WebAppId\Content\Services\Params\AddContentGalleryParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
@@ -105,57 +104,5 @@ class ContentGalleryRepository implements ContentGalleryRepositoryContract
                 return $query->where('content_id', 'LIKE', '%' . $q . '%');
             })
             ->count();
-    }
-
-    /**
-     * @param AddContentGalleryParam $addContentGalleryParam
-     * @param ContentGallery $contentGallery
-     * @return ContentGallery|null
-     * @deprecated
-     */
-    public function addContentGallery(AddContentGalleryParam $addContentGalleryParam, ContentGallery $contentGallery): ?ContentGallery
-    {
-        try {
-            $contentGallery->content_id = $addContentGalleryParam->getContentId();
-            $contentGallery->file_id = $addContentGalleryParam->getFileId();
-            $contentGallery->user_id = $addContentGalleryParam->getUserId();
-            $contentGallery->description = $addContentGalleryParam->getDescription();
-            $contentGallery->save();
-            return $contentGallery;
-        } catch (QueryException $e) {
-            report($e);
-            return null;
-        }
-    }
-
-    /**
-     * @param $content_id
-     * @param ContentGallery $contentGallery
-     * @return Collection
-     * @deprecated
-     */
-    public function getContentGalleryByContentId(int $content_id, ContentGallery $contentGallery): Collection
-    {
-        return $contentGallery->where('content_id', $content_id)->get();
-    }
-
-    /**
-     * @param $content_id
-     * @param ContentGallery $contentGallery
-     * @return bool
-     * @deprecated
-     */
-    public function deleteContentGalleryByContentId(int $content_id, ContentGallery $contentGallery): bool
-    {
-        try {
-            $contentGalleries = $this->getContentGalleryByContentId($content_id, $contentGallery);
-            for ($i = 0; $i < count($contentGalleries); $i++) {
-                $contentGalleries[0]->delete();
-            }
-            return true;
-        } catch (QueryException $e) {
-            report($e);
-            return false;
-        }
     }
 }

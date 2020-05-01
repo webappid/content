@@ -77,19 +77,19 @@ class ContentRepositoryTest extends TestCase
             $timeZone = $this->container->call([$this->timezoneRepositoryTest, 'testStore']);
             $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
 
-            $dummy->title = $this->getFaker()->text(255);
-            $dummy->code = $this->getFaker()->text(255);
-            $dummy->description = $this->getFaker()->text(65535);
-            $dummy->keyword = $this->getFaker()->text(255);
-            $dummy->og_title = $this->getFaker()->text(255);
+            $dummy->title = $this->getFaker()->text(100);
+            $dummy->code = $this->getFaker()->text(20);
+            $dummy->description = $this->getFaker()->text(255);
+            $dummy->keyword = $this->getFaker()->text(100);
+            $dummy->og_title = $this->getFaker()->text(100);
             $dummy->og_description = $this->getFaker()->text(255);
             $dummy->default_image = $file->id;
             $dummy->status_id = $contentStatus->id;
             $dummy->language_id = $language->id;
             $dummy->time_zone_id = $timeZone->id;
             $dummy->publish_date = $this->getFaker()->dateTime();
-            $dummy->additional_info = $this->getFaker()->text(65535);
-            $dummy->content = $this->getFaker()->text(65535);
+            $dummy->additional_info = $this->getFaker()->text(255);
+            $dummy->content = $this->getFaker()->text(255);
             $dummy->creator_id = $user->id;
             $dummy->owner_id = $user->id;
             $dummy->user_id = $user->id;
@@ -146,6 +146,7 @@ class ContentRepositoryTest extends TestCase
         }
 
         $result = $this->container->call([$this->contentRepository, 'getCount']);
+
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -170,7 +171,8 @@ class ContentRepositoryTest extends TestCase
 
     public function testGetWhereCount()
     {
-        for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++) {
+        $randomNumber = $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(30, 70));
+        for ($i = 0; $i < $randomNumber; $i++) {
             $this->testStore($i);
         }
         $string = 'aiueo';

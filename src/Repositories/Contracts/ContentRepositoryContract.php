@@ -70,4 +70,12 @@ interface ContentRepositoryContract
      * @return int
      */
     public function getCount(Content $content, int $category_id = null, string $q = null): int;
+
+    /**
+     * @param string $code
+     * @param int $status_id
+     * @param Content $content
+     * @return Content|null
+     */
+    public function updateStatusByCode(string $code, int $status_id, Content $content): ?Content;
 }

@@ -8,159 +8,139 @@
 
 namespace WebAppId\Content\Tests\Feature\Services;
 
-use WebAppId\Content\Repositories\ContentCategoryRepository;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Services\ContentService;
-use WebAppId\Content\Services\Params\AddContentCategoryParam;
-use WebAppId\Content\Services\Params\ContentSearchParam;
+use WebAppId\Content\Services\Requests\ContentServiceRequest;
+use WebAppId\Content\Services\Requests\ContentServiceSearchRequest;
 use WebAppId\Content\Tests\TestCase;
-use WebAppId\Content\Tests\Unit\Repositories\ContentTest;
+use WebAppId\Content\Tests\Unit\Repositories\ContentCategoryRepositoryTest;
+use WebAppId\Content\Tests\Unit\Repositories\ContentRepositoryTest;
+use WebAppId\Content\Tests\Unit\Repositories\ContentStatusRepositoryTest;
+use WebAppId\Content\Tests\Unit\Repositories\FileRepositoryTest;
+use WebAppId\DDD\Tools\Lazy;
 
+/**
+ * @author: Dyan Galih<dyan.galih@gmail.com>
+ * Date: 26/04/20
+ * Time: 16.54
+ * Class ContentServiceTest
+ * @package WebAppId\Content\Tests\Feature\Services
+ */
 class ContentServiceTest extends TestCase
 {
+    /**
+     * @var ContentService
+     */
     private $contentService;
+
+    /**
+     * @var ContentRepositoryTest
+     */
     private $contentRepositoryTest;
-    private $contentCategoryRepository;
-    
-    public function contentService(): ContentService
-    {
-        if ($this->contentService == null) {
-            $this->contentService = $this->getContainer()->make(ContentService::class);
-        }
-        return $this->contentService;
-    }
-    
-    public function contentRepositoryTest(): ContentTest
-    {
-        if ($this->contentRepositoryTest == null) {
-            $this->contentRepositoryTest = $this->getContainer()->make(ContentTest::class);
-        }
-    
-        return $this->contentRepositoryTest;
-    }
-    
-    public function contentCategoryRepository(): ContentCategoryRepository
-    {
-        if ($this->contentCategoryRepository == null) {
-            $this->contentCategoryRepository = $this->getContainer()->make(ContentCategoryRepository::class);
-        }
-        return $this->contentCategoryRepository;
-    }
-    
-    public function testAddContent()
-    {
-        $dummy = $this->contentRepositoryTest()->getDummy();
-        $dummy->setStatusId($this->getFaker()->numberBetween(1, 4));
-        $categories = [];
-        $categories[] = $this->getFaker()->numberBetween(1, 4);
-        $dummy->setCategories($categories);
-        
-        $galleries = [];
-        $galleries[] = $this->getFaker()->numberBetween(1, 4);
-        $dummy->setGalleries($galleries);
-        
-        $result = $this->getContainer()->call([$this->contentService(), 'store'], ['addContentParam' => $dummy]);
-        self::assertEquals(true, $result->getStatus());
-        return $dummy;
-    }
-    
-    public function testContentSearchByCode()
-    {
-        $data = $this->testAddContent();
-        $result = $this->getContainer()->call([$this->contentService(), 'detail'], ['code' => $data->getCode()]);
-        self::assertEquals(true, $result->getStatus());
-    }
-    
-    public function testChildContent()
-    {
-        $data = $this->testAddContent();
-        
-        $dummy = $this->contentRepositoryTest()->getDummy();
-        $dummy->setStatusId($this->getFaker()->numberBetween(1, 4));
-        $categories = [];
-        $categories[] = $this->getFaker()->numberBetween(1, 4);
-        $dummy->setCategories($categories);
-        
-        $galleries = [];
-        $galleries[] = $this->getFaker()->numberBetween(1, 4);
-        $dummy->setGalleries($galleries);
-        
-        $parentCode = $data->getCode();
-        $parent = $this->getContainer()->call([$this->contentService(), 'detail'], ['code' => $parentCode]);
 
-        $dummy->setParentId($parent->getContent()->id);
+    /**
+     * @var ContentCategoryRepositoryTest
+     */
+    private $contentCategoryRepositoryTest;
 
-        $this->getContainer()->call([$this->contentService(), 'store'], ['addContentParam' => $dummy]);
+    /**
+     * @var FileRepositoryTest
+     */
+    private $fileRepositoryTest;
 
-        $parentChild = $this->getContainer()->call([$this->contentService(), 'detail'], ['code' => $parentCode]);
-
-        self::assertGreaterThanOrEqual(1, count($parentChild->getChild()));
-    }
-    
-    public function testUpdateContentStatus(): void
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        $result = $this->contentRepositoryTest()->testAddContent();
-        $status_id = $this->getFaker()->numberBetween(1, 4);
-        $resultUpdateStatus = $this->getContainer()->call([$this->contentService(), 'updateContentStatusByCode'], ['code' => $result->code, 'status' => $status_id]);
-        
-        if ($resultUpdateStatus == null) {
-            self::assertTrue(false);
-        } else {
-            self::assertTrue(true);
-            self::assertEquals($status_id, $resultUpdateStatus->status_id);
+        parent::__construct($name, $data, $dataName);
+        try {
+            $this->contentService = $this->container->make(ContentService::class);
+            $this->fileRepositoryTest = $this->container->make(FileRepositoryTest::class);
+            $this->contentRepositoryTest = $this->container->make(ContentRepositoryTest::class);
+            $this->contentCategoryRepositoryTest = $this->container->make(ContentCategoryRepositoryTest::class);
+        } catch (BindingResolutionException $e) {
+            report($e);
         }
     }
-    
-    public function testPagingContent(): void
+
+    public function testStore()
     {
-        $contentRepositoryTest = $this->contentRepositoryTest();
-        
-        $paging = 12;
-    
-        for ($i = 0; $i < $paging + 10; $i++) {
-            $result = $contentRepositoryTest->testAddContent();
-            $categories = [];
-            $categories[0] = '1';
-        
-            $contentCategoryData = new AddContentCategoryParam();
-            $contentCategoryData->setUserId(1);
-            $contentCategoryData->setContentId($result->id);
-            $contentCategoryData->setCategoryId($categories[0]);
-        
-            $result['content_category'] = $this->getContainer()->call([$this->contentCategoryRepository(), 'addContentCategory'], ['addContentCategoryParam' => $contentCategoryData]);
+        $content = $this->container->call([$this->contentRepositoryTest, 'getDummy']);
+        $contentServiceResponse = null;
+        try {
+            $contentServiceRequest = $this->container->make(ContentServiceRequest::class);
+            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
+            $categories = $this->container->call([$this->contentCategoryRepositoryTest, 'testStore']);
+            $contentServiceRequest = Lazy::copy($content, $contentServiceRequest);
+            $contentServiceRequest->galleries = [$file->id];
+            $contentServiceRequest->categories = [$categories->id];
+            $contentServiceResponse = $this->container->call([$this->contentService, 'store'], compact('contentServiceRequest'));
+            self::assertTrue($contentServiceResponse->status);
+        } catch (BindingResolutionException $e) {
+            report($e);
         }
-    
-        $request = new ContentSearchParam();
-        $request->setQ('');
-        $request->setCategory('page');
-    
-        $result = $this->getContainer()->call([$this->contentService(), 'showPaginate'], ['paginate' => $paging, 'contentSearchParam' => $request]);
-        
-        self::assertCount($paging, $result);
+        return $contentServiceResponse;
     }
-    
-    public function testDestroy()
+
+    public function testGet()
     {
-        $data = $this->testAddContent();
-        $result = $this->getContainer()->call([$this->contentService(), 'destroy'], ['code' => $data->getCode()]);
-        self::assertTrue($result);
+        $randomNumber = $this->getFaker()->numberBetween(10, 20);
+        $pickNumber = $this->getFaker()->numberBetween(0, $randomNumber);
+
+        for ($i = 0; $i <= $randomNumber; $i++) {
+            if ($pickNumber == $i) {
+                $content = $this->testStore();
+            } else {
+                $this->testStore();
+            }
+
+        }
+
+        try {
+            $contentServiceSearchRequest = $this->container->make(ContentServiceSearchRequest::class);
+            $contentServiceSearchRequest->q = $content->content->title;
+
+            $result = $this->container->call([$this->contentService, 'get'], compact('contentServiceSearchRequest'));
+            self::assertTrue($result->status);
+        } catch (BindingResolutionException $e) {
+            report($e);
+        }
     }
-    
-    public function testUpdateContentByCode()
+
+    public function testDetail()
     {
-        $data = $this->testAddContent();
-        
-        $dummy = $this->contentRepositoryTest()->getDummy();
-        $dummy->setStatusId($this->getFaker()->numberBetween(1, 4));
-        $categories = [];
-        $categories[] = $this->getFaker()->numberBetween(1, 4);
-        $dummy->setCategories($categories);
-        
-        $galleries = [];
-        $galleries[] = $this->getFaker()->numberBetween(1, 4);
-        $dummy->setGalleries($galleries);
-        
-        $result = $this->getContainer()->call([$this->contentService(), 'update'], ['code' => $data->getCode(), 'addContentParam' => $dummy]);
-        
-        self::assertNotEquals(null, $result);
+        $content = $this->testStore();
+        $contentResult = $this->container->call([$this->contentService, 'detail'], ['code' => $content->content->code]);
+        self::assertTrue($contentResult->status);
+    }
+
+    public function testUpdate()
+    {
+        $contentResponse = $this->testStore();
+        $newContent = $this->container->call([$this->contentRepositoryTest, 'getDummy']);
+        try {
+            $contentServiceRequest = $this->container->make(ContentServiceRequest::class);
+            $contentServiceRequest = Lazy::copy($newContent, $contentServiceRequest);
+            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
+            $categories = $this->container->call([$this->contentCategoryRepositoryTest, 'testStore']);
+            $contentServiceRequest->galleries = [$file->id];
+            $contentServiceRequest->categories = [$categories->id];
+            $result = $this->container->call([$this->contentService, 'update'], ['code' => $contentResponse->content->code, 'contentServiceRequest' => $contentServiceRequest]);
+            self::assertTrue($result->status);
+        } catch (BindingResolutionException $e) {
+            report($e);
+        }
+
+    }
+
+    public function testUpdateStatus()
+    {
+        $contentResponse = $this->testStore();
+        try {
+            $contentStatusRepositoryTest = $this->container->make(ContentStatusRepositoryTest::class);
+            $contentStatus = $this->container->call([$contentStatusRepositoryTest, 'testStore']);
+            $result = $this->container->call([$this->contentService, 'updateStatusByCode'], ['code' => $contentResponse->content->code, 'status' => $contentStatus->id]);
+            self::assertTrue($result->status);
+        } catch (BindingResolutionException $e) {
+            report($e);
+        }
     }
 }

@@ -1,19 +1,16 @@
 <?php
 
 /**
- * @author @DyanGalih
- * @copyright @2018
+ * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
 namespace WebAppId\Content\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\DB;
 use WebAppId\Content\Models\ContentChild;
 use WebAppId\Content\Repositories\Contracts\ContentChildRepositoryContract;
 use WebAppId\Content\Repositories\Requests\ContentChildRepositoryRequest;
-use WebAppId\Content\Services\Params\AddContentChildParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
@@ -96,100 +93,5 @@ class ContentChildRepository implements ContentChildRepositoryContract
     public function delete(int $id, ContentChild $contentChild): bool
     {
         return $contentChild->where('id', $id)->delete();
-    }
-
-    /**
-     * @param AddContentChildParam $addContentChildParam
-     * @param ContentChild $contentChild
-     * @return ContentChild|null
-     * @deprecated
-     */
-    public function addContentChild(AddContentChildParam $addContentChildParam, ContentChild $contentChild): ?ContentChild
-    {
-        try {
-
-            $contentChild->content_parent_id = $addContentChildParam->getContentParentId();
-            $contentChild->content_child_id = $addContentChildParam->getContentChildId();
-            $contentChild->user_id = $addContentChildParam->getUserId();
-            $contentChild->save();
-            return $contentChild;
-        } catch (QueryException $e) {
-            report($e);
-            return null;
-        }
-    }
-
-    /**
-     * @param $id
-     * @param ContentChild $contentChild
-     * @return ContentChild|null
-     * @deprecated
-     */
-    public function getOne(int $id, ContentChild $contentChild): ?ContentChild
-    {
-        return $contentChild->findOrFail($id);
-    }
-
-    /**
-     * @param $id
-     * @param ContentChild $contentChild
-     * @return Collection
-     * @deprecated
-     */
-    public function getByContentParentId(int $id, ContentChild $contentChild): Collection
-    {
-        return $contentChild->where('content_parent_id', $id)->get();
-    }
-
-    /**
-     * @param $id
-     * @param ContentChild $contentChild
-     * @return mixed
-     * @throws \Exception
-     * @deprecated
-     */
-    public function deleteContentChild(int $id, ContentChild $contentChild): bool
-    {
-        $contentChild = $this->getOne($id, $contentChild);
-        if ($contentChild != null) {
-            return $contentChild->delete();
-        }
-        return true;
-    }
-
-    /**
-     * @param $id
-     * @param ContentChild $contentChild
-     * @return bool
-     * @deprecated
-     */
-    public function deleteContentChildByContentId(int $id, ContentChild $contentChild): bool
-    {
-        DB::beginTransaction();
-        $result = true;
-        $parentContent = $this->getByContentParentId($id, $contentChild);
-        for ($i = 0; $i < count($parentContent); $i++) {
-            $result = $parentContent[$i]->delete();
-            if (!$result) {
-                $result = false;
-            }
-        }
-        if ($result) {
-            DB::commit();
-            return true;
-        } else {
-            DB::rollBack();
-            return false;
-        }
-    }
-
-    /**
-     * @param ContentChild $contentChild
-     * @return Collection
-     * @deprecated
-     */
-    public function getAll(ContentChild $contentChild): Collection
-    {
-        return $contentChild->get();
     }
 }

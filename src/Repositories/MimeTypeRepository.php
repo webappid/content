@@ -2,8 +2,7 @@
 
 
 /**
- * @author @DyanGalih
- * @copyright @2018
+ * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
 namespace WebAppId\Content\Repositories;
@@ -13,7 +12,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\MimeType;
 use WebAppId\Content\Repositories\Contracts\MimeTypeRepositoryContract;
 use WebAppId\Content\Repositories\Requests\MimeTypeRepositoryRequest;
-use WebAppId\Content\Services\Params\AddMimeTypeParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
@@ -126,36 +124,4 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
             ->where('mime_types.name', $name)
             ->first();
     }
-
-    /**
-     * @param AddMimeTypeParam $addMimeTypeParam
-     * @param MimeType $mimeType
-     * @return MimeType|null
-     * @deprecated
-     */
-    public function addMimeType(AddMimeTypeParam $addMimeTypeParam, MimeType $mimeType): ?MimeType
-    {
-        try {
-            $mimeType->name = $addMimeTypeParam->getName();
-            $mimeType->user_id = $addMimeTypeParam->getUserId();
-            $mimeType->save();
-
-            return $mimeType;
-        } catch (QueryException $e) {
-            report($e);
-            return null;
-        }
-    }
-
-    /**
-     * @param $id
-     * @param MimeType $mimeType
-     * @return mixed
-     * @deprecated
-     */
-    public function getOne(int $id, MimeType $mimeType): ?MimeType
-    {
-        return $mimeType->findOrFail($id);
-    }
-
 }

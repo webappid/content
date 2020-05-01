@@ -68,4 +68,11 @@ interface CategoryRepositoryContract
      * @return Category|null
      */
     public function getByCode(string $code, Category $category): ?Category;
+
+    /**
+     * @param string $name
+     * @param Category $category
+     * @return Category|null
+     */
+    public function getByName(string $name, Category $category): ?Category;
 }

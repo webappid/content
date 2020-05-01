@@ -86,6 +86,13 @@ class FileRepositoryTest extends TestCase
         self::assertNotEquals(null, $result);
     }
 
+    public function testGetByName()
+    {
+        $file = $this->testStore();
+        $result = $this->container->call([$this->fileRepository, 'getByName'], ['name' => $file->name]);
+        self::assertNotEquals(null, $result);
+    }
+
     public function testDelete()
     {
         $file = $this->testStore();
