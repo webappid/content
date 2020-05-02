@@ -6,14 +6,12 @@
 
 namespace WebAppId\Content\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use WebAppId\Content\Models\Category;
 use WebAppId\Content\Repositories\Contracts\CategoryRepositoryContract;
 use WebAppId\Content\Repositories\Requests\CategoryRepositoryRequest;
-use WebAppId\Content\Services\Params\AddCategoryParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**

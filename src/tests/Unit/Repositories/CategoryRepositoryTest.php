@@ -3,13 +3,13 @@
  * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
-namespace WebAppId\Content\Tests\Unit\Repositories;
+namespace WebAppId\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Models\Category;
 use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Repositories\Requests\CategoryRepositoryRequest;
-use WebAppId\Content\Tests\TestCase;
+use WebAppId\Tests\TestCase;
 use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
 
 /**
@@ -17,7 +17,7 @@ use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
  * Date: 22:58:42
  * Time: 2020/04/21
  * Class CategoryServiceResponseList
- * @package WebAppId\Content\Tests\Unit\Repositories
+ * @package WebAppId\Tests\Unit\Repositories
  */
 class CategoryRepositoryTest extends TestCase
 {

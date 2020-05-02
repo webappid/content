@@ -3,13 +3,13 @@
  * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
-namespace WebAppId\Content\Tests\Unit\Repositories;
+namespace WebAppId\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Models\Tag;
 use WebAppId\Content\Repositories\Requests\TagRepositoryRequest;
 use WebAppId\Content\Repositories\TagRepository;
-use WebAppId\Content\Tests\TestCase;
+use WebAppId\Tests\TestCase;
 use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
 
 /**
@@ -17,7 +17,7 @@ use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
  * Date: 05:01:58
  * Time: 2020/04/22
  * Class TagServiceResponseList
- * @package WebAppId\Content\Tests\Unit\Repositories
+ * @package WebAppId\Tests\Unit\Repositories
  */
 class TagRepositoryTest extends TestCase
 {

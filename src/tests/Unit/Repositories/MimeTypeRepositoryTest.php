@@ -3,13 +3,13 @@
  * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
-namespace WebAppId\Content\Tests\Unit\Repositories;
+namespace WebAppId\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Models\MimeType;
 use WebAppId\Content\Repositories\MimeTypeRepository;
 use WebAppId\Content\Repositories\Requests\MimeTypeRepositoryRequest;
-use WebAppId\Content\Tests\TestCase;
+use WebAppId\Tests\TestCase;
 use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
 
 /**

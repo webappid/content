@@ -3,13 +3,13 @@
  * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
-namespace WebAppId\Content\Tests\Unit\Repositories;
+namespace WebAppId\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Models\Language;
 use WebAppId\Content\Repositories\LanguageRepository;
 use WebAppId\Content\Repositories\Requests\LanguageRepositoryRequest;
-use WebAppId\Content\Tests\TestCase;
+use WebAppId\Tests\TestCase;
 use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
 
 /**
@@ -17,7 +17,7 @@ use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
  * Date: 17:23:06
  * Time: 2020/04/22
  * Class LanguageServiceResponseList
- * @package WebAppId\Content\Tests\Unit\Repositories
+ * @package WebAppId\Tests\Unit\Repositories
  */
 class LanguageRepositoryTest extends TestCase
 {
