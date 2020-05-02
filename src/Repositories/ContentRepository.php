@@ -6,7 +6,6 @@
 
 namespace WebAppId\Content\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -190,5 +189,13 @@ class ContentRepository implements ContentRepositoryContract
         }
 
         return $content;
+    }
+
+    /**
+     * @param string $code
+     */
+    public function cleanCache(string $code): void
+    {
+        Cache::forget('content-' . $code);
     }
 }

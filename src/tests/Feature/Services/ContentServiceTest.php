@@ -6,25 +6,25 @@
  * Time: 06.56
  */
 
-namespace WebAppId\Content\Tests\Feature\Services;
+namespace WebAppId\Tests\Feature\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Services\ContentService;
 use WebAppId\Content\Services\Requests\ContentServiceRequest;
 use WebAppId\Content\Services\Requests\ContentServiceSearchRequest;
-use WebAppId\Content\Tests\TestCase;
-use WebAppId\Content\Tests\Unit\Repositories\ContentCategoryRepositoryTest;
-use WebAppId\Content\Tests\Unit\Repositories\ContentRepositoryTest;
-use WebAppId\Content\Tests\Unit\Repositories\ContentStatusRepositoryTest;
-use WebAppId\Content\Tests\Unit\Repositories\FileRepositoryTest;
 use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Tests\TestCase;
+use WebAppId\Tests\Unit\Repositories\ContentCategoryRepositoryTest;
+use WebAppId\Tests\Unit\Repositories\ContentRepositoryTest;
+use WebAppId\Tests\Unit\Repositories\ContentStatusRepositoryTest;
+use WebAppId\Tests\Unit\Repositories\FileRepositoryTest;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
  * Date: 26/04/20
  * Time: 16.54
  * Class ContentServiceTest
- * @package WebAppId\Content\Tests\Feature\Services
+ * @package WebAppId\Tests\Feature\Services
  */
 class ContentServiceTest extends TestCase
 {

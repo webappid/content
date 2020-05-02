@@ -1,21 +1,21 @@
 <?php
 
 
-namespace WebAppId\Content\Tests\Feature\Services;
+namespace WebAppId\Tests\Feature\Services;
 
-use WebAppId\Content\Services\Requests\CategoryServiceRequest;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use WebAppId\Content\Tests\Unit\Repositories\CategoryRepositoryTest;
 use WebAppId\Content\Services\CategoryService;
-use WebAppId\Content\Tests\TestCase;
+use WebAppId\Content\Services\Requests\CategoryServiceRequest;
 use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Tests\TestCase;
+use WebAppId\Tests\Unit\Repositories\CategoryRepositoryTest;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
  * Date: 2019-06-07
  * Time: 13:24
  * Class CategoryServiceTest
- * @package WebAppId\Content\Tests\Feature\Services
+ * @package WebAppId\Tests\Feature\Services
  */
 class CategoryServiceTest extends TestCase
 {
@@ -44,7 +44,7 @@ class CategoryServiceTest extends TestCase
     {
         $contentServiceResponse = $this->testStore();
         $result = $this->container->call([$this->categoryService, 'getById'], ['id' => $contentServiceResponse->id]);
-        self::assertTrue($result->isStatus());
+        self::assertTrue($result->status);
     }
 
     private function getDummy(int $number = 0): CategoryServiceRequest
@@ -72,7 +72,7 @@ class CategoryServiceTest extends TestCase
             $this->testStore($i);
         }
         $result = $this->container->call([$this->categoryService, 'get']);
-        self::assertTrue($result->isStatus());
+        self::assertTrue($result->status);
     }
 
     public function testGetCount()
@@ -92,7 +92,7 @@ class CategoryServiceTest extends TestCase
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
         $result = $this->container->call([$this->categoryService, 'get'], ['q' => $q]);
-        self::assertTrue($result->isStatus());
+        self::assertTrue($result->status);
     }
 
     public function testGetWhereCount()

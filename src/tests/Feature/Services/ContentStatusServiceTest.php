@@ -6,15 +6,15 @@
  * Time: 00:06
  */
 
-namespace WebAppId\Content\Tests\Feature\Services;
+namespace WebAppId\Tests\Feature\Services;
 
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Services\ContentStatusService;
 use WebAppId\Content\Services\Requests\ContentStatusServiceRequest;
-use WebAppId\Content\Tests\TestCase;
-use WebAppId\Content\Tests\Unit\Repositories\ContentStatusRepositoryTest;
 use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Tests\TestCase;
+use WebAppId\Tests\Unit\Repositories\ContentStatusRepositoryTest;
 
 class ContentStatusServiceTest extends TestCase
 {
@@ -44,7 +44,7 @@ class ContentStatusServiceTest extends TestCase
     {
         $contentServiceResponse = $this->testStore();
         $result = $this->container->call([$this->contentStatusService, 'getById'], ['id' => $contentServiceResponse->id]);
-        self::assertTrue($result->isStatus());
+        self::assertTrue($result->status);
     }
 
     private function getDummy(int $number = 0): ContentStatusServiceRequest
@@ -72,16 +72,12 @@ class ContentStatusServiceTest extends TestCase
             $this->testStore($i);
         }
         $result = $this->container->call([$this->contentStatusService, 'get']);
-        self::assertTrue($result->isStatus());
+        self::assertTrue($result->status);
     }
 
     public function testGetContentStatus(): void
     {
-        $resultContentStatuses = $this->getContainer()->call([$this->contentStatusService, "getContentStatus"]);
-        if (count($resultContentStatuses) > 0) {
-            self::assertTrue(true);
-        } else {
-            self::assertTrue(false);
-        }
+        $resultContentStatuses = $this->getContainer()->call([$this->contentStatusService, "get"]);
+        self::assertTrue($resultContentStatuses->status);
     }
 }

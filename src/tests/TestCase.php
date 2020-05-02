@@ -1,6 +1,6 @@
 <?php
 
-namespace WebAppId\Content\Tests;
+namespace WebAppId\Tests;
 
 use Faker\Factory as Faker;
 use Illuminate\Container\Container;
