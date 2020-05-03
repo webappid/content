@@ -42,8 +42,7 @@ class TagRepository implements TagRepositoryContract
                 'tags.id',
                 'tags.name',
                 'tags.user_id',
-                'users.id',
-                'users.name'
+                'users.name AS user_name'
             )
             ->join('users as users', 'tags.user_id', 'users.id');
     }

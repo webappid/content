@@ -44,13 +44,13 @@ class ContentCategoryRepository implements ContentCategoryRepositoryContract
                 'content_categories.content_id',
                 'content_categories.categories_id',
                 'content_categories.user_id',
-                'categories.code',
-                'categories.name',
+                'categories.code AS category_code',
+                'categories.name AS category_name',
                 'contents.title',
-                'contents.code',
+                'contents.code AS content_code',
                 'contents.description',
-                'users.name',
-                'users.email'
+                'users.name AS user_name',
+                'users.email AS user_email'
             )
             ->join('categories as categories', 'content_categories.categories_id', 'categories.id')
             ->join('contents as contents', 'content_categories.content_id', 'contents.id')

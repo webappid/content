@@ -47,8 +47,8 @@ class TimeZoneRepository implements TimeZoneRepositoryContract
                 'time_zones.code',
                 'time_zones.name',
                 'time_zones.minute',
-                'users.id',
-                'users.name'
+                'users.id AS user_id',
+                'users.name AS user_name'
             )
             ->join('users as users', 'time_zones.user_id', 'users.id');
     }

@@ -48,14 +48,11 @@ class LanguageRepository implements LanguageRepositoryContract
                 'languages.name',
                 'languages.image_id',
                 'languages.user_id',
-                'files.id',
-                'files.name',
+                'files.name AS file_name',
                 'files.description',
                 'files.alt',
                 'files.path',
-                'files.mime_type_id',
-                'users.id',
-                'users.name'
+                'users.name AS user_name'
             )
             ->join('files as files', 'languages.image_id', 'files.id')
             ->join('users as users', 'languages.user_id', 'users.id');

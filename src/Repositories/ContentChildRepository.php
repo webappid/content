@@ -55,8 +55,8 @@ class ContentChildRepository implements ContentChildRepositoryContract
                 'content_contents.code AS content_code',
                 'content_contents.description AS content_description',
                 'content_contents.keyword AS content_keyword',
-                'users.name',
-                'users.email'
+                'users.name AS user_name',
+                'users.email AS user_email'
             )
             ->join('contents as contents', 'content_children.content_child_id', 'contents.id')
             ->join('contents as content_contents', 'content_children.content_parent_id', 'content_contents.id')

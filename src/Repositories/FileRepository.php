@@ -52,16 +52,10 @@ class FileRepository implements FileRepositoryContract
                 'files.creator_id',
                 'files.owner_id',
                 'files.user_id',
-                'users.id',
-                'users.name',
-                'mime_types.id',
-                'mime_types.name',
-                'mime_types.user_id',
-                'owner_users.id AS owner_id',
+                'users.name AS creator_name',
+                'mime_types.name AS mime_type_name',
                 'owner_users.name AS owner_name',
-                'user_users.id AS user_id',
-                'user_users.name AS user_name',
-                'user_users.email AS user_email'
+                'user_users.name AS user_name'
             )
             ->join('users as users', 'files.creator_id', 'users.id')
             ->join('mime_types as mime_types', 'files.mime_type_id', 'mime_types.id')

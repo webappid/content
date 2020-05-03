@@ -47,17 +47,17 @@ class ContentGalleryRepository implements ContentGalleryRepositoryContract
                 'content_galleries.content_id',
                 'content_galleries.file_id',
                 'content_galleries.user_id',
-                'content_galleries.description',
+                'content_galleries.description AS gallery_description',
                 'contents.title',
                 'contents.code',
-                'contents.description',
+                'contents.description AS content_description',
                 'contents.keyword',
                 'files.name',
-                'files.description',
+                'files.description AS file_description',
                 'files.alt',
                 'files.path',
                 'files.mime_type_id',
-                'users.name',
+                'users.name AS user_name',
                 'users.email'
             )
             ->join('contents as contents', 'content_galleries.content_id', 'contents.id')
