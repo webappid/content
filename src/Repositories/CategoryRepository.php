@@ -52,11 +52,10 @@ class CategoryRepository implements CategoryRepositoryContract
                 'categories.user_id',
                 'categories.status_id',
                 'categories.parent_id',
-                'category_statuses.id',
-                'category_statuses.name',
-                'users.id',
-                'users.name',
-                'users.email'
+                'category_statuses.id AS status_id',
+                'category_statuses.name AS status_name',
+                'users.name AS user_name',
+                'users.email AS user_email'
             )
             ->join('category_statuses as category_statuses', 'categories.status_id', 'category_statuses.id')
             ->join('users as users', 'categories.user_id', 'users.id');

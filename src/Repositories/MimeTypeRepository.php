@@ -45,8 +45,8 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
             (
                 'mime_types.id',
                 'mime_types.name',
-                'users.id',
-                'users.name'
+                'users.id AS user_id',
+                'users.name AS user_name'
             )
             ->join('users as users', 'mime_types.user_id', 'users.id');
     }
