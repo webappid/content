@@ -27,7 +27,7 @@ class CreateContentCategoriesTable extends Migration
             $table->unsignedBigInteger('content_id')
                     ->unsigned()
                     ->nullable(false);
-            $table->integer('categories_id')
+            $table->integer('category_id')
                     ->unsigned()
                     ->nullable(false);
             $table->unsignedBigInteger('user_id')
@@ -40,7 +40,7 @@ class CreateContentCategoriesTable extends Migration
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
 
-            $table->foreign('categories_id')
+            $table->foreign('category_id')
                     ->references('id')
                     ->on('categories')
                     ->onUpdate('cascade')

@@ -35,7 +35,7 @@ class Content extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'content_categories', 'content_id', 'categories_id');
+        return $this->belongsToMany(Category::class, 'content_categories', 'content_id', 'category_id');
     }
 
     public function galleries()
