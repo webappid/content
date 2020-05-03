@@ -42,7 +42,7 @@ class ContentCategoryRepository implements ContentCategoryRepositoryContract
             (
                 'content_categories.id',
                 'content_categories.content_id',
-                'content_categories.categories_id',
+                'content_categories.category_id',
                 'content_categories.user_id',
                 'categories.code AS category_code',
                 'categories.name AS category_name',
@@ -52,7 +52,7 @@ class ContentCategoryRepository implements ContentCategoryRepositoryContract
                 'users.name AS user_name',
                 'users.email AS user_email'
             )
-            ->join('categories as categories', 'content_categories.categories_id', 'categories.id')
+            ->join('categories as categories', 'content_categories.category_id', 'categories.id')
             ->join('contents as contents', 'content_categories.content_id', 'contents.id')
             ->join('users as users', 'content_categories.user_id', 'users.id');
     }

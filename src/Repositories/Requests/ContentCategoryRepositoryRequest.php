@@ -23,7 +23,7 @@ class ContentCategoryRepositoryRequest
     /**
      * @var int
      */
-    public $categories_id;
+    public $category_id;
 
     /**
      * @var int

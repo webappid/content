@@ -3817,19 +3817,19 @@
             "time": "2020-04-26T06:50:16+00:00"
         },
         {
-            "name": "webappid/laravel-user",
-            "version": "4.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webappid/laravel-user.git",
-                "reference": "33b0e3b3af69648d6cfe0bbc4c0a7734ef988bfb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webappid/laravel-user/zipball/33b0e3b3af69648d6cfe0bbc4c0a7734ef988bfb",
-                "reference": "33b0e3b3af69648d6cfe0bbc4c0a7734ef988bfb",
-                "shasum": ""
-            },
+          "name": "webappid/laravel-user",
+          "version": "4.2.4",
+          "source": {
+            "type": "git",
+            "url": "https://github.com/webappid/laravel-user.git",
+            "reference": "5c9eb4234faa73580ccd200ff1e8bbd00dd2680d"
+          },
+          "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/webappid/laravel-user/zipball/5c9eb4234faa73580ccd200ff1e8bbd00dd2680d",
+            "reference": "5c9eb4234faa73580ccd200ff1e8bbd00dd2680d",
+            "shasum": ""
+          },
             "require": {
                 "doctrine/dbal": "^2.5",
                 "illuminate/support": "^6.0|^7.0",
@@ -3871,7 +3871,7 @@
                 }
             ],
             "description": "Core simple user management for laravel",
-            "time": "2020-05-01T21:50:22+00:00"
+          "time": "2020-05-02T13:04:49+00:00"
         },
         {
             "name": "webpatser/laravel-uuid",

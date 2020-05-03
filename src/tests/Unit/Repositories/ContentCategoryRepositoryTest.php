@@ -65,7 +65,7 @@ class ContentCategoryRepositoryTest extends TestCase
             $category = $this->container->call([$this->categoryRepositoryTest, 'testStore']);
 
             $dummy->content_id = $content->id;
-            $dummy->categories_id = $category->id;
+            $dummy->category_id = $category->id;
             $dummy->user_id = $user->id;
 
         } catch (BindingResolutionException $e) {
