@@ -2997,7 +2997,9 @@ class TimeZoneTableSeeder extends Seeder
             $timeZoneRepositoryRequest->minute = $timezone['minute'];
             $timeZoneRepositoryRequest->user_id = $user_id;
 
-            if ($this->container->call([$timeZoneRepository, 'getByName'], ['name' => $timezone['name']])) {
+            $timezone = $this->container->call([$timeZoneRepository, 'getByName'], ['name' => $timezone['name']]);
+
+            if ($timezone == null) {
                 $result = $this->container->call([$timeZoneRepository, 'store'], compact('timeZoneRepositoryRequest'));
                 if (!$result) {
                     $return = $result;
