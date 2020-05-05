@@ -6,15 +6,15 @@
  * Time: 00:06
  */
 
-namespace WebAppId\Tests\Feature\Services;
+namespace WebAppId\Content\Tests\Feature\Services;
 
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Services\ContentStatusService;
 use WebAppId\Content\Services\Requests\ContentStatusServiceRequest;
+use WebAppId\Content\Tests\TestCase;
+use WebAppId\Content\Tests\Unit\Repositories\ContentStatusRepositoryTest;
 use WebAppId\DDD\Tools\Lazy;
-use WebAppId\Tests\TestCase;
-use WebAppId\Tests\Unit\Repositories\ContentStatusRepositoryTest;
 
 class ContentStatusServiceTest extends TestCase
 {
