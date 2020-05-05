@@ -1,6 +1,6 @@
 <?php
 
-namespace WebAppId\Tests;
+namespace WebAppId\Content\Tests;
 
 use Faker\Factory as Faker;
 use Illuminate\Container\Container;
@@ -34,15 +34,14 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         $this->loadMigrationsFrom([
-            '--realpath' => realpath(__DIR__ . '/../src/migrations'),
+            '--realpath' => realpath(__DIR__ . '/src/migrations'),
         ]);
 
         $migrator = $this->app->make('migrator');
 
-        $migrator->run(__DIR__ . '/../../vendor/webappid/laravel-user/src/migrations');
+        $result = $migrator->run(__DIR__ . '/../vendor/webappid/laravel-user/src/migrations');
 
         $this->artisan('webappid:content:seed');
-
     }
 
     protected function getFaker()

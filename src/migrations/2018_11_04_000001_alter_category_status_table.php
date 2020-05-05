@@ -6,9 +6,9 @@
  * Time: 03.22
  */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AlterCategoryStatusTable extends Migration
 {
@@ -29,24 +29,28 @@ class AlterCategoryStatusTable extends Migration
     
     public function down()
     {
-        $columns = [];
-        $foreigns = [];
-        
-        if(Schema::hasColumn('categories', 'status_id')){
-            array_push($columns,'status_id');
-            array_push($foreigns, 'status_id');
-        }
-        
-        if(count($columns)>0){
-            if (config('database')['default'] != "sqlite") {
-                Schema::table('categories', function (Blueprint $table) use ($foreigns){
-                    $table->dropForeign($foreigns);
+        $driver = Schema::connection($this->getConnection())->getConnection()->getDriverName();
+
+        if ($driver != 'sqlite') {
+            $columns = [];
+            $foreigns = [];
+
+            if (Schema::hasColumn('categories', 'status_id')) {
+                array_push($columns, 'status_id');
+                array_push($foreigns, 'status_id');
+            }
+
+            if (count($columns) > 0) {
+                if (config('database')['default'] != "sqlite") {
+                    Schema::table('categories', function (Blueprint $table) use ($foreigns) {
+                        $table->dropForeign($foreigns);
+                    });
+                }
+
+                Schema::table('categories', function (Blueprint $table) use ($columns) {
+                    $table->dropColumn($columns);
                 });
             }
-            
-            Schema::table('categories', function (Blueprint $table) use ($columns){
-                $table->dropColumn($columns);
-            });
         }
     }
 }

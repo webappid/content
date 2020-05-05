@@ -3,62 +3,55 @@
  * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
-namespace WebAppId\Tests\Unit\Repositories;
+namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use WebAppId\Content\Models\Language;
-use WebAppId\Content\Repositories\LanguageRepository;
-use WebAppId\Content\Repositories\Requests\LanguageRepositoryRequest;
-use WebAppId\Tests\TestCase;
+use WebAppId\Content\Models\TimeZone;
+use WebAppId\Content\Repositories\Requests\TimeZoneRepositoryRequest;
+use WebAppId\Content\Repositories\TimeZoneRepository;
+use WebAppId\Content\Tests\TestCase;
 use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
- * Date: 17:23:06
+ * Date: 04:54:28
  * Time: 2020/04/22
- * Class LanguageServiceResponseList
- * @package WebAppId\Tests\Unit\Repositories
+ * Class TimeZoneServiceResponseList
+ * @package WebAppId\Content\Tests\Unit\Repositories
  */
-class LanguageRepositoryTest extends TestCase
+class TimeZoneRepositoryTest extends TestCase
 {
 
     /**
-     * @var LanguageRepository
+     * @var TimeZoneRepository
      */
-    private $languageRepository;
+    private $timeZoneRepository;
 
     /**
      * @var UserRepositoryTest
      */
     private $userRepositoryTest;
 
-    /**
-     * @var FileRepositoryTest
-     */
-    private $fileRepositoryTest;
-
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->languageRepository = $this->container->make(LanguageRepository::class);
+            $this->timeZoneRepository = $this->container->make(TimeZoneRepository::class);
             $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
-            $this->fileRepositoryTest = $this->container->make(FileRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
     }
 
-    public function getDummy(int $no = 0): ?LanguageRepositoryRequest
+    public function getDummy(int $no = 0): ?TimeZoneRepositoryRequest
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(LanguageRepositoryRequest::class);
+            $dummy = $this->container->make(TimeZoneRepositoryRequest::class);
             $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
-            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
-            $dummy->code = $this->getFaker()->text(5);
-            $dummy->name = $this->getFaker()->text(20);
-            $dummy->image_id = $file->id;
+            $dummy->code = $this->getFaker()->text(255);
+            $dummy->name = $this->getFaker()->text(255);
+            $dummy->minute = $this->getFaker()->randomNumber();
             $dummy->user_id = $user->id;
 
         } catch (BindingResolutionException $e) {
@@ -67,25 +60,32 @@ class LanguageRepositoryTest extends TestCase
         return $dummy;
     }
 
-    public function testStore(int $no = 0): ?Language
+    public function testStore(int $no = 0): ?TimeZone
     {
-        $languageRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->languageRepository, 'store'], ['languageRepositoryRequest' => $languageRepositoryRequest]);
+        $timeZoneRepositoryRequest = $this->getDummy($no);
+        $result = $this->container->call([$this->timeZoneRepository, 'store'], ['timeZoneRepositoryRequest' => $timeZoneRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
 
     public function testGetById()
     {
-        $language = $this->testStore();
-        $result = $this->container->call([$this->languageRepository, 'getById'], ['id' => $language->id]);
+        $timeZone = $this->testStore();
+        $result = $this->container->call([$this->timeZoneRepository, 'getById'], ['id' => $timeZone->id]);
+        self::assertNotEquals(null, $result);
+    }
+
+    public function testGetByName()
+    {
+        $timeZone = $this->testStore();
+        $result = $this->container->call([$this->timeZoneRepository, 'getByName'], ['name' => $timeZone->name]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
-        $language = $this->testStore();
-        $result = $this->container->call([$this->languageRepository, 'delete'], ['id' => $language->id]);
+        $timeZone = $this->testStore();
+        $result = $this->container->call([$this->timeZoneRepository, 'delete'], ['id' => $timeZone->id]);
         self::assertTrue($result);
     }
 
@@ -95,7 +95,7 @@ class LanguageRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->languageRepository, 'get']);
+        $resultList = $this->container->call([$this->timeZoneRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -105,15 +105,15 @@ class LanguageRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->languageRepository, 'getCount']);
+        $result = $this->container->call([$this->timeZoneRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
     public function testUpdate()
     {
-        $language = $this->testStore();
-        $languageRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->languageRepository, 'update'], ['id' => $language->id, 'languageRepositoryRequest' => $languageRepositoryRequest]);
+        $timeZone = $this->testStore();
+        $timeZoneRepositoryRequest = $this->getDummy(1);
+        $result = $this->container->call([$this->timeZoneRepository, 'update'], ['id' => $timeZone->id, 'timeZoneRepositoryRequest' => $timeZoneRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -124,7 +124,7 @@ class LanguageRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->languageRepository, 'get'], ['q' => $q]);
+        $result = $this->container->call([$this->timeZoneRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -135,7 +135,7 @@ class LanguageRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->languageRepository, 'getCount'], ['q' => $q]);
+        $result = $this->container->call([$this->timeZoneRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

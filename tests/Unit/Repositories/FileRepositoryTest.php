@@ -3,53 +3,66 @@
  * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
-namespace WebAppId\Tests\Unit\Repositories;
+namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use WebAppId\Content\Models\MimeType;
-use WebAppId\Content\Repositories\MimeTypeRepository;
-use WebAppId\Content\Repositories\Requests\MimeTypeRepositoryRequest;
-use WebAppId\Tests\TestCase;
+use WebAppId\Content\Models\File;
+use WebAppId\Content\Repositories\FileRepository;
+use WebAppId\Content\Repositories\Requests\FileRepositoryRequest;
+use WebAppId\Content\Tests\TestCase;
 use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
- * Date: 04:25:12
+ * Date: 04:10:49
  * Time: 2020/04/22
- * Class MimeTypeServiceResponseList
- * @package WebAppId\User\Tests\Unit\Repositories
+ * Class FileServiceResponseList
+ * @package Tests\Unit\Repositories
  */
-class MimeTypeRepositoryTest extends TestCase
+class FileRepositoryTest extends TestCase
 {
 
     /**
-     * @var MimeTypeRepository
+     * @var FileRepository
      */
-    private $mimeTypeRepository;
+    private $fileRepository;
 
     /**
      * @var UserRepositoryTest
      */
     private $userRepositoryTest;
 
+    /**
+     * @var MimeTypeRepositoryTest
+     */
+    private $mimeTypeRepositoryTest;
+
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->mimeTypeRepository = $this->container->make(MimeTypeRepository::class);
+            $this->fileRepository = $this->container->make(FileRepository::class);
             $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
+            $this->mimeTypeRepositoryTest = $this->container->make(MimeTypeRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
     }
 
-    public function getDummy(int $no = 0): ?MimeTypeRepositoryRequest
+    public function getDummy(int $no = 0): ?FileRepositoryRequest
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(MimeTypeRepositoryRequest::class);
+            $dummy = $this->container->make(FileRepositoryRequest::class);
             $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
+            $mimeType = $this->container->call([$this->mimeTypeRepositoryTest, 'testStore']);
             $dummy->name = $this->getFaker()->text(255);
+            $dummy->description = $this->getFaker()->text(255);
+            $dummy->alt = $this->getFaker()->text(100);
+            $dummy->path = $this->getFaker()->text(255);
+            $dummy->mime_type_id = $mimeType->id;
+            $dummy->creator_id = $user->id;
+            $dummy->owner_id = $user->id;
             $dummy->user_id = $user->id;
 
         } catch (BindingResolutionException $e) {
@@ -58,32 +71,32 @@ class MimeTypeRepositoryTest extends TestCase
         return $dummy;
     }
 
-    public function testStore(int $no = 0): ?MimeType
+    public function testStore(int $no = 0): ?File
     {
-        $mimeTypeRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->mimeTypeRepository, 'store'], ['mimeTypeRepositoryRequest' => $mimeTypeRepositoryRequest]);
+        $fileRepositoryRequest = $this->getDummy($no);
+        $result = $this->container->call([$this->fileRepository, 'store'], ['fileRepositoryRequest' => $fileRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
 
     public function testGetById()
     {
-        $mimeType = $this->testStore();
-        $result = $this->container->call([$this->mimeTypeRepository, 'getById'], ['id' => $mimeType->id]);
+        $file = $this->testStore();
+        $result = $this->container->call([$this->fileRepository, 'getById'], ['id' => $file->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testGetByName()
     {
-        $mimeType = $this->testStore();
-        $result = $this->container->call([$this->mimeTypeRepository, 'getByName'], ['name' => $mimeType->name]);
+        $file = $this->testStore();
+        $result = $this->container->call([$this->fileRepository, 'getByName'], ['name' => $file->name]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
-        $mimeType = $this->testStore();
-        $result = $this->container->call([$this->mimeTypeRepository, 'delete'], ['id' => $mimeType->id]);
+        $file = $this->testStore();
+        $result = $this->container->call([$this->fileRepository, 'delete'], ['id' => $file->id]);
         self::assertTrue($result);
     }
 
@@ -93,7 +106,7 @@ class MimeTypeRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->mimeTypeRepository, 'get']);
+        $resultList = $this->container->call([$this->fileRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -103,15 +116,15 @@ class MimeTypeRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->mimeTypeRepository, 'getCount']);
+        $result = $this->container->call([$this->fileRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
     public function testUpdate()
     {
-        $mimeType = $this->testStore();
-        $mimeTypeRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->mimeTypeRepository, 'update'], ['id' => $mimeType->id, 'mimeTypeRepositoryRequest' => $mimeTypeRepositoryRequest]);
+        $file = $this->testStore();
+        $fileRepositoryRequest = $this->getDummy(1);
+        $result = $this->container->call([$this->fileRepository, 'update'], ['id' => $file->id, 'fileRepositoryRequest' => $fileRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -122,7 +135,7 @@ class MimeTypeRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->mimeTypeRepository, 'get'], ['q' => $q]);
+        $result = $this->container->call([$this->fileRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -133,7 +146,7 @@ class MimeTypeRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->mimeTypeRepository, 'getCount'], ['q' => $q]);
+        $result = $this->container->call([$this->fileRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

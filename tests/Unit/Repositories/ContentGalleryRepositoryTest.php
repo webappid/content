@@ -3,13 +3,13 @@
  * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
-namespace WebAppId\Tests\Unit\Repositories;
+namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Models\ContentGallery;
 use WebAppId\Content\Repositories\ContentGalleryRepository;
 use WebAppId\Content\Repositories\Requests\ContentGalleryRepositoryRequest;
-use WebAppId\Tests\TestCase;
+use WebAppId\Content\Tests\TestCase;
 use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
 
 /**

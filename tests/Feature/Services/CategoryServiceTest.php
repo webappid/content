@@ -1,21 +1,21 @@
 <?php
 
 
-namespace WebAppId\Tests\Feature\Services;
+namespace WebAppId\Content\Tests\Feature\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Services\CategoryService;
 use WebAppId\Content\Services\Requests\CategoryServiceRequest;
+use WebAppId\Content\Tests\TestCase;
+use WebAppId\Content\Tests\Unit\Repositories\CategoryRepositoryTest;
 use WebAppId\DDD\Tools\Lazy;
-use WebAppId\Tests\TestCase;
-use WebAppId\Tests\Unit\Repositories\CategoryRepositoryTest;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
  * Date: 2019-06-07
  * Time: 13:24
  * Class CategoryServiceTest
- * @package WebAppId\Tests\Feature\Services
+ * @package WebAppId\Content\Tests\Feature\Services
  */
 class CategoryServiceTest extends TestCase
 {

@@ -3,13 +3,13 @@
  * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
-namespace WebAppId\Tests\Unit\Repositories;
+namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Models\ContentTag;
 use WebAppId\Content\Repositories\ContentTagRepository;
 use WebAppId\Content\Repositories\Requests\ContentTagRepositoryRequest;
-use WebAppId\Tests\TestCase;
+use WebAppId\Content\Tests\TestCase;
 use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
 
 /**

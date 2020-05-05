@@ -6,13 +6,15 @@
  * Time: 10.14
  */
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class AlterCategoryParentTable extends Migration{
-    public function up(){
-        Schema::table('categories', function(Blueprint $table){
+class AlterCategoryParentTable extends Migration
+{
+    public function up()
+    {
+        Schema::table('categories', function (Blueprint $table) {
             $table->integer('parent_id')
                 ->unsigned()
                 ->nullable(true)
@@ -20,17 +22,22 @@ class AlterCategoryParentTable extends Migration{
         });
     }
     
-    public function down(){
-        $columns = [];
-        
-        if(Schema::hasColumn('categories','parent_id')){
-            array_push($columns, 'parent_id');
-        }
-        
-        if(count($columns)>0){
-            Schema::table('categories', function (Blueprint $table) use ($columns){
-                $table->dropColumn($columns);
-            });
+    public function down()
+    {
+        $driver = Schema::connection($this->getConnection())->getConnection()->getDriverName();
+
+        if ($driver != 'sqlite') {
+            $columns = [];
+
+            if (Schema::hasColumn('categories', 'parent_id')) {
+                array_push($columns, 'parent_id');
+            }
+
+            if (count($columns) > 0) {
+                Schema::table('categories', function (Blueprint $table) use ($columns) {
+                    $table->dropColumn($columns);
+                });
+            }
         }
     }
 }

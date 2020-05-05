@@ -3,20 +3,20 @@
  * Created by LazyCrud - @DyanGalih <dyan.galih@gmail.com>
  */
 
-namespace WebAppId\Tests\Unit\Repositories;
+namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use WebAppId\Content\Models\CategoryStatus;
 use WebAppId\Content\Repositories\CategoryStatusRepository;
 use WebAppId\Content\Repositories\Requests\CategoryStatusRepositoryRequest;
-use WebAppId\Tests\TestCase;
+use WebAppId\Content\Tests\TestCase;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
  * Date: 22/04/20
  * Time: 03.21
  * Class CategoryStatusRepositoryTest
- * @package WebAppId\Tests\Unit\Repositories
+ * @package WebAppId\Content\Tests\Unit\Repositories
  */
 class CategoryStatusRepositoryTest extends TestCase
 {
