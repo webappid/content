@@ -37,10 +37,6 @@ abstract class TestCase extends BaseTestCase
             '--realpath' => realpath(__DIR__ . '/src/migrations'),
         ]);
 
-        $migrator = $this->app->make('migrator');
-
-        $result = $migrator->run(__DIR__ . '/../vendor/webappid/laravel-user/src/migrations');
-
         $this->artisan('webappid:content:seed');
     }
 
@@ -56,6 +52,7 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageProviders($app)
     {
         return [
+            \WebAppId\User\ServiceProvider::class,
             ServiceProvider::class
         ];
     }
