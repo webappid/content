@@ -23,9 +23,7 @@ class ContentRequest extends AbstractFormRequest
     {
         return [
             'title.required' => 'Content title required',
-            'title.unique' => 'Content title should unique',
-            'description.required' => 'Content description required',
-            'content.required' => 'Content should required'
+            'title.unique' => 'Content title should unique'
         ];
     }
 
@@ -36,8 +34,13 @@ class ContentRequest extends AbstractFormRequest
     {
         return [
             'title' => 'required|string|max:191|unique:contents,title',
-            'description' => 'required|string|max:191',
-            'content' => 'required|string'
+            'description' => 'string|max:191',
+            'content' => 'required|string',
+            'keyword' => 'string',
+            'status_id' => 'numeric',
+            'categories' => 'array',
+            'default_image' => 'int',
+            'galleries' => 'array'
         ];
     }
 }
