@@ -8,10 +8,7 @@
 namespace WebAppId\Content\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Repositories\ContentCategoryRepository;
@@ -40,76 +37,22 @@ use WebAppId\DDD\Tools\Lazy;
  */
 class ContentService extends BaseService implements ContentServiceContract
 {
-
     /**
-     * @param TimeZoneRepository $timeZoneRepository
      * @param ContentServiceRequest $contentServiceRequest
-     * @return ContentServiceRequest
+     * @param ContentRepositoryRequest $contentRepositoryRequest
+     * @return ContentRepositoryRequest
      */
-    private function getDefault(TimeZoneRepository $timeZoneRepository,
-                                ContentServiceRequest $contentServiceRequest): ContentServiceRequest
+    protected function transformContent(ContentServiceRequest $contentServiceRequest, ContentRepositoryRequest $contentRepositoryRequest): ContentRepositoryRequest
     {
+        $contentRepositoryRequest = Lazy::copy($contentServiceRequest, $contentRepositoryRequest);
 
-        $user_id = Auth::id() == null ? session('user_id') : Auth::id();
+        unset($contentRepositoryRequest->categories);
 
-        if (session('timezone') == null) {
-            $zone = "Asia/Jakarta";
-        } else {
-            $zone = session('timezone');
-        }
+        unset($contentRepositoryRequest->parent_id);
 
-        $contentServiceRequest->user_id = $user_id;
+        unset($contentRepositoryRequest->galleries);
 
-        $timeZoneData = $this->container->call([$timeZoneRepository, 'getByName'], ['name' => $zone]);
-
-
-        $contentServiceRequest->code = str::slug($contentServiceRequest->title);
-
-        if ($contentServiceRequest->keyword == null) {
-            $contentServiceRequest->keyword = $contentServiceRequest->title;
-        }
-
-        if ($contentServiceRequest->og_title == null) {
-            $contentServiceRequest->og_title = $contentServiceRequest->title . ' - ' . env('APP_NAME');
-        }
-
-        if ($contentServiceRequest->og_description == null) {
-            $contentServiceRequest->og_description = $contentServiceRequest->description;
-        }
-
-        if ($contentServiceRequest->default_image == null) {
-            $contentServiceRequest->default_image = 1;
-        }
-
-        if ($contentServiceRequest->status_id == null) {
-            $contentServiceRequest->status_id = 1;
-        }
-
-        if ($contentServiceRequest->language_id == null) {
-            $contentServiceRequest->language_id = 1;
-        }
-
-        if ($contentServiceRequest->publish_date == null) {
-            $contentServiceRequest->publish_date = Carbon::now('UTC');
-        }
-
-        if ($contentServiceRequest->additional_info == null) {
-            $contentServiceRequest->additional_info = "";
-        }
-
-        if ($contentServiceRequest->time_zone_id == null) {
-            $contentServiceRequest->time_zone_id = isset($timeZoneData) ? $timeZoneData->id : 1;
-        }
-
-        if ($contentServiceRequest->creator_id == null) {
-            $contentServiceRequest->creator_id = $contentServiceRequest->user_id;
-        }
-
-        if ($contentServiceRequest->owner_id == null) {
-            $contentServiceRequest->owner_id = $contentServiceRequest->user_id;
-        }
-
-        return $contentServiceRequest;
+        return $contentRepositoryRequest;
     }
 
     /**
@@ -127,22 +70,13 @@ class ContentService extends BaseService implements ContentServiceContract
         ContentGalleryRepository $contentGalleryRepository,
         ContentServiceResponse $contentServiceResponse): ContentServiceResponse
     {
-
         if (count($contentServiceRequest->categories) == 0) {
             $contentServiceResponse->status = false;
             $contentServiceResponse->message = "categories data required";
             return $contentServiceResponse;
         }
 
-        $contentServiceRequest = $this->getDefault($timeZoneRepository, $contentServiceRequest);
-
-        $contentRepositoryRequest = Lazy::copy($contentServiceRequest, $contentRepositoryRequest);
-
-        unset($contentRepositoryRequest->categories);
-
-        unset($contentRepositoryRequest->parent_id);
-
-        unset($contentRepositoryRequest->galleries);
+        $contentRepositoryRequest = $this->transformContent($contentServiceRequest, $contentRepositoryRequest);
 
         $content = $this->container->call([$contentRepository, 'store'], compact('contentRepositoryRequest'));
 
@@ -164,21 +98,87 @@ class ContentService extends BaseService implements ContentServiceContract
             }
         }
 
+        $contentServiceResponse = $this->storeCategoryAndGallery($contentServiceResponse, $contentGalleryRepository, $contentCategoryRepository, $contentServiceRequest, $content);
+
+        $contentServiceResponse->status = true;
+
+        $contentServiceResponse->message = 'store data success';
+
+        return $contentServiceResponse;
+    }
+
+    /**
+     * @param ContentServiceResponse $contentServiceResponse
+     * @param ContentGalleryRepository $contentGalleryRepository
+     * @param ContentCategoryRepository $contentCategoryRepository
+     * @param ContentServiceRequest $contentServiceRequest
+     * @param Content $content
+     * @return ContentServiceResponse
+     * @throws BindingResolutionException
+     */
+    protected function storeCategoryAndGallery(ContentServiceResponse $contentServiceResponse,
+                                               ContentGalleryRepository $contentGalleryRepository,
+                                               ContentCategoryRepository $contentCategoryRepository,
+                                               ContentServiceRequest $contentServiceRequest,
+                                               Content $content): ContentServiceResponse
+    {
+        $this->container->call([$contentGalleryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
+
         $galleries = $contentServiceRequest->galleries;
 
         $galleries = $this->storeGalleries($galleries, $content, $contentServiceRequest, $contentGalleryRepository);
 
         $contentServiceResponse->galleries = $galleries;
 
+        $contentServiceResponse->content = $content;
+
         $categories = $contentServiceRequest->categories;
+
+        $this->container->call([$contentCategoryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
 
         $categories = $this->storeCategories($categories, $content, $contentServiceRequest, $contentCategoryRepository);
 
-        $contentServiceResponse->status = true;
-
-        $contentServiceResponse->message = 'store data success';
-
         $contentServiceResponse->categories = $categories;
+
+        return $contentServiceResponse;
+    }
+
+    /**
+     * @inheritDoc
+     * @throws BindingResolutionException
+     */
+    public function update(string $code,
+                           ContentServiceRequest $contentServiceRequest,
+                           ContentRepositoryRequest $contentRepositoryRequest,
+                           ContentRepository $contentRepository,
+                           TimeZoneRepository $timeZoneRepository,
+                           ContentCategoryRepository $contentCategoryRepository,
+                           ContentGalleryRepository $contentGalleryRepository,
+                           ContentServiceResponse $contentServiceResponse): ContentServiceResponse
+    {
+        if (count($contentServiceRequest->categories) == 0) {
+            $contentServiceResponse->status = false;
+            $contentServiceResponse->message = "categories data required";
+            return $contentServiceResponse;
+        }
+
+        $contentRepositoryRequest = $this->transformContent($contentServiceRequest, $contentRepositoryRequest);
+
+        $content = $this->container->call([$contentRepository, 'update'], compact('contentRepositoryRequest', 'code'));
+
+        if ($content != null) {
+
+            $contentServiceResponse = $this->storeCategoryAndGallery($contentServiceResponse, $contentGalleryRepository, $contentCategoryRepository, $contentServiceRequest, $content);
+
+            $contentServiceResponse->status = true;
+
+            if (count($content->parents) > 0) {
+                $contentRepository->cleanCache($content->parents[0]['code']);
+            }
+        } else {
+            $contentServiceResponse->status = false;
+            $contentServiceResponse->message = 'Update Failed';
+        }
 
         return $contentServiceResponse;
     }
@@ -263,64 +263,6 @@ class ContentService extends BaseService implements ContentServiceContract
         return $contentServiceResponseList;
     }
 
-    /**
-     * @inheritDoc
-     * @throws BindingResolutionException
-     */
-    public function update(string $code,
-                           ContentServiceRequest $contentServiceRequest,
-                           ContentRepositoryRequest $contentRepositoryRequest,
-                           ContentRepository $contentRepository,
-                           TimeZoneRepository $timeZoneRepository,
-                           ContentCategoryRepository $contentCategoryRepository,
-                           ContentGalleryRepository $contentGalleryRepository,
-                           ContentServiceResponse $contentServiceResponse): ContentServiceResponse
-    {
-
-        $contentServiceRequest = $this->getDefault($timeZoneRepository, $contentServiceRequest);
-
-        $contentRepositoryRequest = Lazy::copy($contentServiceRequest, $contentRepositoryRequest);
-
-        unset($contentRepositoryRequest->categories);
-
-        unset($contentRepositoryRequest->parent_id);
-
-        unset($contentRepositoryRequest->galleries);
-
-        $content = $this->container->call([$contentRepository, 'update'], compact('contentRepositoryRequest', 'code'));
-
-        if ($content != null) {
-            $this->container->call([$contentGalleryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
-
-            $galleries = $contentServiceRequest->galleries;
-
-            $galleries = $this->storeGalleries($galleries, $content, $contentServiceRequest, $contentGalleryRepository);
-
-            $contentServiceResponse->galleries = $galleries;
-
-            $contentServiceResponse->content = $content;
-
-            $categories = $contentServiceRequest->categories;
-
-            $this->container->call([$contentCategoryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
-
-            $categories = $this->storeCategories($categories, $content, $contentServiceRequest, $contentCategoryRepository);
-
-
-            $contentServiceResponse->categories = $categories;
-
-            $contentServiceResponse->status = true;
-
-            if (count($content->parents) > 0) {
-                $contentRepository->cleanCache($content->parents[0]['code']);
-            }
-        } else {
-            $contentServiceResponse->status = false;
-            $contentServiceResponse->message = 'Update Failed';
-        }
-
-        return $contentServiceResponse;
-    }
 
     /**
      * @param string $code
