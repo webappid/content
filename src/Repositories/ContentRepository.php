@@ -9,6 +9,7 @@ namespace WebAppId\Content\Repositories;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Repositories\Contracts\ContentRepositoryContract;
 use WebAppId\Content\Repositories\Requests\ContentRepositoryRequest;
@@ -63,6 +64,7 @@ class ContentRepository implements ContentRepositoryContract
                 'owner_users.id AS owner_id',
                 'owner_users.name AS owner_name',
                 'files.name AS file_name',
+                DB::raw('REPLACE("' . route('file', 'file_name') . '", "file_name" , files.name) AS file_uri'),
                 'files.description AS file_description',
                 'files.alt AS file_alt',
                 'files.path as file_path',
@@ -133,7 +135,7 @@ class ContentRepository implements ContentRepositoryContract
                 return $query->where('category_id', $category_id);
             })
             ->when($q != null, function ($query) use ($q) {
-                return $query->where('contents.code', 'LIKE', '%'. $q . '%')
+                return $query->where('contents.code', 'LIKE', '%' . $q . '%')
                     ->orWhere('contents.title', 'LIKE', '%' . $q . '%')
                     ->orWhere('contents.description', 'LIKE', '%' . $q . '%')
                     ->orWhere('contents.additional_info', 'LIKE', '%' . $q . '%')
