@@ -7,6 +7,7 @@ namespace WebAppId\Content\Traits;
 
 use Illuminate\Container\Container;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use WebAppId\Content\Repositories\TimeZoneRepository;
 use WebAppId\Content\Services\Requests\ContentServiceRequest;
@@ -49,12 +50,16 @@ trait Content
         $contentRequest['default_image'] = isset($contentRequest['default_image']) ? $contentRequest['default_image'] : 1;
         $contentRequest['status_id'] = isset($contentRequest['status_id']) ? (int)$contentRequest['status_id'] : 1;
         $contentRequest['language_id'] = isset($contentRequest['language_id']) ? $contentRequest['language_id'] : 1;
-        $contentRequest['publish_date'] = isset($contentRequest['publish_date']) ? $contentRequest['publish_date'] : Carbon::now('UTC');
+        $contentRequest['publish_date'] = isset($contentRequest['publish_date']) ? $contentRequest['publish_date'] : Carbon::now('UTC')->toString();
         $contentRequest['additional_info'] = isset($contentRequest['additional_info']) ? $contentRequest['additional_info'] : "";
         $contentRequest['time_zone_id'] = isset($timeZoneData) ? $timeZoneData->id : 271;
         $contentRequest['parent_id'] = isset($contentRequest['parent_id']) ? $contentRequest['parent_id'] : 0;
         $contentRequest['galleries'] = isset($contentRequest['galleries']) ? $contentRequest['galleries'] : [];
+        $contentRequest['categories'] = isset($contentRequest['categories']) ? $contentRequest['categories'] : [];
         $contentRequest['keyword'] = isset($contentRequest['keyword']) ? $contentRequest['keyword'] : "";
+        $contentRequest['user_id'] = isset($contentRequest['user_id']) ? $contentRequest['user_id'] : Auth::id();
+        $contentRequest['creator_id'] = isset($contentRequest['creator_id']) ? $contentRequest['creator_id'] : Auth::id();
+        $contentRequest['owner_id'] = isset($contentRequest['owner_id']) ? $contentRequest['owner_id'] : Auth::id();
 
         try {
             $contentServiceRequest = Lazy::copyFromArray($contentRequest, $contentServiceRequest);
