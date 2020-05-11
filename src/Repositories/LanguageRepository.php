@@ -138,6 +138,6 @@ class LanguageRepository implements LanguageRepositoryContract
      */
     public function getByName($name, Language $language): ?Language
     {
-        return $language->where('languages.name', $name)->first($this->getColumn());
+        return $language->where('languages.name', $name)->first();
     }
 }

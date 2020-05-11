@@ -6,7 +6,6 @@
 
 namespace WebAppId\Content\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\ContentStatus;
@@ -36,15 +35,6 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
             report($queryException);
             return null;
         }
-    }
-
-    /**
-     * @param ContentStatus $contentStatus
-     * @return Builder
-     */
-    protected function getJoin(ContentStatus $contentStatus): Builder
-    {
-        return $contentStatus;
     }
 
     /**
@@ -82,7 +72,7 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
      */
     public function getById(int $id, ContentStatus $contentStatus): ?ContentStatus
     {
-        return $this->getJoin($contentStatus)->find($id, $this->getColumn());
+        return $contentStatus->find($id, $this->getColumn());
     }
 
     /**
@@ -103,11 +93,9 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
      */
     public function get(ContentStatus $contentStatus, int $length = 12, string $q = null): LengthAwarePaginator
     {
-        return $this
-            ->getJoin($contentStatus)
-            ->when($q != null, function ($query) use ($q) {
-                return $query->where('content_statuses.name', 'LIKE', '%' . $q . '%');
-            })
+        return $contentStatus->when($q != null, function ($query) use ($q) {
+            return $query->where('content_statuses.name', 'LIKE', '%' . $q . '%');
+        })
             ->paginate($length, $this->getColumn());
     }
 

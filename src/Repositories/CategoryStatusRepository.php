@@ -5,7 +5,6 @@
 
 namespace WebAppId\Content\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\CategoryStatus;
@@ -35,15 +34,6 @@ class CategoryStatusRepository implements CategoryStatusRepositoryContract
             report($queryException);
             return null;
         }
-    }
-
-    /**
-     * @param $categoryStatus
-     * @return Builder
-     */
-    protected function getJoin($categoryStatus): Builder
-    {
-        return $categoryStatus;
     }
 
     /**
@@ -80,7 +70,7 @@ class CategoryStatusRepository implements CategoryStatusRepositoryContract
      */
     public function getById(int $id, CategoryStatus $categoryStatus): ?CategoryStatus
     {
-        return $this->getJoin($categoryStatus)->find($id, $this->getColumn());
+        return $categoryStatus->find($id);
     }
 
     /**
@@ -101,11 +91,9 @@ class CategoryStatusRepository implements CategoryStatusRepositoryContract
      */
     public function get(CategoryStatus $categoryStatus, int $length = 12, string $q = null): LengthAwarePaginator
     {
-        return $this
-            ->getJoin($categoryStatus)
-            ->when($q != null, function ($query) use ($q) {
-                return $query->where('category_statuses.name', 'LIKE', '%' . $q . '%');
-            })
+        return $categoryStatus->when($q != null, function ($query) use ($q) {
+            return $query->where('category_statuses.name', 'LIKE', '%' . $q . '%');
+        })
             ->orderBy('category_statuses.name', 'asc')
             ->paginate($length, $this->getColumn());
     }
