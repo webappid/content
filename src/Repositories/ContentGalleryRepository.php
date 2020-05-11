@@ -6,6 +6,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -38,31 +39,37 @@ class ContentGalleryRepository implements ContentGalleryRepositoryContract
         }
     }
 
-    protected function getColumn($contentGallery)
+    protected function getJoin(ContentGallery $contentGallery): Builder
     {
         return $contentGallery
-            ->select
-            (
-                'content_galleries.id',
-                'content_galleries.content_id',
-                'content_galleries.file_id',
-                'content_galleries.user_id',
-                'content_galleries.description AS gallery_description',
-                'contents.title',
-                'contents.code',
-                'contents.description AS content_description',
-                'contents.keyword',
-                'files.name',
-                'files.description AS file_description',
-                'files.alt',
-                'files.path',
-                'files.mime_type_id',
-                'users.name AS user_name',
-                'users.email'
-            )
             ->join('contents as contents', 'content_galleries.content_id', 'contents.id')
             ->join('files as files', 'content_galleries.file_id', 'files.id')
             ->join('users as users', 'content_galleries.user_id', 'users.id');
+    }
+
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
+    {
+        return [
+            'content_galleries.id',
+            'content_galleries.content_id',
+            'content_galleries.file_id',
+            'content_galleries.user_id',
+            'content_galleries.description AS gallery_description',
+            'contents.title',
+            'contents.code',
+            'contents.description AS content_description',
+            'contents.keyword',
+            'files.name',
+            'files.description AS file_description',
+            'files.alt',
+            'files.path',
+            'files.mime_type_id',
+            'users.name AS user_name',
+            'users.email'
+        ];
     }
 
     /**
@@ -70,7 +77,7 @@ class ContentGalleryRepository implements ContentGalleryRepositoryContract
      */
     public function getByContentId(int $contentId, ContentGallery $contentGallery): Collection
     {
-        return $this->getColumn($contentGallery)->where('content_id', $contentId)->get();
+        return $this->getJoin($contentGallery)->where('content_id', $contentId)->get($this->getColumn());
     }
 
     /**
@@ -87,11 +94,11 @@ class ContentGalleryRepository implements ContentGalleryRepositoryContract
     public function get(ContentGallery $contentGallery, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this
-            ->getColumn($contentGallery)
+            ->getJoin($contentGallery)
             ->when($q != null, function ($query) use ($q) {
                 return $query->where('content_id', 'LIKE', '%' . $q . '%');
             })
-            ->paginate($length);
+            ->paginate($length, $this->getColumn());
     }
 
     /**

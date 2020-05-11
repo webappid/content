@@ -6,6 +6,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\Tag;
@@ -34,17 +35,28 @@ class TagRepository implements TagRepositoryContract
         }
     }
 
-    protected function getColumn($tag)
+    /**
+     * @param Tag $tag
+     * @return Builder
+     */
+    protected function getJoin(Tag $tag): Builder
     {
         return $tag
-            ->select
-            (
-                'tags.id',
-                'tags.name',
-                'tags.user_id',
-                'users.name AS user_name'
-            )
             ->join('users as users', 'tags.user_id', 'users.id');
+    }
+
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
+    {
+        return [
+            'tags.id',
+            'tags.name',
+            'tags.user_id',
+            'users.name AS user_name'
+        ];
+
     }
 
     /**
@@ -70,7 +82,7 @@ class TagRepository implements TagRepositoryContract
      */
     public function getById(int $id, Tag $tag): ?Tag
     {
-        return $this->getColumn($tag)->find($id);
+        return $this->getJoin($tag)->find($id, $this->getColumn());
     }
 
     /**
@@ -92,11 +104,11 @@ class TagRepository implements TagRepositoryContract
     public function get(Tag $tag, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this
-            ->getColumn($tag)
+            ->getJoin($tag)
             ->when($q != null, function ($query) use ($q) {
                 return $query->where('tags.name', 'LIKE', '%' . $q . '%');
             })
-            ->paginate($length);
+            ->paginate($length, $this->getColumn());
     }
 
     /**
@@ -116,7 +128,7 @@ class TagRepository implements TagRepositoryContract
      */
     public function getByName(string $name, Tag $tag): ?Tag
     {
-        return $this->getColumn($tag)
-            ->where('tags.name', $name)->first();
+        return $this->getJoin($tag)
+            ->where('tags.name', $name)->first($this->getColumn());
     }
 }

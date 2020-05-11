@@ -7,6 +7,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\MimeType;
@@ -38,17 +39,28 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
         }
     }
 
-    protected function getColumn($mimeType)
+    /**
+     * @param MimeType $mimeType
+     * @return Builder
+     */
+    protected function getJoin(MimeType $mimeType): Builder
     {
         return $mimeType
-            ->select
-            (
-                'mime_types.id',
-                'mime_types.name',
-                'users.id AS user_id',
-                'users.name AS user_name'
-            )
             ->join('users as users', 'mime_types.user_id', 'users.id');
+    }
+
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
+    {
+        return [
+            'mime_types.id',
+            'mime_types.name',
+            'users.id AS user_id',
+            'users.name AS user_name'
+        ];
+
     }
 
     /**
@@ -74,7 +86,7 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
      */
     public function getById(int $id, MimeType $mimeType): ?MimeType
     {
-        return $this->getColumn($mimeType)->find($id);
+        return $this->getJoin($mimeType)->find($id, $this->getColumn());
     }
 
     /**
@@ -95,12 +107,12 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
      */
     public function get(MimeType $mimeType, int $length = 12, string $q = null): LengthAwarePaginator
     {
-        return $this->getColumn($mimeType)
+        return $this->getJoin($mimeType)
             ->when($q != null, function ($query) use ($q) {
                 return $query->where('mime_types.name', 'LIKE', '%' . $q . '%');
             })
             ->orderBy('mime_types.name', 'asc')
-            ->paginate($length);
+            ->paginate($length, $this->getColumn());
     }
 
     /**
@@ -120,8 +132,8 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
      */
     public function getByName(string $name, MimeType $mimeType): ?MimeType
     {
-        return $this->getColumn($mimeType)
+        return $this->getJoin($mimeType)
             ->where('mime_types.name', $name)
-            ->first();
+            ->first($this->getColumn());
     }
 }

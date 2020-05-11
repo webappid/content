@@ -6,6 +6,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\File;
@@ -38,29 +39,39 @@ class FileRepository implements FileRepositoryContract
         }
     }
 
-    protected function getColumn($file)
+    /**
+     * @param File $file
+     * @return Builder
+     */
+    protected function getJoin(File $file): Builder
     {
         return $file
-            ->select
-            (
-                'files.id',
-                'files.name',
-                'files.description',
-                'files.alt',
-                'files.path',
-                'files.mime_type_id',
-                'files.creator_id',
-                'files.owner_id',
-                'files.user_id',
-                'users.name AS creator_name',
-                'mime_types.name AS mime_type_name',
-                'owner_users.name AS owner_name',
-                'user_users.name AS user_name'
-            )
             ->join('users as users', 'files.creator_id', 'users.id')
             ->join('mime_types as mime_types', 'files.mime_type_id', 'mime_types.id')
             ->join('users as owner_users', 'files.owner_id', 'owner_users.id')
             ->join('users as user_users', 'files.user_id', 'user_users.id');
+    }
+
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
+    {
+        return [
+            'files.id',
+            'files.name',
+            'files.description',
+            'files.alt',
+            'files.path',
+            'files.mime_type_id',
+            'files.creator_id',
+            'files.owner_id',
+            'files.user_id',
+            'users.name AS creator_name',
+            'mime_types.name AS mime_type_name',
+            'owner_users.name AS owner_name',
+            'user_users.name AS user_name'
+        ];
     }
 
     /**
@@ -86,7 +97,7 @@ class FileRepository implements FileRepositoryContract
      */
     public function getById(int $id, File $file): ?File
     {
-        return $this->getColumn($file)->find($id);
+        return $this->getJoin($file)->find($id, $this->getColumn());
     }
 
     /**
@@ -107,12 +118,12 @@ class FileRepository implements FileRepositoryContract
      */
     public function get(File $file, int $length = 12, string $q = null): LengthAwarePaginator
     {
-        return $this->getColumn($file)
+        return $this->getJoin($file)
             ->when($q != null, function ($query) use ($q) {
                 return $query->where('files.name', 'LIKE', '%' . $q . '%');
             })
             ->orderBy('files.name', 'asc')
-            ->paginate($length);
+            ->paginate($length, $this->getColumn());
     }
 
     /**
@@ -132,49 +143,8 @@ class FileRepository implements FileRepositoryContract
      */
     public function getByName(string $name, File $file): ?File
     {
-        return $this->getColumn($file)
+        return $this->getJoin($file)
             ->where('files.name', $name)
-            ->first();
-    }
-
-    /**
-     * @param AddFileParam $addFileParam
-     * @param File $file
-     * @return File|null
-     * @deprecated
-     */
-    public function addFile(AddFileParam $addFileParam, File $file): ?File
-    {
-        try {
-            $file = Lazy::copy($addFileParam, $file);
-
-            $file->save();
-
-            return $file;
-        } catch (QueryException $e) {
-            report($e);
-            return null;
-        }
-    }
-
-    /**
-     * @param int $id
-     * @param File $file
-     * @return File|null
-     * @deprecated
-     */
-    public function getOne(int $id, File $file): ?File
-    {
-        return $file->findOrFail($id);
-    }
-
-
-    /**
-     * @param File $file
-     * @return int
-     */
-    public function getFileCount(File $file): int
-    {
-        return $file->count();
+            ->first($this->getColumn());
     }
 }

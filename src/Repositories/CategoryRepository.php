@@ -6,6 +6,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -41,24 +42,33 @@ class CategoryRepository implements CategoryRepositoryContract
         }
     }
 
-    protected function getColumn($category)
+    /**
+     * @param Category $category
+     * @return Builder
+     */
+    protected function getJoin(Category $category): Builder
     {
         return $category
-            ->select
-            (
-                'categories.id',
-                'categories.code',
-                'categories.name',
-                'categories.user_id',
-                'categories.status_id',
-                'categories.parent_id',
-                'category_statuses.id AS status_id',
-                'category_statuses.name AS status_name',
-                'users.name AS user_name',
-                'users.email AS user_email'
-            )
             ->join('category_statuses as category_statuses', 'categories.status_id', 'category_statuses.id')
             ->join('users as users', 'categories.user_id', 'users.id');
+    }
+
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
+    {
+        return [
+            'categories.id',
+            'categories.code',
+            'categories.name',
+            'categories.user_id',
+            'categories.status_id',
+            'categories.parent_id',
+            'category_statuses.id AS status_id',
+            'category_statuses.name AS status_name',
+            'users.name AS user_name',
+            'users.email AS user_email'];
     }
 
     /**
@@ -87,7 +97,7 @@ class CategoryRepository implements CategoryRepositoryContract
      */
     public function getById(int $id, Category $category): ?Category
     {
-        return $this->getColumn($category)->find($id);
+        return $this->getJoin($category)->find($id, $this->getColumn());
     }
 
     /**
@@ -95,7 +105,7 @@ class CategoryRepository implements CategoryRepositoryContract
      */
     public function getByCode(string $code, Category $category): ?Category
     {
-        return $this->getColumn($category)->where('categories.code', $code)->first();
+        return $this->getJoin($category)->where('categories.code', $code)->first($this->getColumn());
     }
 
     /**
@@ -103,7 +113,7 @@ class CategoryRepository implements CategoryRepositoryContract
      */
     public function getByName(string $name, Category $category): ?Category
     {
-        return $this->getColumn($category)->where('categories.name', $name)->first();
+        return $this->getJoin($category)->where('categories.name', $name)->first($this->getColumn());
     }
 
     /**
@@ -127,12 +137,12 @@ class CategoryRepository implements CategoryRepositoryContract
      */
     public function get(Category $category, int $length = 12, string $q = null): LengthAwarePaginator
     {
-        return $this->getColumn($category)
+        return $this->getJoin($category)
             ->orderBy('categories.name', 'asc')
             ->when($q != null, function ($query) use ($q) {
                 return $query->where('categories.code', 'LIKE', '%' . $q . '%');
             })
-            ->paginate($length);
+            ->paginate($length, $this->getColumn());
     }
 
     /**

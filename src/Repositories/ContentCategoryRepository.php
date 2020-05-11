@@ -6,6 +6,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\ContentCategory;
@@ -35,26 +36,37 @@ class ContentCategoryRepository implements ContentCategoryRepositoryContract
         }
     }
 
-    protected function getColumn($contentCategory)
+    /**
+     * @param ContentCategory $contentCategory
+     * @return Builder
+     */
+    protected function getJoin(ContentCategory $contentCategory): Builder
     {
         return $contentCategory
-            ->select
-            (
-                'content_categories.id',
-                'content_categories.content_id',
-                'content_categories.category_id',
-                'content_categories.user_id',
-                'categories.code AS category_code',
-                'categories.name AS category_name',
-                'contents.title',
-                'contents.code AS content_code',
-                'contents.description',
-                'users.name AS user_name',
-                'users.email AS user_email'
-            )
             ->join('categories as categories', 'content_categories.category_id', 'categories.id')
             ->join('contents as contents', 'content_categories.content_id', 'contents.id')
             ->join('users as users', 'content_categories.user_id', 'users.id');
+    }
+
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
+    {
+        return [
+            'content_categories.id',
+            'content_categories.content_id',
+            'content_categories.category_id',
+            'content_categories.user_id',
+            'categories.code AS category_code',
+            'categories.name AS category_name',
+            'contents.title',
+            'contents.code AS content_code',
+            'contents.description',
+            'users.name AS user_name',
+            'users.email AS user_email'
+        ];
+
     }
 
     /**
@@ -80,7 +92,7 @@ class ContentCategoryRepository implements ContentCategoryRepositoryContract
      */
     public function getById(int $id, ContentCategory $contentCategory): ?ContentCategory
     {
-        return $this->getColumn($contentCategory)->find($id);
+        return $this->getJoin($contentCategory)->find($id, $this->getColumn());
     }
 
     /**
@@ -102,11 +114,11 @@ class ContentCategoryRepository implements ContentCategoryRepositoryContract
     public function get(ContentCategory $contentCategory, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this
-            ->getColumn($contentCategory)
+            ->getJoin($contentCategory)
             ->when($q != null, function ($query) use ($q) {
                 return $query->where('content_id', 'LIKE', '%' . $q . '%');
             })
-            ->paginate($length);
+            ->paginate($length, $this->getColumn());
     }
 
     /**
