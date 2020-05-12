@@ -37,14 +37,16 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
         }
     }
 
-    protected function getColumn($contentStatus)
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
     {
-        return $contentStatus
-            ->select
-            (
-                'content_statuses.id',
-                'content_statuses.name'
-            );
+        return [
+            'content_statuses.id',
+            'content_statuses.name'
+        ];
+
     }
 
     /**
@@ -70,7 +72,7 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
      */
     public function getById(int $id, ContentStatus $contentStatus): ?ContentStatus
     {
-        return $this->getColumn($contentStatus)->find($id);
+        return $contentStatus->find($id, $this->getColumn());
     }
 
     /**
@@ -91,12 +93,10 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
      */
     public function get(ContentStatus $contentStatus, int $length = 12, string $q = null): LengthAwarePaginator
     {
-        return $this
-            ->getColumn($contentStatus)
-            ->when($q != null, function ($query) use ($q) {
-                return $query->where('content_statuses.name', 'LIKE', '%' . $q . '%');
-            })
-            ->paginate($length);
+        return $contentStatus->when($q != null, function ($query) use ($q) {
+            return $query->where('content_statuses.name', 'LIKE', '%' . $q . '%');
+        })
+            ->paginate($length, $this->getColumn());
     }
 
     /**
@@ -120,6 +120,6 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
                               ContentStatus $contentStatus): ?ContentStatus
     {
         return $contentStatus->where('content_statuses.name', $name)
-            ->first();
+            ->first($this->getColumn());
     }
 }

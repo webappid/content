@@ -6,6 +6,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\TimeZone;
@@ -38,19 +39,29 @@ class TimeZoneRepository implements TimeZoneRepositoryContract
         }
     }
 
-    protected function getColumn($timeZone)
+    /**
+     * @param TimeZone $timeZone
+     * @return Builder
+     */
+    protected function getJoin(TimeZone $timeZone): Builder
     {
         return $timeZone
-            ->select
-            (
-                'time_zones.id',
-                'time_zones.code',
-                'time_zones.name',
-                'time_zones.minute',
-                'users.id AS user_id',
-                'users.name AS user_name'
-            )
             ->join('users as users', 'time_zones.user_id', 'users.id');
+    }
+
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
+    {
+        return [
+            'time_zones.id',
+            'time_zones.code',
+            'time_zones.name',
+            'time_zones.minute',
+            'users.id AS user_id',
+            'users.name AS user_name'
+        ];
     }
 
     /**
@@ -76,7 +87,7 @@ class TimeZoneRepository implements TimeZoneRepositoryContract
      */
     public function getById(int $id, TimeZone $timeZone): ?TimeZone
     {
-        return $this->getColumn($timeZone)->find($id);
+        return $this->getJoin($timeZone)->find($id, $this->getColumn());
     }
 
     /**
@@ -98,12 +109,12 @@ class TimeZoneRepository implements TimeZoneRepositoryContract
     public function get(TimeZone $timeZone, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this
-            ->getColumn($timeZone)
+            ->getJoin($timeZone)
             ->when($q != null, function ($query) use ($q) {
                 return $query->where('time_zones.name', 'LIKE', '%' . $q . '%');
             })
             ->orderBy('time_zones.name', 'asc')
-            ->paginate($length);
+            ->paginate($length, $this->getColumn());
     }
 
     /**
@@ -124,7 +135,7 @@ class TimeZoneRepository implements TimeZoneRepositoryContract
     public function getByName(string $name, TimeZone $timezone): ?TimeZone
     {
         return $this
-            ->getColumn($timezone)
-            ->where('time_zones.name', $name)->first();
+            ->getJoin($timezone)
+            ->where('time_zones.name', $name)->first($this->getColumn());
     }
 }

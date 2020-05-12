@@ -36,14 +36,15 @@ class CategoryStatusRepository implements CategoryStatusRepositoryContract
         }
     }
 
-    protected function getColumn($categoryStatus)
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
     {
-        return $categoryStatus
-            ->select
-            (
-                'category_statuses.id',
-                'category_statuses.name'
-            );
+        return [
+            'category_statuses.id',
+            'category_statuses.name'
+        ];
     }
 
     /**
@@ -69,7 +70,7 @@ class CategoryStatusRepository implements CategoryStatusRepositoryContract
      */
     public function getById(int $id, CategoryStatus $categoryStatus): ?CategoryStatus
     {
-        return $this->getColumn($categoryStatus)->find($id);
+        return $categoryStatus->find($id);
     }
 
     /**
@@ -90,13 +91,11 @@ class CategoryStatusRepository implements CategoryStatusRepositoryContract
      */
     public function get(CategoryStatus $categoryStatus, int $length = 12, string $q = null): LengthAwarePaginator
     {
-        return $this
-            ->getColumn($categoryStatus)
-            ->when($q != null, function ($query) use ($q) {
-                return $query->where('category_statuses.name', 'LIKE', '%' . $q . '%');
-            })
+        return $categoryStatus->when($q != null, function ($query) use ($q) {
+            return $query->where('category_statuses.name', 'LIKE', '%' . $q . '%');
+        })
             ->orderBy('category_statuses.name', 'asc')
-            ->paginate($length);
+            ->paginate($length, $this->getColumn());
     }
 
     /**
@@ -116,6 +115,6 @@ class CategoryStatusRepository implements CategoryStatusRepositoryContract
      */
     public function getByName(string $name, CategoryStatus $categoryStatus): ?CategoryStatus
     {
-        return $categoryStatus->where('name', $name)->first();
+        return $categoryStatus->where('name', $name)->first($this->getColumn());
     }
 }

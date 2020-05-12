@@ -6,6 +6,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -38,47 +39,13 @@ class ContentRepository implements ContentRepositoryContract
         }
     }
 
-    protected function getColumn($content)
+    /**
+     * @param Content $content
+     * @return Builder
+     */
+    protected function getJoin(Content $content): Builder
     {
         return $content
-            ->select
-            (
-                'contents.id',
-                'contents.title',
-                'contents.code',
-                'contents.description',
-                'contents.keyword',
-                'contents.og_title',
-                'contents.og_description',
-                'contents.default_image',
-                'contents.status_id',
-                'contents.language_id',
-                'contents.time_zone_id',
-                'contents.publish_date',
-                'contents.additional_info',
-                'contents.content',
-                'users.id AS creator_id',
-                'users.name AS creator_name',
-                'user_users.id AS user_id',
-                'user_users.name AS user_name',
-                'owner_users.id AS owner_id',
-                'owner_users.name AS owner_name',
-                'files.name AS file_name',
-                DB::raw('REPLACE("' . route('file', 'file_name') . '", "file_name" , files.name) AS file_uri'),
-                'files.description AS file_description',
-                'files.alt AS file_alt',
-                'files.path as file_path',
-                'languages.code AS language_code',
-                'languages.name AS language_name',
-                'owner_users.id AS owner_id',
-                'owner_users.name AS owner_name',
-                'content_statuses.id AS status_id',
-                'content_statuses.name AS status_name',
-                'time_zones.id AS timezone_id',
-                'time_zones.code AS timezone_code',
-                'time_zones.name AS timezone_name',
-                'time_zones.minute'
-            )
             ->join('users as users', 'contents.creator_id', 'users.id')
             ->join('files as files', 'contents.default_image', 'files.id')
             ->join('languages as languages', 'contents.language_id', 'languages.id')
@@ -86,6 +53,51 @@ class ContentRepository implements ContentRepositoryContract
             ->join('content_statuses as content_statuses', 'contents.status_id', 'content_statuses.id')
             ->join('time_zones as time_zones', 'contents.time_zone_id', 'time_zones.id')
             ->join('users as user_users', 'contents.user_id', 'user_users.id');
+    }
+
+    /**
+     * @return array
+     */
+    protected function getColumn(): array
+    {
+
+        return [
+            'contents.id',
+            'contents.title',
+            'contents.code',
+            'contents.description',
+            'contents.keyword',
+            'contents.og_title',
+            'contents.og_description',
+            'contents.default_image',
+            'contents.status_id',
+            'contents.language_id',
+            'contents.time_zone_id',
+            'contents.publish_date',
+            'contents.additional_info',
+            'contents.content',
+            'users.id AS creator_id',
+            'users.name AS creator_name',
+            'user_users.id AS user_id',
+            'user_users.name AS user_name',
+            'owner_users.id AS owner_id',
+            'owner_users.name AS owner_name',
+            'files.name AS file_name',
+            DB::raw('REPLACE("' . route('file', 'file_name') . '", "file_name" , files.name) AS file_uri'),
+            'files.description AS file_description',
+            'files.alt AS file_alt',
+            'files.path as file_path',
+            'languages.code AS language_code',
+            'languages.name AS language_name',
+            'owner_users.id AS owner_id',
+            'owner_users.name AS owner_name',
+            'content_statuses.id AS status_id',
+            'content_statuses.name AS status_name',
+            'time_zones.id AS timezone_id',
+            'time_zones.code AS timezone_code',
+            'time_zones.name AS timezone_name',
+            'time_zones.minute'
+        ];
     }
 
     /**
@@ -112,7 +124,7 @@ class ContentRepository implements ContentRepositoryContract
      */
     public function getById(int $id, Content $content): ?Content
     {
-        return $this->getColumn($content)->find($id);
+        return $this->getJoin($content)->find($id, $this->getColumn());
     }
 
     /**
@@ -130,7 +142,7 @@ class ContentRepository implements ContentRepositoryContract
 
     private function getWhere(Content $content, int $category_id = null, string $q = null)
     {
-        return $this->getColumn($content)
+        return $this->getJoin($content)
             ->when($category_id != null, function ($query) use ($category_id) {
                 return $query->where('category_id', $category_id);
             })
@@ -153,7 +165,7 @@ class ContentRepository implements ContentRepositoryContract
     {
         return $this->getWhere($content, $category_id, $q)
             ->orderBy('contents.id', 'desc')
-            ->paginate($length);
+            ->paginate($length, $this->getColumn());
     }
 
     /**

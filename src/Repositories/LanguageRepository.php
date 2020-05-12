@@ -6,6 +6,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\Language;
@@ -38,24 +39,34 @@ class LanguageRepository implements LanguageRepositoryContract
         }
     }
 
-    protected function getColumn($language)
+    /**
+     * @param Language $language
+     * @return Builder
+     */
+    protected function getJoin(Language $language): Builder
     {
         return $language
-            ->select
-            (
-                'languages.id',
-                'languages.code',
-                'languages.name',
-                'languages.image_id',
-                'languages.user_id',
-                'files.name AS file_name',
-                'files.description',
-                'files.alt',
-                'files.path',
-                'users.name AS user_name'
-            )
             ->join('files as files', 'languages.image_id', 'files.id')
             ->join('users as users', 'languages.user_id', 'users.id');
+    }
+
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
+    {
+        return [
+            'languages.id',
+            'languages.code',
+            'languages.name',
+            'languages.image_id',
+            'languages.user_id',
+            'files.name AS file_name',
+            'files.description',
+            'files.alt',
+            'files.path',
+            'users.name AS user_name'
+        ];
     }
 
     /**
@@ -81,7 +92,7 @@ class LanguageRepository implements LanguageRepositoryContract
      */
     public function getById(int $id, Language $language): ?Language
     {
-        return $this->getColumn($language)->find($id);
+        return $this->getJoin($language)->find($id, $this->getColumn());
     }
 
     /**
@@ -103,11 +114,11 @@ class LanguageRepository implements LanguageRepositoryContract
     public function get(Language $language, int $length = 12, string $q = null): LengthAwarePaginator
     {
         return $this
-            ->getColumn($language)
+            ->getJoin($language)
             ->when($q != null, function ($query) use ($q) {
                 return $query->where('languages.name', 'LIKE', '%' . $q . '%');
             })
-            ->paginate($length);
+            ->paginate($length, $this->getColumn());
     }
 
     /**

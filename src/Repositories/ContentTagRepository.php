@@ -6,6 +6,7 @@
 
 namespace WebAppId\Content\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\ContentTag;
 use WebAppId\Content\Repositories\Contracts\ContentTagRepositoryContract;
@@ -33,26 +34,36 @@ class ContentTagRepository implements ContentTagRepositoryContract
         }
     }
 
-    protected function getColumn($contentTag)
+    /**
+     * @param ContentTag $contentTag
+     * @return Builder
+     */
+    protected function getJoin(ContentTag $contentTag): Builder
     {
         return $contentTag
-            ->select
-            (
-                'content_tags.id',
-                'content_tags.content_id',
-                'content_tags.tag_id',
-                'content_tags.user_id',
-                'contents.title',
-                'contents.code',
-                'contents.description',
-                'contents.keyword',
-                'tags.name AS tag_name',
-                'users.name AS user_name',
-                'users.email'
-            )
             ->join('contents as contents', 'content_tags.content_id', 'contents.id')
             ->join('tags as tags', 'content_tags.tag_id', 'tags.id')
             ->join('users as users', 'content_tags.user_id', 'users.id');
+    }
+
+    /**
+     * @return array|string[]
+     */
+    protected function getColumn(): array
+    {
+        return [
+            'content_tags.id',
+            'content_tags.content_id',
+            'content_tags.tag_id',
+            'content_tags.user_id',
+            'contents.title',
+            'contents.code',
+            'contents.description',
+            'contents.keyword',
+            'tags.name AS tag_name',
+            'users.name AS user_name',
+            'users.email'
+        ];
     }
 
     /**
@@ -60,7 +71,7 @@ class ContentTagRepository implements ContentTagRepositoryContract
      */
     public function getByContentId(int $content_id, ContentTag $contentTag): ?ContentTag
     {
-        return $this->getColumn($contentTag)->where('content_id', $content_id)->first();
+        return $this->getJoin($contentTag)->where('content_id', $content_id)->first($this->getColumn());
     }
 
     /**
