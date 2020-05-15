@@ -26,7 +26,7 @@ if (isset($_SERVER["PHP_SELF"])) {
 
 Route::group(['prefix' => 'file'], function () {
     $routeCode = "file";
-    Route::get('{name}', WebAppId\Content\Controllers\FileOriController::class)->name($routeCode);
+    Route::get('{name}', WebAppId\Content\Controllers\FileOriController::class)->name($routeCode . '.ori');
     Route::get('{name}/{size}', WebAppId\Content\Controllers\FileShowController::class)->name($routeCode . '.resize');
-    Route::post('upload/{path}', WebAppId\Content\Controllers\FileStoreController::class)->name($routeCode . '.upload');
+    Route::post('upload/{path}', WebAppId\Content\Controllers\FileStoreController::class)->name($routeCode . '.store');
 });
