@@ -62,7 +62,7 @@ trait Content
         $contentRequest['owner_id'] = isset($contentRequest['owner_id']) ? $contentRequest['owner_id'] : Auth::id();
 
         try {
-            $contentServiceRequest = Lazy::copyFromArray($contentRequest, $contentServiceRequest);
+            $contentServiceRequest = Lazy::copyFromArray($contentRequest, $contentServiceRequest, Lazy::AUTOCAST);
         } catch (\Exception $e) {
             report($e);
         }
