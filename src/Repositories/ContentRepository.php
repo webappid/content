@@ -83,7 +83,7 @@ class ContentRepository implements ContentRepositoryContract
             'owner_users.id AS owner_id',
             'owner_users.name AS owner_name',
             'files.name AS file_name',
-            DB::raw('REPLACE("' . route('file', 'file_name') . '", "file_name" , files.name) AS file_uri'),
+            DB::raw('REPLACE("' . route('file.ori', 'file_name') . '", "file_name" , files.name) AS file_uri'),
             'files.description AS file_description',
             'files.alt AS file_alt',
             'files.path as file_path',
