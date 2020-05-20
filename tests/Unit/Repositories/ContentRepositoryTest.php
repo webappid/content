@@ -6,6 +6,7 @@
 namespace WebAppId\Content\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Str;
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Repositories\ContentRepository;
 use WebAppId\Content\Repositories\Requests\ContentRepositoryRequest;
@@ -78,7 +79,7 @@ class ContentRepositoryTest extends TestCase
             $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
 
             $dummy->title = $this->getFaker()->text(100);
-            $dummy->code = $this->getFaker()->text(20);
+            $dummy->code = Str::slug($dummy->title);
             $dummy->description = $this->getFaker()->text(255);
             $dummy->keyword = $this->getFaker()->text(100);
             $dummy->og_title = $this->getFaker()->text(100);
@@ -179,5 +180,23 @@ class ContentRepositoryTest extends TestCase
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
         $result = $this->container->call([$this->contentRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
+    }
+
+    public function testGetDuplicateTitle()
+    {
+        $q = $this->getFaker()->userName;
+        $contentRepositoryRequest = $this->getDummy();
+        $contentRepositoryRequest->code = $q;
+
+        $this->container->call([$this->contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
+
+        $contentRepositoryRequest = $this->getDummy();
+        $contentRepositoryRequest->code = $q . $this->getFaker()->numberBetween(1, 50);
+
+        $this->container->call([$this->contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
+
+        $result = $this->container->call([$this->contentRepository, 'getDuplicateTitle'], ['q' => $q]);
+
+        self::assertEquals(2, $result);
     }
 }

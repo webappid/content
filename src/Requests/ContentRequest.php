@@ -33,7 +33,7 @@ class ContentRequest extends AbstractFormRequest
     function rules(): array
     {
         return [
-            'title' => 'required|string|max:191|unique:contents,title',
+            'title' => 'required|string|max:191',
             'description' => 'string|max:191',
             'content' => 'required|string',
             'keyword' => 'string',

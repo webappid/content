@@ -70,6 +70,7 @@ class ContentService extends BaseService implements ContentServiceContract
         ContentGalleryRepository $contentGalleryRepository,
         ContentServiceResponse $contentServiceResponse): ContentServiceResponse
     {
+
         if (count($contentServiceRequest->categories) == 0) {
             $contentServiceResponse->status = false;
             $contentServiceResponse->message = "categories data required";
@@ -78,9 +79,15 @@ class ContentService extends BaseService implements ContentServiceContract
 
         $contentRepositoryRequest = $this->transformContent($contentServiceRequest, $contentRepositoryRequest);
 
-        $content = $this->container->call([$contentRepository, 'store'], compact('contentRepositoryRequest'));
+        $duplicateCode = $this->container->call([$contentRepository, 'getDuplicateTitle'], ['q' => $contentRepositoryRequest->code]);
 
-        if ($content == null) {
+        if ($duplicateCode > 0) {
+            $contentRepositoryRequest->code .= $duplicateCode;
+        }
+
+        $content = $this->container->call([$contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
+
+        if ($content->id == null) {
             $contentServiceResponse->status = false;
             $contentServiceResponse->message = 'Save content failed';
             return $contentServiceResponse;
@@ -163,6 +170,20 @@ class ContentService extends BaseService implements ContentServiceContract
         }
 
         $contentRepositoryRequest = $this->transformContent($contentServiceRequest, $contentRepositoryRequest);
+
+        $content = $this->container->call([$contentRepository, 'getByCode'], ['code' => $code]);
+
+        if ($content == null) {
+            $contentServiceResponse->status = false;
+            $contentServiceResponse->message = "Content Not Found";
+            return $contentServiceResponse;
+        }
+
+        $duplicateCode = $this->container->call([$contentRepository, 'getDuplicateTitle'], ['q' => $contentRepositoryRequest->code, 'id' => $content->id]);
+
+        if ($duplicateCode > 0) {
+            $contentRepositoryRequest->code .= $duplicateCode;
+        }
 
         $content = $this->container->call([$contentRepository, 'update'], compact('contentRepositoryRequest', 'code'));
 

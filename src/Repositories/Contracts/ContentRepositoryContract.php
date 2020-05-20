@@ -78,4 +78,12 @@ interface ContentRepositoryContract
      * @return Content|null
      */
     public function updateStatusByCode(string $code, int $status_id, Content $content): ?Content;
+
+    /**
+     * @param Content $content
+     * @param string|null $q
+     * @param int|null $id
+     * @return int
+     */
+    public function getDuplicateTitle(Content $content, string $q = null, int $id = null): int;
 }
