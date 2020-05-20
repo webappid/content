@@ -33,8 +33,8 @@ class ContentRepository implements ContentRepositoryContract
             $this->cleanCache($content->code);
             return $content;
         } catch (QueryException $queryException) {
+            return $content;
             report($queryException);
-            dd($queryException);
             return null;
         }
     }
@@ -183,8 +183,8 @@ class ContentRepository implements ContentRepositoryContract
      */
     public function getByCode(string $code, Content $content): ?Content
     {
-        return $content
-            ->where('code', $code)
+        return $this->getJoin($content)
+            ->where('contents.code', $code)
             ->first();
     }
 
@@ -213,5 +213,13 @@ class ContentRepository implements ContentRepositoryContract
     public function cleanCache(string $code): void
     {
         Cache::forget('content-' . $code);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDuplicateTitle(Content $content, string $q = null): int
+    {
+        return $content->where('contents.code', 'LIKE', $q . '%')->count();
     }
 }

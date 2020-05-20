@@ -80,6 +80,38 @@ class ContentServiceTest extends TestCase
         return $contentServiceResponse;
     }
 
+    public function testStoreDuplicateTitle()
+    {
+        $content = $this->container->call([$this->contentRepositoryTest, 'getDummy']);
+        $contentServiceResponse = null;
+        try {
+            $contentServiceRequest = $this->container->make(ContentServiceRequest::class);
+            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
+            $categories = $this->container->call([$this->contentCategoryRepositoryTest, 'testStore']);
+            $contentServiceRequest = Lazy::copy($content, $contentServiceRequest);
+            $contentServiceRequest->galleries = [$file->id];
+            $contentServiceRequest->categories = [$categories->id];
+            $contentServiceResponse = $this->container->call([$this->contentService, 'store'], compact('contentServiceRequest'));
+
+            self::assertTrue($contentServiceResponse->status);
+
+            $newContent = $this->container->call([$this->contentRepositoryTest, 'getDummy']);
+            $newContentServiceRequest = $this->container->make(ContentServiceRequest::class);
+            $newFile = $this->container->call([$this->fileRepositoryTest, 'testStore']);
+            $newCategories = $this->container->call([$this->contentCategoryRepositoryTest, 'testStore']);
+            $newContent->code = $content->code;
+            $newContentServiceRequest = Lazy::copy($newContent, $newContentServiceRequest);
+            $newContentServiceRequest->galleries = [$newFile->id];
+            $newContentServiceRequest->categories = [$newCategories->id];
+
+            $contentServiceResponse = $this->container->call([$this->contentService, 'store'], compact('contentServiceRequest'));
+            self::assertTrue($contentServiceResponse->status);
+        } catch (BindingResolutionException $e) {
+            report($e);
+        }
+        return $contentServiceResponse;
+    }
+
     public function testGet()
     {
         $randomNumber = $this->getFaker()->numberBetween(10, 20);
