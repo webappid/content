@@ -171,6 +171,20 @@ class ContentService extends BaseService implements ContentServiceContract
 
         $contentRepositoryRequest = $this->transformContent($contentServiceRequest, $contentRepositoryRequest);
 
+        $content = $this->container->call([$contentRepository, 'getByCode'], ['code' => $code]);
+
+        if ($content == null) {
+            $contentServiceResponse->status = false;
+            $contentServiceResponse->message = "Content Not Found";
+            return $contentServiceResponse;
+        }
+
+        $duplicateCode = $this->container->call([$contentRepository, 'getDuplicateTitle'], ['q' => $contentRepositoryRequest->code, 'id' => $content->id]);
+
+        if ($duplicateCode > 0) {
+            $contentRepositoryRequest->code .= $duplicateCode;
+        }
+
         $content = $this->container->call([$contentRepository, 'update'], compact('contentRepositoryRequest', 'code'));
 
         if ($content != null) {

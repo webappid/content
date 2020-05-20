@@ -82,7 +82,8 @@ interface ContentRepositoryContract
     /**
      * @param Content $content
      * @param string|null $q
+     * @param int|null $id
      * @return int
      */
-    public function getDuplicateTitle(Content $content, string $q = null): int;
+    public function getDuplicateTitle(Content $content, string $q = null, int $id = null): int;
 }

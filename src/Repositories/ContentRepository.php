@@ -218,8 +218,13 @@ class ContentRepository implements ContentRepositoryContract
     /**
      * @inheritDoc
      */
-    public function getDuplicateTitle(Content $content, string $q = null): int
+    public function getDuplicateTitle(Content $content, string $q = null, int $id = null): int
     {
-        return $content->where('contents.code', 'LIKE', $q . '%')->count();
+        return $content
+            ->where('contents.code', 'LIKE', $q . '%')
+            ->when($id != null, function ($query) use ($id) {
+                return $query->where('id', $id);
+            })
+            ->count();
     }
 }

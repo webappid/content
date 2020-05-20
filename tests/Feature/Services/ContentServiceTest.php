@@ -157,6 +157,9 @@ class ContentServiceTest extends TestCase
             $contentServiceRequest->categories = [$categories->id];
             $result = $this->container->call([$this->contentService, 'update'], ['code' => $contentResponse->content->code, 'contentServiceRequest' => $contentServiceRequest]);
             self::assertTrue($result->status);
+            $contentServiceRequest->code = $contentResponse->content->code;
+            $result = $this->container->call([$this->contentService, 'update'], ['code' => $contentResponse->content->code, 'contentServiceRequest' => $contentServiceRequest]);
+            self::assertTrue($result->status);
         } catch (BindingResolutionException $e) {
             report($e);
         }
