@@ -185,7 +185,7 @@ class ContentRepository implements ContentRepositoryContract
     {
         return $this->getJoin($content)
             ->where('contents.code', $code)
-            ->first();
+            ->first($this->getColumn());
     }
 
     /**
