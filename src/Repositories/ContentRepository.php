@@ -223,7 +223,7 @@ class ContentRepository implements ContentRepositoryContract
         return $content
             ->where('contents.code', 'LIKE', $q . '%')
             ->when($id != null, function ($query) use ($id) {
-                return $query->where('id', $id);
+                return $query->where('id', '<>', $id);
             })
             ->count();
     }
