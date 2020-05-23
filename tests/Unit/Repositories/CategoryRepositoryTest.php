@@ -90,6 +90,21 @@ class CategoryRepositoryTest extends TestCase
         self::assertNotEquals(null, $result);
     }
 
+    public function testGetWhereInName()
+    {
+        $categories = [];
+        for ($i = 0; $i < $this->getFaker()->numberBetween(5, 10); $i++) {
+            $category = $this->testStore();
+            if ($this->getFaker()->boolean) {
+                $categories[] = $category->name;
+            }
+        }
+        $result = $this->container->call([$this->categoryRepository, 'getWhereInName'], ['names' => $categories]);
+
+        self::assertSameSize($result, $categories);
+        return $result;
+    }
+
     public function testGetByCode()
     {
         $category = $this->testStore();

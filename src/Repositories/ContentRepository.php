@@ -140,11 +140,14 @@ class ContentRepository implements ContentRepositoryContract
         }
     }
 
-    private function getWhere(Content $content, int $category_id = null, string $q = null)
+    private function getWhere(Content $content, int $category_id = null, $categories = [], string $q = null)
     {
         return $this->getJoin($content)
             ->when($category_id != null, function ($query) use ($category_id) {
                 return $query->where('category_id', $category_id);
+            })
+            ->when(count($categories) > 0, function ($query) use ($categories) {
+                return $query->whereIn('category_id', $categories);
             })
             ->when($q != null, function ($query) use ($q) {
                 return $query->where('contents.code', 'LIKE', '%' . $q . '%')
@@ -161,9 +164,10 @@ class ContentRepository implements ContentRepositoryContract
     public function get(Content $content,
                         int $length = 12,
                         int $category_id = null,
+                        array $categories = [],
                         string $q = null): LengthAwarePaginator
     {
-        return $this->getWhere($content, $category_id, $q)
+        return $this->getWhere($content, $category_id, $categories, $q)
             ->orderBy('contents.id', 'desc')
             ->paginate($length, $this->getColumn());
     }
@@ -171,10 +175,13 @@ class ContentRepository implements ContentRepositoryContract
     /**
      * @inheritDoc
      */
-    public function getCount(Content $content, int $category_id = null, string $q = null): int
+    public function getCount(Content $content,
+                             int $category_id = null,
+                             array $categories = [],
+                             string $q = null): int
     {
         return $this
-            ->getWhere($content, $category_id, $q)
+            ->getWhere($content, $category_id, $categories, $q)
             ->count();
     }
 
@@ -185,7 +192,7 @@ class ContentRepository implements ContentRepositoryContract
     {
         return $this->getJoin($content)
             ->where('contents.code', $code)
-            ->first();
+            ->first($this->getColumn());
     }
 
     /**

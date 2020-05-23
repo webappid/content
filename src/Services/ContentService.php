@@ -143,9 +143,9 @@ class ContentService extends BaseService implements ContentServiceContract
 
         $this->container->call([$contentCategoryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
 
-        $categories = $this->storeCategories($categories, $content, $contentServiceRequest, $contentCategoryRepository);
+        $categoryResponse = $this->storeCategories($categories, $content, $contentServiceRequest, $contentCategoryRepository);
 
-        $contentServiceResponse->categories = $categories;
+        $contentServiceResponse->categories = $content->categories;
 
         return $contentServiceResponse;
     }
@@ -256,26 +256,42 @@ class ContentService extends BaseService implements ContentServiceContract
                         ContentServiceResponseList $contentServiceResponseList): ContentServiceResponseList
     {
 
-        $categoryName = $contentServiceSearchRequest->category == null ? '' : $contentServiceSearchRequest->category;
+        if (count($contentServiceSearchRequest->categories) > 0) {
 
-        $categoryResult = $this->container->call([$categoryRepository, 'getByName'], ['name' => $categoryName]);
+            $categoryResult = $this->container->call([$categoryRepository, 'getWhereInName'], ['names' => $contentServiceSearchRequest->categories]);
 
-        if ($categoryResult == null) {
-            $categoryId = null;
+            $categories = [];
+            foreach ($categoryResult as $category) {
+                $categories[] = $category->name;
+            }
+
+            $q = $contentServiceSearchRequest->q;
+
+            $content = $this->container->call([$contentRepository, 'get'], ['q' => $q, 'categories' => $categories]);
+            $recordsTotal = $this->container->call([$contentRepository, 'getCount'], ['categories' => $categories]);
+            $recordsFiltered = $this->container->call([$contentRepository, 'getCount'], ['q' => $q, 'categories' => $categories]);
         } else {
-            $categoryId = $categoryResult->id;
+            $categoryName = $contentServiceSearchRequest->category == null ? '' : $contentServiceSearchRequest->category;
+
+            $categoryResult = $this->container->call([$categoryRepository, 'getByName'], ['name' => $categoryName]);
+
+            if ($categoryResult == null) {
+                $categoryId = null;
+            } else {
+                $categoryId = $categoryResult->id;
+            }
+
+            $q = $contentServiceSearchRequest->q;
+
+            $content = $this->container->call([$contentRepository, 'get'], ['q' => $q, 'category_id' => $categoryId]);
+            $recordsTotal = $this->container->call([$contentRepository, 'getCount'], ['category_id' => $categoryId]);
+            $recordsFiltered = $this->container->call([$contentRepository, 'getCount'], ['q' => $q, 'category_id' => $categoryId]);
         }
-
-        $q = $contentServiceSearchRequest->q;
-
-        $content = $this->container->call([$contentRepository, 'get'], ['q' => $q, 'category_id' => $categoryId]);
 
         if ($content != null) {
             $contentServiceResponseList->status = true;
             $contentServiceResponseList->contentList = $content;
-            $recordsTotal = $this->container->call([$contentRepository, 'getCount'], ['category_id' => $categoryId]);
             $contentServiceResponseList->count = $recordsTotal;
-            $recordsFiltered = $this->container->call([$contentRepository, 'getCount'], ['q' => $q, 'category_id' => $categoryId]);
             $contentServiceResponseList->countFiltered = $recordsFiltered;
         } else {
             $contentServiceResponseList->status = false;

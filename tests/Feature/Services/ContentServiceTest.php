@@ -13,6 +13,7 @@ use WebAppId\Content\Services\ContentService;
 use WebAppId\Content\Services\Requests\ContentServiceRequest;
 use WebAppId\Content\Services\Requests\ContentServiceSearchRequest;
 use WebAppId\Content\Tests\TestCase;
+use WebAppId\Content\Tests\Unit\Repositories\CategoryRepositoryTest;
 use WebAppId\Content\Tests\Unit\Repositories\ContentCategoryRepositoryTest;
 use WebAppId\Content\Tests\Unit\Repositories\ContentRepositoryTest;
 use WebAppId\Content\Tests\Unit\Repositories\ContentStatusRepositoryTest;
@@ -48,6 +49,11 @@ class ContentServiceTest extends TestCase
      */
     private $fileRepositoryTest;
 
+    /**
+     * @var CategoryRepositoryTest
+     */
+    private $categoryRepositoryTest;
+
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -56,6 +62,7 @@ class ContentServiceTest extends TestCase
             $this->fileRepositoryTest = $this->container->make(FileRepositoryTest::class);
             $this->contentRepositoryTest = $this->container->make(ContentRepositoryTest::class);
             $this->contentCategoryRepositoryTest = $this->container->make(ContentCategoryRepositoryTest::class);
+            $this->categoryRepositoryTest = $this->container->make(CategoryRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -123,7 +130,6 @@ class ContentServiceTest extends TestCase
             } else {
                 $this->testStore();
             }
-
         }
 
         try {
@@ -131,6 +137,33 @@ class ContentServiceTest extends TestCase
             $contentServiceSearchRequest->q = $content->content->title;
 
             $result = $this->container->call([$this->contentService, 'get'], compact('contentServiceSearchRequest'));
+            self::assertTrue($result->status);
+        } catch (BindingResolutionException $e) {
+            report($e);
+        }
+    }
+
+    public function testGetByCategories()
+    {
+        $randomNumber = $this->getFaker()->numberBetween(10, 20);
+
+        $categories = [];
+
+        for ($i = 0; $i <= $randomNumber; $i++) {
+            $content = $this->testStore();
+            if (isset($content->categories[0])) {
+                $categories [] = $content->categories[0]->name;
+            }
+        }
+
+        $string = 'aiueo';
+        $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
+
+        try {
+            $contentServiceSearchRequest = $this->container->make(ContentServiceSearchRequest::class);
+            $contentServiceSearchRequest->q = $q;
+
+            $result = $this->container->call([$this->contentService, 'get'], compact('contentServiceSearchRequest', 'categories'));
             self::assertTrue($result->status);
         } catch (BindingResolutionException $e) {
             report($e);
