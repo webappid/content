@@ -19,4 +19,9 @@ class ContentServiceSearchRequest
      * @var string
      */
     public $category = "";
+
+    /**
+     * @var array
+     */
+    public $categories = [];
 }

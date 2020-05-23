@@ -75,4 +75,11 @@ interface CategoryRepositoryContract
      * @return Category|null
      */
     public function getByName(string $name, Category $category): ?Category;
+
+    /**
+     * @param array $names
+     * @param Category $category
+     * @return Category|null
+     */
+    public function getWhereInName(array $names, Category $category): ?LengthAwarePaginator;
 }

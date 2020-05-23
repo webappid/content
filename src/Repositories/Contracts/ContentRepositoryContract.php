@@ -58,18 +58,27 @@ interface ContentRepositoryContract
      * @param Content $content
      * @param int $length
      * @param int|null $category_id
+     * @param array $categories
      * @param string|null $q
      * @return LengthAwarePaginator
      */
-    public function get(Content $content, int $length = 12, int $category_id = null, string $q = null): LengthAwarePaginator;
+    public function get(Content $content,
+                        int $length = 12,
+                        int $category_id = null,
+                        array $categories = [],
+                        string $q = null): LengthAwarePaginator;
 
     /**
      * @param Content $content
      * @param int|null $category_id
+     * @param array $categories
      * @param string|null $q
      * @return int
      */
-    public function getCount(Content $content, int $category_id = null, string $q = null): int;
+    public function getCount(Content $content,
+                             int $category_id = null,
+                             array $categories = [],
+                             string $q = null): int;
 
     /**
      * @param string $code

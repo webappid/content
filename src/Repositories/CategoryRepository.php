@@ -119,6 +119,14 @@ class CategoryRepository implements CategoryRepositoryContract
     /**
      * @inheritDoc
      */
+    public function getWhereInName(array $names, Category $category, $length = 12): ?LengthAwarePaginator
+    {
+        return $this->getJoin($category)->whereIn('categories.name', $names)->paginate($length, $this->getColumn());
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function delete(int $id, Category $category): bool
     {
         $category = $this->getById($id, $category);
