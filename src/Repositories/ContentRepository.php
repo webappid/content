@@ -52,6 +52,7 @@ class ContentRepository implements ContentRepositoryContract
             ->join('users as owner_users', 'contents.owner_id', 'owner_users.id')
             ->join('content_statuses as content_statuses', 'contents.status_id', 'content_statuses.id')
             ->join('time_zones as time_zones', 'contents.time_zone_id', 'time_zones.id')
+            ->join('content_categories', 'content_categories.content_id', 'contents.id')
             ->join('users as user_users', 'contents.user_id', 'user_users.id');
     }
 
@@ -150,11 +151,13 @@ class ContentRepository implements ContentRepositoryContract
                 return $query->whereIn('category_id', $categories);
             })
             ->when($q != null, function ($query) use ($q) {
-                return $query->where('contents.code', 'LIKE', '%' . $q . '%')
-                    ->orWhere('contents.title', 'LIKE', '%' . $q . '%')
-                    ->orWhere('contents.description', 'LIKE', '%' . $q . '%')
-                    ->orWhere('contents.additional_info', 'LIKE', '%' . $q . '%')
-                    ->orWhere('contents.og_title', 'LIKE', '%' . $q . '%');
+                return $query->where(function ($query) use ($q) {
+                    return $query->where('contents.code', 'LIKE', '%' . $q . '%')
+                        ->orWhere('contents.title', 'LIKE', '%' . $q . '%')
+                        ->orWhere('contents.description', 'LIKE', '%' . $q . '%')
+                        ->orWhere('contents.additional_info', 'LIKE', '%' . $q . '%')
+                        ->orWhere('contents.og_title', 'LIKE', '%' . $q . '%');
+                });
             });
     }
 

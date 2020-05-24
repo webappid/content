@@ -268,6 +268,7 @@ class ContentService extends BaseService implements ContentServiceContract
             $q = $contentServiceSearchRequest->q;
 
             $content = $this->container->call([$contentRepository, 'get'], ['q' => $q, 'categories' => $categories]);
+
             $recordsTotal = $this->container->call([$contentRepository, 'getCount'], ['categories' => $categories]);
             $recordsFiltered = $this->container->call([$contentRepository, 'getCount'], ['q' => $q, 'categories' => $categories]);
         } else {
