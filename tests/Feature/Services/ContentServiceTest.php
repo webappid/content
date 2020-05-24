@@ -163,7 +163,9 @@ class ContentServiceTest extends TestCase
             $contentServiceSearchRequest = $this->container->make(ContentServiceSearchRequest::class);
             $contentServiceSearchRequest->q = $q;
 
-            $result = $this->container->call([$this->contentService, 'get'], compact('contentServiceSearchRequest', 'categories'));
+            $contentServiceSearchRequest->categories = $categories;
+
+            $result = $this->container->call([$this->contentService, 'get'], compact('contentServiceSearchRequest'));
             self::assertTrue($result->status);
         } catch (BindingResolutionException $e) {
             report($e);
