@@ -262,7 +262,7 @@ class ContentService extends BaseService implements ContentServiceContract
 
             $categories = [];
             foreach ($categoryResult as $category) {
-                $categories[] = $category->name;
+                $categories[] = $category->id;
             }
 
             $q = $contentServiceSearchRequest->q;
