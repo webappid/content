@@ -77,7 +77,7 @@ class ContentStatusServiceTest extends TestCase
 
     public function testGetContentStatus(): void
     {
-        $resultContentStatuses = $this->getContainer()->call([$this->contentStatusService, "get"]);
+        $resultContentStatuses = $this->container->call([$this->contentStatusService, "get"]);
         self::assertTrue($resultContentStatuses->status);
     }
 }
