@@ -33,7 +33,6 @@ class ContentRepository implements ContentRepositoryContract
             $this->cleanCache($content->code);
             return $content;
         } catch (QueryException $queryException) {
-            return $content;
             report($queryException);
             return null;
         }

@@ -46,7 +46,8 @@ trait Content
         $contentRequest['code'] = Str::slug($contentRequest['title']);
         $contentRequest['og_title'] = $contentRequest['title'] . ' - ' . env('APP_NAME');
         $contentRequest['keyword'] = isset($contentRequest['keyword']) ? $contentRequest['keyword'] : $contentRequest['title'];
-        $contentRequest['og_description'] = $contentRequest['description'];
+        $contentRequest['description'] = isset($contentRequest['description']) ? $contentRequest['description'] : '-';
+        $contentRequest['og_description'] = isset($contentRequest['og_description']) ? $contentRequest['og_description'] : $contentRequest['description'];
         $contentRequest['default_image'] = isset($contentRequest['default_image']) ? $contentRequest['default_image'] : 1;
         $contentRequest['status_id'] = isset($contentRequest['status_id']) ? (int)$contentRequest['status_id'] : 1;
         $contentRequest['language_id'] = isset($contentRequest['language_id']) ? $contentRequest['language_id'] : 1;
