@@ -52,7 +52,6 @@ class ContentRepository implements ContentRepositoryContract
             ->join('users as owner_users', 'contents.owner_id', 'owner_users.id')
             ->join('content_statuses as content_statuses', 'contents.status_id', 'content_statuses.id')
             ->join('time_zones as time_zones', 'contents.time_zone_id', 'time_zones.id')
-            ->join('content_categories', 'content_categories.content_id', 'contents.id')
             ->join('users as user_users', 'contents.user_id', 'user_users.id');
     }
 
@@ -145,10 +144,14 @@ class ContentRepository implements ContentRepositoryContract
     {
         return $this->getJoin($content)
             ->when($category_id != null, function ($query) use ($category_id) {
-                return $query->where('category_id', $category_id);
+                return $query
+                    ->join('content_categories', 'content_categories.content_id', 'contents.id')
+                    ->where('category_id', $category_id);
             })
             ->when(count($categories) > 0, function ($query) use ($categories) {
-                return $query->whereIn('category_id', $categories);
+                return $query
+                    ->join('content_categories', 'content_categories.content_id', 'contents.id')
+                    ->whereIn('category_id', $categories);
             })
             ->when($q != null, function ($query) use ($q) {
                 return $query->where(function ($query) use ($q) {

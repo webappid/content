@@ -8,7 +8,9 @@ namespace WebAppId\Content\Tests\Unit\Repositories;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use WebAppId\Content\Models\Content;
+use WebAppId\Content\Repositories\ContentCategoryRepository;
 use WebAppId\Content\Repositories\ContentRepository;
+use WebAppId\Content\Repositories\Requests\ContentCategoryRepositoryRequest;
 use WebAppId\Content\Repositories\Requests\ContentRepositoryRequest;
 use WebAppId\Content\Tests\TestCase;
 use WebAppId\User\Tests\Unit\Repositories\UserRepositoryTest;
@@ -52,6 +54,16 @@ class ContentRepositoryTest extends TestCase
      */
     private $fileRepositoryTest;
 
+    /**
+     * @var ContentCategoryRepository
+     */
+    private $contentCategoryRepository;
+
+    /**
+     * @var CategoryRepositoryTest
+     */
+    private $categoryRepositoryTest;
+
     public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -62,6 +74,8 @@ class ContentRepositoryTest extends TestCase
             $this->languageRepositoryTest = $this->container->make(LanguageRepositoryTest::class);
             $this->timezoneRepositoryTest = $this->container->make(TimeZoneRepositoryTest::class);
             $this->fileRepositoryTest = $this->container->make(FileRepositoryTest::class);
+            $this->contentCategoryRepository = $this->container->make(ContentCategoryRepository::class);
+            $this->categoryRepositoryTest = $this->container->make(CategoryRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -104,9 +118,15 @@ class ContentRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?Content
     {
         $contentRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
-        self::assertNotEquals(null, $result);
-        return $result;
+        $content = $this->container->call([$this->contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
+        $category = $this->container->call([$this->categoryRepositoryTest, 'testStore']);
+        $contentCategoryRepositoryRequest = $this->container->make(ContentCategoryRepositoryRequest::class);
+        $contentCategoryRepositoryRequest->content_id = $content->id;
+        $contentCategoryRepositoryRequest->category_id = $category->id;
+        $contentCategoryRepositoryRequest->user_id = $contentRepositoryRequest->user_id;
+        $this->container->call([$this->contentCategoryRepository, 'store'], compact('contentCategoryRepositoryRequest'));
+        self::assertNotEquals(null, $content);
+        return $content;
     }
 
     public function testGetById()

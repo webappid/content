@@ -190,8 +190,6 @@ class ContentServiceTest extends TestCase
             $categories = $this->container->call([$this->contentCategoryRepositoryTest, 'testStore']);
             $contentServiceRequest->galleries = [$file->id];
             $contentServiceRequest->categories = [$categories->id];
-            $result = $this->container->call([$this->contentService, 'update'], ['code' => $contentResponse->content->code, 'contentServiceRequest' => $contentServiceRequest]);
-            self::assertTrue($result->status);
             $contentServiceRequest->code = $contentResponse->content->code;
             $result = $this->container->call([$this->contentService, 'update'], ['code' => $contentResponse->content->code, 'contentServiceRequest' => $contentServiceRequest]);
             self::assertTrue($result->status);
