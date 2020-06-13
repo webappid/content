@@ -74,7 +74,7 @@ class ContentCategoryRepository implements ContentCategoryRepositoryContract
      */
     public function update(int $id, ContentCategoryRepositoryRequest $contentCategoryRepositoryRequest, ContentCategory $contentCategory): ?ContentCategory
     {
-        $contentCategory = $this->getById($id, $contentCategory);
+        $contentCategory = $contentCategory->first($id);
         if ($contentCategory != null) {
             try {
                 $contentCategory = Lazy::copy($contentCategoryRepositoryRequest, $contentCategory);
@@ -100,7 +100,7 @@ class ContentCategoryRepository implements ContentCategoryRepositoryContract
      */
     public function delete(int $id, ContentCategory $contentCategory): bool
     {
-        $contentCategory = $this->getById($id, $contentCategory);
+        $contentCategory = $contentCategory->find($id);
         if ($contentCategory != null) {
             return $contentCategory->delete();
         } else {

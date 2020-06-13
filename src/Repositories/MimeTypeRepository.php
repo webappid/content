@@ -68,7 +68,7 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
      */
     public function update(int $id, MimeTypeRepositoryRequest $mimeTypeRepositoryRequest, MimeType $mimeType): ?MimeType
     {
-        $mimeType = $this->getById($id, $mimeType);
+        $mimeType = $mimeType->find($id);
         if ($mimeType != null) {
             try {
                 $mimeType = Lazy::copy($mimeTypeRepositoryRequest, $mimeType);
@@ -94,7 +94,7 @@ class MimeTypeRepository implements MimeTypeRepositoryContract
      */
     public function delete(int $id, MimeType $mimeType): bool
     {
-        $mimeType = $this->getById($id, $mimeType);
+        $mimeType = $mimeType->find($id);
         if ($mimeType != null) {
             return $mimeType->delete();
         } else {

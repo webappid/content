@@ -52,7 +52,7 @@ class CategoryStatusRepository implements CategoryStatusRepositoryContract
      */
     public function update(int $id, CategoryStatusRepositoryRequest $categoryStatusRepositoryRequest, CategoryStatus $categoryStatus): ?CategoryStatus
     {
-        $categoryStatus = $this->getById($id, $categoryStatus);
+        $categoryStatus = $categoryStatus->find($id);
         if ($categoryStatus != null) {
             try {
                 $categoryStatus = Lazy::copy($categoryStatusRepositoryRequest, $categoryStatus);
@@ -78,7 +78,7 @@ class CategoryStatusRepository implements CategoryStatusRepositoryContract
      */
     public function delete(int $id, CategoryStatus $categoryStatus): bool
     {
-        $categoryStatus = $this->getById($id, $categoryStatus);
+        $categoryStatus = $categoryStatus->find($id);
         if ($categoryStatus != null) {
             return $categoryStatus->delete();
         } else {

@@ -79,7 +79,7 @@ class FileRepository implements FileRepositoryContract
      */
     public function update(int $id, FileRepositoryRequest $fileRepositoryRequest, File $file): ?File
     {
-        $file = $this->getById($id, $file);
+        $file = $file->find($id);
         if ($file != null) {
             try {
                 $file = Lazy::copy($fileRepositoryRequest, $file);
@@ -105,7 +105,7 @@ class FileRepository implements FileRepositoryContract
      */
     public function delete(int $id, File $file): bool
     {
-        $file = $this->getById($id, $file);
+        $file = $file->find($id);
         if ($file != null) {
             return $file->delete();
         } else {

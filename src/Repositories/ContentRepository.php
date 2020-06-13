@@ -104,7 +104,7 @@ class ContentRepository implements ContentRepositoryContract
      */
     public function update(string $code, ContentRepositoryRequest $contentRepositoryRequest, Content $content): ?Content
     {
-        $content = $this->getByCode($code, $content);
+        $content = $content->where('code', $code)->first();
         if ($content != null) {
             try {
                 $content = Lazy::copy($contentRepositoryRequest, $content);
@@ -205,7 +205,7 @@ class ContentRepository implements ContentRepositoryContract
      */
     public function updateStatusByCode(string $code, int $status_id, Content $content): ?Content
     {
-        $content = $this->getByCode($code, $content);
+        $content = $content->where('code', $code)->first();
         if ($content != null) {
             try {
                 $content->status_id = $status_id;
