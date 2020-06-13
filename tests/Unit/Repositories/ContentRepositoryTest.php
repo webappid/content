@@ -94,17 +94,17 @@ class ContentRepositoryTest extends TestCase
 
             $dummy->title = $this->getFaker()->text(100);
             $dummy->code = Str::slug($dummy->title);
-            $dummy->description = $this->getFaker()->text(255);
+            $dummy->description = $this->getFaker()->text(191);
             $dummy->keyword = $this->getFaker()->text(100);
             $dummy->og_title = $this->getFaker()->text(100);
-            $dummy->og_description = $this->getFaker()->text(255);
+            $dummy->og_description = $this->getFaker()->text(191);
             $dummy->default_image = $file->id;
             $dummy->status_id = $contentStatus->id;
             $dummy->language_id = $language->id;
             $dummy->time_zone_id = $timeZone->id;
-            $dummy->publish_date = $this->getFaker()->dateTime();
-            $dummy->additional_info = $this->getFaker()->text(255);
-            $dummy->content = $this->getFaker()->text(255);
+            $dummy->publish_date = $this->getFaker()->date('Y-m-d H:i:s');
+            $dummy->additional_info = $this->getFaker()->text(191);
+            $dummy->content = $this->getFaker()->text(191);
             $dummy->creator_id = $user->id;
             $dummy->owner_id = $user->id;
             $dummy->user_id = $user->id;

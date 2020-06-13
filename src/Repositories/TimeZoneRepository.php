@@ -69,7 +69,7 @@ class TimeZoneRepository implements TimeZoneRepositoryContract
      */
     public function update(int $id, TimeZoneRepositoryRequest $timeZoneRepositoryRequest, TimeZone $timeZone): ?TimeZone
     {
-        $timeZone = $this->getById($id, $timeZone);
+        $timeZone = $timeZone->find($id);
         if ($timeZone != null) {
             try {
                 $timeZone = Lazy::copy($timeZoneRepositoryRequest, $timeZone);
@@ -95,7 +95,7 @@ class TimeZoneRepository implements TimeZoneRepositoryContract
      */
     public function delete(int $id, TimeZone $timeZone): bool
     {
-        $timeZone = $this->getById($id, $timeZone);
+        $timeZone = $timeZone->find($id);
         if ($timeZone != null) {
             return $timeZone->delete();
         } else {

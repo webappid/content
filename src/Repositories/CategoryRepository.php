@@ -76,7 +76,7 @@ class CategoryRepository implements CategoryRepositoryContract
      */
     public function update(int $id, CategoryRepositoryRequest $categoryRepositoryRequest, Category $category): ?Category
     {
-        $category = $this->getById($id, $category);
+        $category = $category->find($id);
         if ($category != null) {
             try {
                 $category = Lazy::copy($categoryRepositoryRequest, $category);
@@ -129,7 +129,7 @@ class CategoryRepository implements CategoryRepositoryContract
      */
     public function delete(int $id, Category $category): bool
     {
-        $category = $this->getById($id, $category);
+        $category = $category->find($id);
         if ($category != null) {
             if ($category->parent != null) {
                 $this->cleanCache($category->parent);

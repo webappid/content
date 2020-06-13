@@ -79,11 +79,6 @@ class ContentTagRepository implements ContentTagRepositoryContract
      */
     public function deleteByContentId(int $content_id, ContentTag $contentTag): bool
     {
-        $contentTag = $this->getByContentId($content_id, $contentTag);
-        if ($contentTag != null) {
-            return $contentTag->delete();
-        } else {
-            return false;
-        }
+        return $contentTag->where('content_id', $content_id)->delete();
     }
 }

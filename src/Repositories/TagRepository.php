@@ -64,7 +64,7 @@ class TagRepository implements TagRepositoryContract
      */
     public function update(int $id, TagRepositoryRequest $tagRepositoryRequest, Tag $tag): ?Tag
     {
-        $tag = $this->getById($id, $tag);
+        $tag = $tag->find($id);
         if ($tag != null) {
             try {
                 $tag = Lazy::copy($tagRepositoryRequest, $tag);
@@ -90,7 +90,7 @@ class TagRepository implements TagRepositoryContract
      */
     public function delete(int $id, Tag $tag): bool
     {
-        $tag = $this->getById($id, $tag);
+        $tag = $tag->find($id);
         if ($tag != null) {
             return $tag->delete();
         } else {

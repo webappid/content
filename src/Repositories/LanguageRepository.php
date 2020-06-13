@@ -74,7 +74,7 @@ class LanguageRepository implements LanguageRepositoryContract
      */
     public function update(int $id, LanguageRepositoryRequest $languageRepositoryRequest, Language $language): ?Language
     {
-        $language = $this->getById($id, $language);
+        $language = $language->find($id);
         if ($language != null) {
             try {
                 $language = Lazy::copy($languageRepositoryRequest, $language);
@@ -100,7 +100,7 @@ class LanguageRepository implements LanguageRepositoryContract
      */
     public function delete(int $id, Language $language): bool
     {
-        $language = $this->getById($id, $language);
+        $language = $language->find($id);
         if ($language != null) {
             return $language->delete();
         } else {

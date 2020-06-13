@@ -54,7 +54,7 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
      */
     public function update(int $id, ContentStatusRepositoryRequest $contentStatusRepositoryRequest, ContentStatus $contentStatus): ?ContentStatus
     {
-        $contentStatus = $this->getById($id, $contentStatus);
+        $contentStatus = $contentStatus->find($id);
         if ($contentStatus != null) {
             try {
                 $contentStatus = Lazy::copy($contentStatusRepositoryRequest, $contentStatus);
@@ -80,7 +80,7 @@ class ContentStatusRepository implements ContentStatusRepositoryContract
      */
     public function delete(int $id, ContentStatus $contentStatus): bool
     {
-        $contentStatus = $this->getById($id, $contentStatus);
+        $contentStatus = $contentStatus->find($id);
         if ($contentStatus != null) {
             return $contentStatus->delete();
         } else {
