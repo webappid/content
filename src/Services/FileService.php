@@ -161,7 +161,15 @@ class FileService extends BaseService implements FileServiceContract
                     $image->resizeToBestFit($sizeData[0], $sizeData[1]);
                 }
             }
-            return response($image->output())->header('Cache-Control', 'max-age=2592000')->header('Content-Type', $mimeType);
+
+            return response()->stream(function () use ($image, $mimeType) {
+                echo $image->output();
+            }, 200,
+                [
+                    "Content-Type" => $mimeType,
+                    'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                ]
+            );
         } else {
             $smartReadFile->getFile($path . '/' . $imageName, $imageName);
             return null;
