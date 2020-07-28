@@ -6,8 +6,6 @@
 namespace WebAppId\Content\Services\Contracts;
 
 use WebAppId\Content\Repositories\CategoryRepository;
-use WebAppId\Content\Repositories\Requests\CategoryRepositoryRequest;
-use WebAppId\Content\Services\Requests\CategoryServiceRequest;
 use WebAppId\Content\Services\Responses\CategoryServiceResponse;
 use WebAppId\Content\Services\Responses\CategoryServiceResponseList;
 

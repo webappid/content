@@ -12,7 +12,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\File;
 use WebAppId\Content\Repositories\Contracts\FileRepositoryContract;
 use WebAppId\Content\Repositories\Requests\FileRepositoryRequest;
-use WebAppId\Content\Services\Params\AddFileParam;
 use WebAppId\DDD\Tools\Lazy;
 
 /**

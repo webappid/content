@@ -10,15 +10,15 @@ use WebAppId\DDD\Responses\AbstractResponseList;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
- * Date: 10:32:46
- * Time: 2020/04/22
- * Class ContentServiceResponseList
- * @package WebAppId\Content\Services\Responses
+ * Date: 17:09:16
+ * Time: 2020/07/28
+ * Class TagServiceResponseList
+ * @package App\Services\Responses
  */
-class ContentServiceResponseList extends AbstractResponseList
+class TagServiceResponseList extends AbstractResponseList
 {
     /**
      * @var LengthAwarePaginator
      */
-    public $contentList;
+    public $tagList;
 }

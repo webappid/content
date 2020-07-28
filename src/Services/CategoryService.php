@@ -2,17 +2,11 @@
 
 namespace WebAppId\Content\Services;
 
-use WebAppId\Content\Repositories\Requests\CategoryRepositoryRequest;
+use WebAppId\Content\Repositories\CategoryRepository;
 use WebAppId\Content\Services\Contracts\CategoryServiceContract;
-use WebAppId\Content\Services\Requests\CategoryServiceRequest;
 use WebAppId\Content\Services\Responses\CategoryServiceResponse;
 use WebAppId\Content\Services\Responses\CategoryServiceResponseList;
-use Illuminate\Support\Facades\Cache;
-use WebAppId\Content\Repositories\CategoryRepository;
-use WebAppId\Content\Responses\Categories\ListResponse;
-use WebAppId\Content\Responses\Categories\SearchResponse;
 use WebAppId\DDD\Services\BaseService;
-use WebAppId\DDD\Tools\Lazy;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>

@@ -6,7 +6,6 @@
 namespace WebAppId\Content\Services\Responses;
 
 use Illuminate\Pagination\LengthAwarePaginator;
-use WebAppId\DDD\Responses\AbstractResponse;
 use WebAppId\DDD\Responses\AbstractResponseList;
 
 /**
