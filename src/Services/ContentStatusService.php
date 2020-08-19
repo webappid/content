@@ -105,6 +105,6 @@ class ContentStatusService implements ContentStatusServiceContract
      */
     public function getContentStatus(ContentStatusRepository $contentStatusRepository): ?Collection
     {
-        return $this->getContainer()->call([$contentStatusRepository, 'getContentStatus']);
+        return app()->call([$contentStatusRepository, 'getContentStatus']);
     }
 }

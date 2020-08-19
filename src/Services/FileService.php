@@ -62,12 +62,12 @@ class FileService implements FileServiceContract
         $filename = $file->store($path);
         $fileData = explode('/', $filename);
 
-        $resultMimeType = $this->getContainer()->call([$mimeTypeRepository, 'getByName'], ['name' => $file->getMimeType()]);
+        $resultMimeType = app()->call([$mimeTypeRepository, 'getByName'], ['name' => $file->getMimeType()]);
 
         if ($resultMimeType == null) {
             $mimeTypeRepositoryRequest->name = $file->getMimeType();
             $mimeTypeRepositoryRequest->user_id = $user_id;
-            $resultMimeType = $this->getContainer()->call([$mimeTypeRepository, 'store'], compact('mimeTypeRepositoryRequest'));
+            $resultMimeType = app()->call([$mimeTypeRepository, 'store'], compact('mimeTypeRepositoryRequest'));
         }
 
         if ($upload->description == null) {
@@ -86,7 +86,7 @@ class FileService implements FileServiceContract
         $fileRepositoryRequest->creator_id = $user_id;
         $fileRepositoryRequest->owner_id = $user_id;
 
-        return $this->getContainer()->call([$fileRepository, 'store'], compact('fileRepositoryRequest'));
+        return app()->call([$fileRepository, 'store'], compact('fileRepositoryRequest'));
     }
 
     /**
@@ -131,7 +131,7 @@ class FileService implements FileServiceContract
     private function loadFile($name, $size, FileRepository $fileRepository, SmartReadFile $smartReadFile, bool $download = false)
     {
         $path = '';
-        $fileData = $this->getContainer()->call([$fileRepository, 'getByName'], ['name' => $name]);
+        $fileData = app()->call([$fileRepository, 'getByName'], ['name' => $name]);
 
         if ($fileData != null && Storage::exists($fileData->path . '/' . $fileData->name)) {
             $imageName = $fileData->name;
