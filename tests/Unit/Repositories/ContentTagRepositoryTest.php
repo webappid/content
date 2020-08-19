@@ -46,10 +46,10 @@ class ContentTagRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->contentTagRepository = $this->container->make(ContentTagRepository::class);
-            $this->tagRepositoryTest = $this->container->make(TagRepositoryTest::class);
-            $this->contentRepositoryTest = $this->container->make(ContentRepositoryTest::class);
-            $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
+            $this->contentTagRepository = app()->make(ContentTagRepository::class);
+            $this->tagRepositoryTest = app()->make(TagRepositoryTest::class);
+            $this->contentRepositoryTest = app()->make(ContentRepositoryTest::class);
+            $this->userRepositoryTest = app()->make(UserRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -59,10 +59,10 @@ class ContentTagRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(ContentTagRepositoryRequest::class);
-            $content = $this->container->call([$this->contentRepositoryTest, 'testStore']);
-            $tag = $this->container->call([$this->tagRepositoryTest, 'testStore']);
-            $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
+            $dummy = app()->make(ContentTagRepositoryRequest::class);
+            $content = app()->call([$this->contentRepositoryTest, 'testStore']);
+            $tag = app()->call([$this->tagRepositoryTest, 'testStore']);
+            $user = app()->call([$this->userRepositoryTest, 'testStore']);
 
             $dummy->content_id = $content->id;
             $dummy->tag_id = $tag->id;
@@ -77,7 +77,7 @@ class ContentTagRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?ContentTag
     {
         $contentTagRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->contentTagRepository, 'store'], ['contentTagRepositoryRequest' => $contentTagRepositoryRequest]);
+        $result = app()->call([$this->contentTagRepository, 'store'], ['contentTagRepositoryRequest' => $contentTagRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -85,14 +85,14 @@ class ContentTagRepositoryTest extends TestCase
     public function testGetById()
     {
         $contentTag = $this->testStore();
-        $result = $this->container->call([$this->contentTagRepository, 'getByContentId'], ['content_id' => $contentTag->content_id]);
+        $result = app()->call([$this->contentTagRepository, 'getByContentId'], ['content_id' => $contentTag->content_id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $contentTag = $this->testStore();
-        $result = $this->container->call([$this->contentTagRepository, 'deleteByContentId'], ['content_id' => $contentTag->content_id]);
+        $result = app()->call([$this->contentTagRepository, 'deleteByContentId'], ['content_id' => $contentTag->content_id]);
         self::assertTrue($result);
     }
 }

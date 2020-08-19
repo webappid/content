@@ -32,8 +32,8 @@ class ContentStatusServiceTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->contentStatusService = $this->container->make(ContentStatusService::class);
-            $this->contentStatusRepositoryTest = $this->container->make(ContentStatusRepositoryTest::class);
+            $this->contentStatusService = app()->make(ContentStatusService::class);
+            $this->contentStatusRepositoryTest = app()->make(ContentStatusRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -43,16 +43,16 @@ class ContentStatusServiceTest extends TestCase
     public function testGetById()
     {
         $contentServiceResponse = $this->testStore();
-        $result = $this->container->call([$this->contentStatusService, 'getById'], ['id' => $contentServiceResponse->id]);
+        $result = app()->call([$this->contentStatusService, 'getById'], ['id' => $contentServiceResponse->id]);
         self::assertTrue($result->status);
     }
 
     private function getDummy(int $number = 0): ContentStatusServiceRequest
     {
-        $contentStatusRepositoryRequest = $this->container->call([$this->contentStatusRepositoryTest, 'getDummy'], ['no' => $number]);
+        $contentStatusRepositoryRequest = app()->call([$this->contentStatusRepositoryTest, 'getDummy'], ['no' => $number]);
         $contentStatusServiceRequest = null;
         try {
-            $contentStatusServiceRequest = $this->container->make(ContentStatusServiceRequest::class);
+            $contentStatusServiceRequest = app()->make(ContentStatusServiceRequest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -61,7 +61,7 @@ class ContentStatusServiceTest extends TestCase
 
     public function testStore(int $number = 0)
     {
-        $result = $this->container->call([$this->contentStatusRepositoryTest, 'testStore']);
+        $result = app()->call([$this->contentStatusRepositoryTest, 'testStore']);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -71,13 +71,13 @@ class ContentStatusServiceTest extends TestCase
         for ($i = 0; $i < $this->getFaker()->numberBetween(50, $this->getFaker()->numberBetween(50, 100)); $i++) {
             $this->testStore($i);
         }
-        $result = $this->container->call([$this->contentStatusService, 'get']);
+        $result = app()->call([$this->contentStatusService, 'get']);
         self::assertTrue($result->status);
     }
 
     public function testGetContentStatus(): void
     {
-        $resultContentStatuses = $this->container->call([$this->contentStatusService, "get"]);
+        $resultContentStatuses = app()->call([$this->contentStatusService, "get"]);
         self::assertTrue($resultContentStatuses->status);
     }
 }

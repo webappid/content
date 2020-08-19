@@ -32,12 +32,12 @@ class CategoryStatusTableSeeder extends Seeder
         );
 
         foreach ($categoryStatuses as $categoryStatus) {
-            $result = $this->container->call([$categoryStatusRepository, 'getByName'], ['name' => $categoryStatus]);
+            $result = app()->call([$categoryStatusRepository, 'getByName'], ['name' => $categoryStatus]);
             if ($result == null) {
-                $categoryStatusRepositoryRequest = $this->container->make(CategoryStatusRepositoryRequest::class);
+                $categoryStatusRepositoryRequest = app()->make(CategoryStatusRepositoryRequest::class);
                 $categoryStatusRepositoryRequest->name = $categoryStatus;
 
-                $this->container->call([$categoryStatusRepository, 'store'], compact('categoryStatusRepositoryRequest'));
+                app()->call([$categoryStatusRepository, 'store'], compact('categoryStatusRepositoryRequest'));
             }
         }
     }

@@ -25,7 +25,6 @@ use WebAppId\Content\Services\Requests\ContentServiceRequest;
 use WebAppId\Content\Services\Requests\ContentServiceSearchRequest;
 use WebAppId\Content\Services\Responses\ContentServiceResponse;
 use WebAppId\Content\Services\Responses\ContentServiceResponseList;
-use WebAppId\DDD\Services\BaseService;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
@@ -35,7 +34,7 @@ use WebAppId\DDD\Tools\Lazy;
  * Class ContentService
  * @package WebAppId\Content\Services
  */
-class ContentService extends BaseService implements ContentServiceContract
+class ContentService implements ContentServiceContract
 {
     /**
      * @param ContentServiceRequest $contentServiceRequest
@@ -79,13 +78,13 @@ class ContentService extends BaseService implements ContentServiceContract
 
         $contentRepositoryRequest = $this->transformContent($contentServiceRequest, $contentRepositoryRequest);
 
-        $duplicateCode = $this->container->call([$contentRepository, 'getDuplicateTitle'], ['q' => $contentRepositoryRequest->code]);
+        $duplicateCode = app()->call([$contentRepository, 'getDuplicateTitle'], ['q' => $contentRepositoryRequest->code]);
 
         if ($duplicateCode > 0) {
             $contentRepositoryRequest->code .= $duplicateCode;
         }
 
-        $content = $this->container->call([$contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
+        $content = app()->call([$contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
 
         if ($content->id == null) {
             $contentServiceResponse->status = false;
@@ -99,7 +98,7 @@ class ContentService extends BaseService implements ContentServiceContract
             $contentChildServiceRequest->user_id = $contentRepositoryRequest->user_id;
             $contentChildServiceRequest->content_parent_id = $contentRepositoryRequest->parent_id;
             $contentChildServiceRequest->content_child_id = $content->id;
-            $this->container->call([$contentChildRepository, 'store'], compact('contentChildServiceRequest'));
+            app()->call([$contentChildRepository, 'store'], compact('contentChildServiceRequest'));
             if (count($content->parents) > 0) {
                 $contentRepository->cleanCache($content->parents[0]['code']);
             }
@@ -129,7 +128,7 @@ class ContentService extends BaseService implements ContentServiceContract
                                                ContentServiceRequest $contentServiceRequest,
                                                Content $content): ContentServiceResponse
     {
-        $this->container->call([$contentGalleryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
+        app()->call([$contentGalleryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
 
         $galleries = $contentServiceRequest->galleries;
 
@@ -141,7 +140,7 @@ class ContentService extends BaseService implements ContentServiceContract
 
         $categories = $contentServiceRequest->categories;
 
-        $this->container->call([$contentCategoryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
+        app()->call([$contentCategoryRepository, 'deleteByContentId'], ['contentId' => $content->id]);
 
         $categoryResponse = $this->storeCategories($categories, $content, $contentServiceRequest, $contentCategoryRepository);
 
@@ -171,7 +170,7 @@ class ContentService extends BaseService implements ContentServiceContract
 
         $contentRepositoryRequest = $this->transformContent($contentServiceRequest, $contentRepositoryRequest);
 
-        $content = $this->container->call([$contentRepository, 'getByCode'], ['code' => $code]);
+        $content = app()->call([$contentRepository, 'getByCode'], ['code' => $code]);
 
         if ($content == null) {
             $contentServiceResponse->status = false;
@@ -179,13 +178,13 @@ class ContentService extends BaseService implements ContentServiceContract
             return $contentServiceResponse;
         }
 
-        $duplicateCode = $this->container->call([$contentRepository, 'getDuplicateTitle'], ['q' => $contentRepositoryRequest->code, 'id' => $content->id]);
+        $duplicateCode = app()->call([$contentRepository, 'getDuplicateTitle'], ['q' => $contentRepositoryRequest->code, 'id' => $content->id]);
 
         if ($duplicateCode > 0) {
             $contentRepositoryRequest->code .= $duplicateCode;
         }
 
-        $content = $this->container->call([$contentRepository, 'update'], compact('contentRepositoryRequest', 'code'));
+        $content = app()->call([$contentRepository, 'update'], compact('contentRepositoryRequest', 'code'));
 
         if ($content != null) {
 
@@ -217,11 +216,11 @@ class ContentService extends BaseService implements ContentServiceContract
                                      ContentCategoryRepository $contentCategoryRepository): array
     {
         foreach ($categories as $category) {
-            $contentCategoryRepositoryRequest = $this->container->make(ContentCategoryRepositoryRequest::class);
+            $contentCategoryRepositoryRequest = app()->make(ContentCategoryRepositoryRequest::class);
             $contentCategoryRepositoryRequest->user_id = $contentServiceRequest->user_id;
             $contentCategoryRepositoryRequest->content_id = $content->id;
             $contentCategoryRepositoryRequest->category_id = $category;
-            $categories[] = $this->container->call([$contentCategoryRepository, 'store'], compact('contentCategoryRepositoryRequest'));
+            $categories[] = app()->call([$contentCategoryRepository, 'store'], compact('contentCategoryRepositoryRequest'));
         }
         return $categories;
     }
@@ -237,12 +236,12 @@ class ContentService extends BaseService implements ContentServiceContract
     private function storeGalleries(array $galleries, Content $content, ContentServiceRequest $contentServiceRequest, ContentGalleryRepository $contentGalleryRepository): array
     {
         foreach ($galleries as $gallery) {
-            $contentGalleryRepositoryRequest = $this->container->make(ContentGalleryRepositoryRequest::class);
+            $contentGalleryRepositoryRequest = app()->make(ContentGalleryRepositoryRequest::class);
             $contentGalleryRepositoryRequest->content_id = $content->id;
             $contentGalleryRepositoryRequest->user_id = $contentServiceRequest->user_id;
             $contentGalleryRepositoryRequest->file_id = $gallery;
             $contentGalleryRepositoryRequest->description = '';
-            $galleries[] = $this->container->call([$contentGalleryRepository, 'store'], compact('contentGalleryRepositoryRequest'));
+            $galleries[] = app()->call([$contentGalleryRepository, 'store'], compact('contentGalleryRepositoryRequest'));
         }
         return $galleries;
     }
@@ -258,7 +257,7 @@ class ContentService extends BaseService implements ContentServiceContract
 
         if (count($contentServiceSearchRequest->categories) > 0) {
 
-            $categoryResult = $this->container->call([$categoryRepository, 'getWhereInName'], ['names' => $contentServiceSearchRequest->categories]);
+            $categoryResult = app()->call([$categoryRepository, 'getWhereInName'], ['names' => $contentServiceSearchRequest->categories]);
 
             $categories = [];
             foreach ($categoryResult as $category) {
@@ -267,14 +266,14 @@ class ContentService extends BaseService implements ContentServiceContract
 
             $q = $contentServiceSearchRequest->q;
 
-            $content = $this->container->call([$contentRepository, 'get'], ['q' => $q, 'categories' => $categories]);
+            $content = app()->call([$contentRepository, 'get'], ['q' => $q, 'categories' => $categories]);
 
-            $recordsTotal = $this->container->call([$contentRepository, 'getCount'], ['categories' => $categories]);
-            $recordsFiltered = $this->container->call([$contentRepository, 'getCount'], ['q' => $q, 'categories' => $categories]);
+            $recordsTotal = app()->call([$contentRepository, 'getCount'], ['categories' => $categories]);
+            $recordsFiltered = app()->call([$contentRepository, 'getCount'], ['q' => $q, 'categories' => $categories]);
         } else {
             $categoryName = $contentServiceSearchRequest->category == null ? '' : $contentServiceSearchRequest->category;
 
-            $categoryResult = $this->container->call([$categoryRepository, 'getByName'], ['name' => $categoryName]);
+            $categoryResult = app()->call([$categoryRepository, 'getByName'], ['name' => $categoryName]);
 
             if ($categoryResult == null) {
                 $categoryId = null;
@@ -284,9 +283,9 @@ class ContentService extends BaseService implements ContentServiceContract
 
             $q = $contentServiceSearchRequest->q;
 
-            $content = $this->container->call([$contentRepository, 'get'], ['q' => $q, 'category_id' => $categoryId]);
-            $recordsTotal = $this->container->call([$contentRepository, 'getCount'], ['category_id' => $categoryId]);
-            $recordsFiltered = $this->container->call([$contentRepository, 'getCount'], ['q' => $q, 'category_id' => $categoryId]);
+            $content = app()->call([$contentRepository, 'get'], ['q' => $q, 'category_id' => $categoryId]);
+            $recordsTotal = app()->call([$contentRepository, 'getCount'], ['category_id' => $categoryId]);
+            $recordsFiltered = app()->call([$contentRepository, 'getCount'], ['q' => $q, 'category_id' => $categoryId]);
         }
 
         if ($content != null) {
@@ -310,7 +309,7 @@ class ContentService extends BaseService implements ContentServiceContract
     public function destroy(string $code,
                             ContentRepository $contentRepository): bool
     {
-        return $this->container->call([$contentRepository, 'delete'], ['code' => $code]);
+        return app()->call([$contentRepository, 'delete'], ['code' => $code]);
     }
 
     /**
@@ -324,7 +323,7 @@ class ContentService extends BaseService implements ContentServiceContract
                            ContentServiceResponse $contentServiceResponse): ?ContentServiceResponse
     {
         $contentServiceResponse = Cache::rememberForever('content-' . $code, function () use ($contentRepository, $contentServiceResponse, $code) {
-            $content = $this->container->call([$contentRepository, 'getByCode'], ['code' => $code]);
+            $content = app()->call([$contentRepository, 'getByCode'], ['code' => $code]);
             if ($content != null) {
                 $contentServiceResponse->status = true;
                 $contentServiceResponse = $this->getContentDetailComplete($content, $contentServiceResponse);
@@ -362,7 +361,7 @@ class ContentService extends BaseService implements ContentServiceContract
                                        ContentRepository $contentRepository,
                                        ContentServiceResponse $contentServiceResponse): ContentServiceResponse
     {
-        $result = $this->container->call([$contentRepository, 'updateStatusByCode'], ['code' => $code, 'status_id' => $status]);
+        $result = app()->call([$contentRepository, 'updateStatusByCode'], ['code' => $code, 'status_id' => $status]);
         if ($result != null) {
             $contentServiceResponse->status = true;
             $contentServiceResponse->message = "Update Status Success";

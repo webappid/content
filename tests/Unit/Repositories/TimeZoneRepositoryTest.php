@@ -36,8 +36,8 @@ class TimeZoneRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->timeZoneRepository = $this->container->make(TimeZoneRepository::class);
-            $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
+            $this->timeZoneRepository = app()->make(TimeZoneRepository::class);
+            $this->userRepositoryTest = app()->make(UserRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -47,8 +47,8 @@ class TimeZoneRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(TimeZoneRepositoryRequest::class);
-            $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
+            $dummy = app()->make(TimeZoneRepositoryRequest::class);
+            $user = app()->call([$this->userRepositoryTest, 'testStore']);
             $dummy->code = $this->getFaker()->text(255);
             $dummy->name = $this->getFaker()->text(255);
             $dummy->minute = $this->getFaker()->randomNumber();
@@ -63,7 +63,7 @@ class TimeZoneRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?TimeZone
     {
         $timeZoneRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->timeZoneRepository, 'store'], ['timeZoneRepositoryRequest' => $timeZoneRepositoryRequest]);
+        $result = app()->call([$this->timeZoneRepository, 'store'], ['timeZoneRepositoryRequest' => $timeZoneRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -71,21 +71,21 @@ class TimeZoneRepositoryTest extends TestCase
     public function testGetById()
     {
         $timeZone = $this->testStore();
-        $result = $this->container->call([$this->timeZoneRepository, 'getById'], ['id' => $timeZone->id]);
+        $result = app()->call([$this->timeZoneRepository, 'getById'], ['id' => $timeZone->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testGetByName()
     {
         $timeZone = $this->testStore();
-        $result = $this->container->call([$this->timeZoneRepository, 'getByName'], ['name' => $timeZone->name]);
+        $result = app()->call([$this->timeZoneRepository, 'getByName'], ['name' => $timeZone->name]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $timeZone = $this->testStore();
-        $result = $this->container->call([$this->timeZoneRepository, 'delete'], ['id' => $timeZone->id]);
+        $result = app()->call([$this->timeZoneRepository, 'delete'], ['id' => $timeZone->id]);
         self::assertTrue($result);
     }
 
@@ -95,7 +95,7 @@ class TimeZoneRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->timeZoneRepository, 'get']);
+        $resultList = app()->call([$this->timeZoneRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -105,7 +105,7 @@ class TimeZoneRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->timeZoneRepository, 'getCount']);
+        $result = app()->call([$this->timeZoneRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -113,7 +113,7 @@ class TimeZoneRepositoryTest extends TestCase
     {
         $timeZone = $this->testStore();
         $timeZoneRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->timeZoneRepository, 'update'], ['id' => $timeZone->id, 'timeZoneRepositoryRequest' => $timeZoneRepositoryRequest]);
+        $result = app()->call([$this->timeZoneRepository, 'update'], ['id' => $timeZone->id, 'timeZoneRepositoryRequest' => $timeZoneRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -124,7 +124,7 @@ class TimeZoneRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->timeZoneRepository, 'get'], ['q' => $q]);
+        $result = app()->call([$this->timeZoneRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -135,7 +135,7 @@ class TimeZoneRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->timeZoneRepository, 'getCount'], ['q' => $q]);
+        $result = app()->call([$this->timeZoneRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

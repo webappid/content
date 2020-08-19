@@ -12,7 +12,6 @@ namespace WebAppId\Content\Controllers;
 use Illuminate\Support\Facades\Auth;
 use WebAppId\Content\Requests\UploadRequest;
 use WebAppId\Content\Services\FileService;
-use WebAppId\DDD\Controllers\BaseController;
 use WebAppId\SmartResponse\Response;
 use WebAppId\SmartResponse\SmartResponse;
 
@@ -20,7 +19,7 @@ use WebAppId\SmartResponse\SmartResponse;
  * Class FileStoreController
  * @package App\Http\Tools
  */
-class FileStoreController extends BaseController
+class FileStoreController
 {
     /**
      * @param UploadRequest $uploadRequest
@@ -37,7 +36,7 @@ class FileStoreController extends BaseController
         if (!Auth::check()) {
             session(['user_id' => 1]);
         }
-        $result = $this->container->call([$fileService, 'store'], ['path' => 'images', 'upload' => $uploadRequest]);
+        $result = app()->call([$fileService, 'store'], ['path' => 'images', 'upload' => $uploadRequest]);
 
         $responseData = [];
         $responseData['image_url'] = route('file.ori', $result[0]['name']);

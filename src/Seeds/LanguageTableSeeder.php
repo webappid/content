@@ -43,17 +43,17 @@ class LanguageTableSeeder extends Seeder
 
         foreach ($data as $key) {
 
-            $languageRepositoryRequest = $this->container->make(LanguageRepositoryRequest::class);
+            $languageRepositoryRequest = app()->make(LanguageRepositoryRequest::class);
 
             $languageRepositoryRequest->code = $key['code'];
             $languageRepositoryRequest->name = $key['name'];
             $languageRepositoryRequest->image_id = $key['image_id'];
             $languageRepositoryRequest->user_id = 1;
 
-            $resultLanguage = $this->container->call([$languageRepository, 'getByName'], ['name' => $key['name']]);
+            $resultLanguage = app()->call([$languageRepository, 'getByName'], ['name' => $key['name']]);
 
             if ($resultLanguage === null) {
-                $this->container->call([$languageRepository, 'store'], compact('languageRepositoryRequest'));
+                app()->call([$languageRepository, 'store'], compact('languageRepositoryRequest'));
             }
         }
     }

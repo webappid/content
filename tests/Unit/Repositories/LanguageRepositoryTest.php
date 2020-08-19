@@ -41,9 +41,9 @@ class LanguageRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->languageRepository = $this->container->make(LanguageRepository::class);
-            $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
-            $this->fileRepositoryTest = $this->container->make(FileRepositoryTest::class);
+            $this->languageRepository = app()->make(LanguageRepository::class);
+            $this->userRepositoryTest = app()->make(UserRepositoryTest::class);
+            $this->fileRepositoryTest = app()->make(FileRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -53,9 +53,9 @@ class LanguageRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(LanguageRepositoryRequest::class);
-            $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
-            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
+            $dummy = app()->make(LanguageRepositoryRequest::class);
+            $user = app()->call([$this->userRepositoryTest, 'testStore']);
+            $file = app()->call([$this->fileRepositoryTest, 'testStore']);
             $dummy->code = $this->getFaker()->text(5);
             $dummy->name = $this->getFaker()->text(20);
             $dummy->image_id = $file->id;
@@ -70,7 +70,7 @@ class LanguageRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?Language
     {
         $languageRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->languageRepository, 'store'], ['languageRepositoryRequest' => $languageRepositoryRequest]);
+        $result = app()->call([$this->languageRepository, 'store'], ['languageRepositoryRequest' => $languageRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -78,14 +78,14 @@ class LanguageRepositoryTest extends TestCase
     public function testGetById()
     {
         $language = $this->testStore();
-        $result = $this->container->call([$this->languageRepository, 'getById'], ['id' => $language->id]);
+        $result = app()->call([$this->languageRepository, 'getById'], ['id' => $language->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $language = $this->testStore();
-        $result = $this->container->call([$this->languageRepository, 'delete'], ['id' => $language->id]);
+        $result = app()->call([$this->languageRepository, 'delete'], ['id' => $language->id]);
         self::assertTrue($result);
     }
 
@@ -95,7 +95,7 @@ class LanguageRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->languageRepository, 'get']);
+        $resultList = app()->call([$this->languageRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -105,7 +105,7 @@ class LanguageRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->languageRepository, 'getCount']);
+        $result = app()->call([$this->languageRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -113,7 +113,7 @@ class LanguageRepositoryTest extends TestCase
     {
         $language = $this->testStore();
         $languageRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->languageRepository, 'update'], ['id' => $language->id, 'languageRepositoryRequest' => $languageRepositoryRequest]);
+        $result = app()->call([$this->languageRepository, 'update'], ['id' => $language->id, 'languageRepositoryRequest' => $languageRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -124,7 +124,7 @@ class LanguageRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->languageRepository, 'get'], ['q' => $q]);
+        $result = app()->call([$this->languageRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -135,7 +135,7 @@ class LanguageRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->languageRepository, 'getCount'], ['q' => $q]);
+        $result = app()->call([$this->languageRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

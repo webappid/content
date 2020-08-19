@@ -41,9 +41,9 @@ class FileRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->fileRepository = $this->container->make(FileRepository::class);
-            $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
-            $this->mimeTypeRepositoryTest = $this->container->make(MimeTypeRepositoryTest::class);
+            $this->fileRepository = app()->make(FileRepository::class);
+            $this->userRepositoryTest = app()->make(UserRepositoryTest::class);
+            $this->mimeTypeRepositoryTest = app()->make(MimeTypeRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -53,9 +53,9 @@ class FileRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(FileRepositoryRequest::class);
-            $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
-            $mimeType = $this->container->call([$this->mimeTypeRepositoryTest, 'testStore']);
+            $dummy = app()->make(FileRepositoryRequest::class);
+            $user = app()->call([$this->userRepositoryTest, 'testStore']);
+            $mimeType = app()->call([$this->mimeTypeRepositoryTest, 'testStore']);
             $dummy->name = $this->getFaker()->text(255);
             $dummy->description = $this->getFaker()->text(255);
             $dummy->alt = $this->getFaker()->text(100);
@@ -74,7 +74,7 @@ class FileRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?File
     {
         $fileRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->fileRepository, 'store'], ['fileRepositoryRequest' => $fileRepositoryRequest]);
+        $result = app()->call([$this->fileRepository, 'store'], ['fileRepositoryRequest' => $fileRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -82,21 +82,21 @@ class FileRepositoryTest extends TestCase
     public function testGetById()
     {
         $file = $this->testStore();
-        $result = $this->container->call([$this->fileRepository, 'getById'], ['id' => $file->id]);
+        $result = app()->call([$this->fileRepository, 'getById'], ['id' => $file->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testGetByName()
     {
         $file = $this->testStore();
-        $result = $this->container->call([$this->fileRepository, 'getByName'], ['name' => $file->name]);
+        $result = app()->call([$this->fileRepository, 'getByName'], ['name' => $file->name]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $file = $this->testStore();
-        $result = $this->container->call([$this->fileRepository, 'delete'], ['id' => $file->id]);
+        $result = app()->call([$this->fileRepository, 'delete'], ['id' => $file->id]);
         self::assertTrue($result);
     }
 
@@ -106,7 +106,7 @@ class FileRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->fileRepository, 'get']);
+        $resultList = app()->call([$this->fileRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -116,7 +116,7 @@ class FileRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->fileRepository, 'getCount']);
+        $result = app()->call([$this->fileRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -124,7 +124,7 @@ class FileRepositoryTest extends TestCase
     {
         $file = $this->testStore();
         $fileRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->fileRepository, 'update'], ['id' => $file->id, 'fileRepositoryRequest' => $fileRepositoryRequest]);
+        $result = app()->call([$this->fileRepository, 'update'], ['id' => $file->id, 'fileRepositoryRequest' => $fileRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -135,7 +135,7 @@ class FileRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->fileRepository, 'get'], ['q' => $q]);
+        $result = app()->call([$this->fileRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -146,7 +146,7 @@ class FileRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->fileRepository, 'getCount'], ['q' => $q]);
+        $result = app()->call([$this->fileRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

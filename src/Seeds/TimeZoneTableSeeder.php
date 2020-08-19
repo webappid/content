@@ -2990,17 +2990,17 @@ class TimeZoneTableSeeder extends Seeder
         $return = true;
         foreach ($timeZones as $timezone) {
 
-            $timeZoneRepositoryRequest = $this->container->make(TimeZoneRepositoryRequest::class);
+            $timeZoneRepositoryRequest = app()->make(TimeZoneRepositoryRequest::class);
 
             $timeZoneRepositoryRequest->code = $timezone['code'] == "" ? $timezone['name'] : $timezone['code'];
             $timeZoneRepositoryRequest->name = $timezone['name'];
             $timeZoneRepositoryRequest->minute = $timezone['minute'];
             $timeZoneRepositoryRequest->user_id = $user_id;
 
-            $timezone = $this->container->call([$timeZoneRepository, 'getByName'], ['name' => $timezone['name']]);
+            $timezone = app()->call([$timeZoneRepository, 'getByName'], ['name' => $timezone['name']]);
 
             if ($timezone == null) {
-                $result = $this->container->call([$timeZoneRepository, 'store'], compact('timeZoneRepositoryRequest'));
+                $result = app()->call([$timeZoneRepository, 'store'], compact('timeZoneRepositoryRequest'));
                 if (!$result) {
                     $return = $result;
                     break;

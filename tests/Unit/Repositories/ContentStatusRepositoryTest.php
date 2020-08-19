@@ -36,8 +36,8 @@ class ContentStatusRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->contentStatusRepository = $this->container->make(ContentStatusRepository::class);
-            $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
+            $this->contentStatusRepository = app()->make(ContentStatusRepository::class);
+            $this->userRepositoryTest = app()->make(UserRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -47,8 +47,8 @@ class ContentStatusRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(ContentStatusRepositoryRequest::class);
-            $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
+            $dummy = app()->make(ContentStatusRepositoryRequest::class);
+            $user = app()->call([$this->userRepositoryTest, 'testStore']);
             $dummy->name = $this->getFaker()->text(20);
             $dummy->user_id = $user->id;
 
@@ -61,7 +61,7 @@ class ContentStatusRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?ContentStatus
     {
         $contentStatusRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->contentStatusRepository, 'store'], ['contentStatusRepositoryRequest' => $contentStatusRepositoryRequest]);
+        $result = app()->call([$this->contentStatusRepository, 'store'], ['contentStatusRepositoryRequest' => $contentStatusRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -69,14 +69,14 @@ class ContentStatusRepositoryTest extends TestCase
     public function testGetById()
     {
         $contentStatus = $this->testStore();
-        $result = $this->container->call([$this->contentStatusRepository, 'getById'], ['id' => $contentStatus->id]);
+        $result = app()->call([$this->contentStatusRepository, 'getById'], ['id' => $contentStatus->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $contentStatus = $this->testStore();
-        $result = $this->container->call([$this->contentStatusRepository, 'delete'], ['id' => $contentStatus->id]);
+        $result = app()->call([$this->contentStatusRepository, 'delete'], ['id' => $contentStatus->id]);
         self::assertTrue($result);
     }
 
@@ -86,7 +86,7 @@ class ContentStatusRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->contentStatusRepository, 'get']);
+        $resultList = app()->call([$this->contentStatusRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -96,7 +96,7 @@ class ContentStatusRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->contentStatusRepository, 'getCount']);
+        $result = app()->call([$this->contentStatusRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -104,7 +104,7 @@ class ContentStatusRepositoryTest extends TestCase
     {
         $contentStatus = $this->testStore();
         $contentStatusRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->contentStatusRepository, 'update'], ['id' => $contentStatus->id, 'contentStatusRepositoryRequest' => $contentStatusRepositoryRequest]);
+        $result = app()->call([$this->contentStatusRepository, 'update'], ['id' => $contentStatus->id, 'contentStatusRepositoryRequest' => $contentStatusRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -115,7 +115,7 @@ class ContentStatusRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->contentStatusRepository, 'get'], ['q' => $q]);
+        $result = app()->call([$this->contentStatusRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -126,7 +126,7 @@ class ContentStatusRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->contentStatusRepository, 'getCount'], ['q' => $q]);
+        $result = app()->call([$this->contentStatusRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

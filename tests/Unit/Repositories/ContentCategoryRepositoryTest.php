@@ -46,10 +46,10 @@ class ContentCategoryRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->contentCategoryRepository = $this->container->make(ContentCategoryRepository::class);
-            $this->contentRepositoryTest = $this->container->make(ContentRepositoryTest::class);
-            $this->categoryRepositoryTest = $this->container->make(CategoryRepositoryTest::class);
-            $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
+            $this->contentCategoryRepository = app()->make(ContentCategoryRepository::class);
+            $this->contentRepositoryTest = app()->make(ContentRepositoryTest::class);
+            $this->categoryRepositoryTest = app()->make(CategoryRepositoryTest::class);
+            $this->userRepositoryTest = app()->make(UserRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -59,10 +59,10 @@ class ContentCategoryRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(ContentCategoryRepositoryRequest::class);
-            $content = $this->container->call([$this->contentRepositoryTest, 'testStore']);
-            $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
-            $category = $this->container->call([$this->categoryRepositoryTest, 'testStore']);
+            $dummy = app()->make(ContentCategoryRepositoryRequest::class);
+            $content = app()->call([$this->contentRepositoryTest, 'testStore']);
+            $user = app()->call([$this->userRepositoryTest, 'testStore']);
+            $category = app()->call([$this->categoryRepositoryTest, 'testStore']);
 
             $dummy->content_id = $content->id;
             $dummy->category_id = $category->id;
@@ -77,7 +77,7 @@ class ContentCategoryRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?ContentCategory
     {
         $contentCategoryRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->contentCategoryRepository, 'store'], ['contentCategoryRepositoryRequest' => $contentCategoryRepositoryRequest]);
+        $result = app()->call([$this->contentCategoryRepository, 'store'], ['contentCategoryRepositoryRequest' => $contentCategoryRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -85,21 +85,21 @@ class ContentCategoryRepositoryTest extends TestCase
     public function testGetById()
     {
         $contentCategory = $this->testStore();
-        $result = $this->container->call([$this->contentCategoryRepository, 'getById'], ['id' => $contentCategory->id]);
+        $result = app()->call([$this->contentCategoryRepository, 'getById'], ['id' => $contentCategory->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $contentCategory = $this->testStore();
-        $result = $this->container->call([$this->contentCategoryRepository, 'delete'], ['id' => $contentCategory->id]);
+        $result = app()->call([$this->contentCategoryRepository, 'delete'], ['id' => $contentCategory->id]);
         self::assertTrue($result);
     }
 
     public function testDeleteByContentId()
     {
         $contentCategory = $this->testStore();
-        $result = $this->container->call([$this->contentCategoryRepository, 'deleteByContentId'], ['contentId' => $contentCategory->content_id]);
+        $result = app()->call([$this->contentCategoryRepository, 'deleteByContentId'], ['contentId' => $contentCategory->content_id]);
         self::assertTrue($result);
     }
 
@@ -109,7 +109,7 @@ class ContentCategoryRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->contentCategoryRepository, 'get']);
+        $resultList = app()->call([$this->contentCategoryRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -119,7 +119,7 @@ class ContentCategoryRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->contentCategoryRepository, 'getCount']);
+        $result = app()->call([$this->contentCategoryRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -127,7 +127,7 @@ class ContentCategoryRepositoryTest extends TestCase
     {
         $contentCategory = $this->testStore();
         $contentCategoryRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->contentCategoryRepository, 'update'], ['id' => $contentCategory->id, 'contentCategoryRepositoryRequest' => $contentCategoryRepositoryRequest]);
+        $result = app()->call([$this->contentCategoryRepository, 'update'], ['id' => $contentCategory->id, 'contentCategoryRepositoryRequest' => $contentCategoryRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 }

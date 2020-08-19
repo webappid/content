@@ -46,10 +46,10 @@ class ContentGalleryRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->contentGalleryRepository = $this->container->make(ContentGalleryRepository::class);
-            $this->contentRepositoryTest = $this->container->make(ContentRepositoryTest::class);
-            $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
-            $this->fileRepositoryTest = $this->container->make(FileRepositoryTest::class);
+            $this->contentGalleryRepository = app()->make(ContentGalleryRepository::class);
+            $this->contentRepositoryTest = app()->make(ContentRepositoryTest::class);
+            $this->userRepositoryTest = app()->make(UserRepositoryTest::class);
+            $this->fileRepositoryTest = app()->make(FileRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -59,10 +59,10 @@ class ContentGalleryRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(ContentGalleryRepositoryRequest::class);
-            $content = $this->container->call([$this->contentRepositoryTest, 'testStore']);
-            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
-            $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
+            $dummy = app()->make(ContentGalleryRepositoryRequest::class);
+            $content = app()->call([$this->contentRepositoryTest, 'testStore']);
+            $file = app()->call([$this->fileRepositoryTest, 'testStore']);
+            $user = app()->call([$this->userRepositoryTest, 'testStore']);
 
             $dummy->content_id = $content->id;
             $dummy->file_id = $file->id;
@@ -78,7 +78,7 @@ class ContentGalleryRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?ContentGallery
     {
         $contentGalleryRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->contentGalleryRepository, 'store'], ['contentGalleryRepositoryRequest' => $contentGalleryRepositoryRequest]);
+        $result = app()->call([$this->contentGalleryRepository, 'store'], ['contentGalleryRepositoryRequest' => $contentGalleryRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -86,14 +86,14 @@ class ContentGalleryRepositoryTest extends TestCase
     public function testGetByContentId()
     {
         $contentGallery = $this->testStore();
-        $result = $this->container->call([$this->contentGalleryRepository, 'getByContentId'], ['contentId' => $contentGallery->content_id]);
+        $result = app()->call([$this->contentGalleryRepository, 'getByContentId'], ['contentId' => $contentGallery->content_id]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
     public function testDeleteByContentId()
     {
         $contentGallery = $this->testStore();
-        $result = $this->container->call([$this->contentGalleryRepository, 'deleteByContentId'], ['contentId' => $contentGallery->content_id]);
+        $result = app()->call([$this->contentGalleryRepository, 'deleteByContentId'], ['contentId' => $contentGallery->content_id]);
         self::assertTrue($result);
     }
 
@@ -103,7 +103,7 @@ class ContentGalleryRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->contentGalleryRepository, 'get']);
+        $resultList = app()->call([$this->contentGalleryRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -113,7 +113,7 @@ class ContentGalleryRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->contentGalleryRepository, 'getCount']);
+        $result = app()->call([$this->contentGalleryRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 

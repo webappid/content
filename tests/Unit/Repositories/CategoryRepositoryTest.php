@@ -41,9 +41,9 @@ class CategoryRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->categoryRepository = $this->container->make(CategoryRepository::class);
-            $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
-            $this->categoryStatusRepositoryTest = $this->container->make(CategoryStatusRepositoryTest::class);
+            $this->categoryRepository = app()->make(CategoryRepository::class);
+            $this->userRepositoryTest = app()->make(UserRepositoryTest::class);
+            $this->categoryStatusRepositoryTest = app()->make(CategoryStatusRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -53,9 +53,9 @@ class CategoryRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(CategoryRepositoryRequest::class);
-            $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
-            $categoryStatus = $this->container->call([$this->categoryStatusRepositoryTest, 'testStore']);
+            $dummy = app()->make(CategoryRepositoryRequest::class);
+            $user = app()->call([$this->userRepositoryTest, 'testStore']);
+            $categoryStatus = app()->call([$this->categoryStatusRepositoryTest, 'testStore']);
             $dummy->code = $this->getFaker()->text(20);
             $dummy->name = $this->getFaker()->text(50);
             $dummy->user_id = $user->id;
@@ -71,7 +71,7 @@ class CategoryRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?Category
     {
         $categoryRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->categoryRepository, 'store'], ['categoryRepositoryRequest' => $categoryRepositoryRequest]);
+        $result = app()->call([$this->categoryRepository, 'store'], ['categoryRepositoryRequest' => $categoryRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -79,14 +79,14 @@ class CategoryRepositoryTest extends TestCase
     public function testGetById()
     {
         $category = $this->testStore();
-        $result = $this->container->call([$this->categoryRepository, 'getById'], ['id' => $category->id]);
+        $result = app()->call([$this->categoryRepository, 'getById'], ['id' => $category->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testGetByName()
     {
         $category = $this->testStore();
-        $result = $this->container->call([$this->categoryRepository, 'getByName'], ['name' => $category->name]);
+        $result = app()->call([$this->categoryRepository, 'getByName'], ['name' => $category->name]);
         self::assertNotEquals(null, $result);
     }
 
@@ -99,7 +99,7 @@ class CategoryRepositoryTest extends TestCase
                 $categories[] = $category->name;
             }
         }
-        $result = $this->container->call([$this->categoryRepository, 'getWhereInName'], ['names' => $categories]);
+        $result = app()->call([$this->categoryRepository, 'getWhereInName'], ['names' => $categories]);
 
         self::assertSameSize($result, $categories);
         return $result;
@@ -108,14 +108,14 @@ class CategoryRepositoryTest extends TestCase
     public function testGetByCode()
     {
         $category = $this->testStore();
-        $result = $this->container->call([$this->categoryRepository, 'getByCode'], ['code' => $category->code]);
+        $result = app()->call([$this->categoryRepository, 'getByCode'], ['code' => $category->code]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $category = $this->testStore();
-        $result = $this->container->call([$this->categoryRepository, 'delete'], ['id' => $category->id]);
+        $result = app()->call([$this->categoryRepository, 'delete'], ['id' => $category->id]);
         self::assertTrue($result);
     }
 
@@ -125,7 +125,7 @@ class CategoryRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->categoryRepository, 'get']);
+        $resultList = app()->call([$this->categoryRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -135,7 +135,7 @@ class CategoryRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->categoryRepository, 'getCount']);
+        $result = app()->call([$this->categoryRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -143,7 +143,7 @@ class CategoryRepositoryTest extends TestCase
     {
         $category = $this->testStore();
         $categoryRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->categoryRepository, 'update'], ['id' => $category->id, 'categoryRepositoryRequest' => $categoryRepositoryRequest]);
+        $result = app()->call([$this->categoryRepository, 'update'], ['id' => $category->id, 'categoryRepositoryRequest' => $categoryRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -154,7 +154,7 @@ class CategoryRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->categoryRepository, 'get'], ['q' => $q]);
+        $result = app()->call([$this->categoryRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -165,7 +165,7 @@ class CategoryRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->categoryRepository, 'getCount'], ['q' => $q]);
+        $result = app()->call([$this->categoryRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

@@ -19,7 +19,6 @@ use WebAppId\Content\Repositories\Requests\MimeTypeRepositoryRequest;
 use WebAppId\Content\Services\Contracts\FileServiceContract;
 use WebAppId\Content\Tools\ImageResize;
 use WebAppId\Content\Tools\SmartReadFile;
-use WebAppId\DDD\Services\BaseService;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
@@ -28,7 +27,7 @@ use WebAppId\DDD\Services\BaseService;
  * Class FileService
  * @package WebAppId\Content\Services
  */
-class FileService extends BaseService implements FileServiceContract
+class FileService implements FileServiceContract
 {
 
     /**
