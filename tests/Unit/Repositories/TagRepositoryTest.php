@@ -36,8 +36,8 @@ class TagRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->tagRepository = $this->container->make(TagRepository::class);
-            $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
+            $this->tagRepository = app()->make(TagRepository::class);
+            $this->userRepositoryTest = app()->make(UserRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -47,8 +47,8 @@ class TagRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(TagRepositoryRequest::class);
-            $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
+            $dummy = app()->make(TagRepositoryRequest::class);
+            $user = app()->call([$this->userRepositoryTest, 'testStore']);
             $dummy->name = $this->getFaker()->text(255);
             $dummy->user_id = $user->id;
 
@@ -61,7 +61,7 @@ class TagRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?Tag
     {
         $tagRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->tagRepository, 'store'], ['tagRepositoryRequest' => $tagRepositoryRequest]);
+        $result = app()->call([$this->tagRepository, 'store'], ['tagRepositoryRequest' => $tagRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -69,21 +69,21 @@ class TagRepositoryTest extends TestCase
     public function testGetById()
     {
         $tag = $this->testStore();
-        $result = $this->container->call([$this->tagRepository, 'getById'], ['id' => $tag->id]);
+        $result = app()->call([$this->tagRepository, 'getById'], ['id' => $tag->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testGetByName()
     {
         $tag = $this->testStore();
-        $result = $this->container->call([$this->tagRepository, 'getByName'], ['name' => $tag->name]);
+        $result = app()->call([$this->tagRepository, 'getByName'], ['name' => $tag->name]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $tag = $this->testStore();
-        $result = $this->container->call([$this->tagRepository, 'delete'], ['id' => $tag->id]);
+        $result = app()->call([$this->tagRepository, 'delete'], ['id' => $tag->id]);
         self::assertTrue($result);
     }
 
@@ -93,7 +93,7 @@ class TagRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->tagRepository, 'get']);
+        $resultList = app()->call([$this->tagRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -103,7 +103,7 @@ class TagRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->tagRepository, 'getCount']);
+        $result = app()->call([$this->tagRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -111,7 +111,7 @@ class TagRepositoryTest extends TestCase
     {
         $tag = $this->testStore();
         $tagRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->tagRepository, 'update'], ['id' => $tag->id, 'tagRepositoryRequest' => $tagRepositoryRequest]);
+        $result = app()->call([$this->tagRepository, 'update'], ['id' => $tag->id, 'tagRepositoryRequest' => $tagRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -122,7 +122,7 @@ class TagRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->tagRepository, 'get'], ['q' => $q]);
+        $result = app()->call([$this->tagRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -133,7 +133,7 @@ class TagRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->tagRepository, 'getCount'], ['q' => $q]);
+        $result = app()->call([$this->tagRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

@@ -5,7 +5,6 @@
 
 namespace WebAppId\Content\Traits;
 
-use Illuminate\Container\Container;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -24,14 +23,12 @@ use WebAppId\DDD\Tools\Lazy;
 trait Content
 {
     /**
-     * @param Container $container
      * @param array $contentRequest
      * @param ContentServiceRequest $contentServiceRequest
      * @param TimeZoneRepository $timeZoneRepository
      * @return object|ContentServiceRequest
      */
-    public function transformContent(Container $container,
-                                     array $contentRequest,
+    public function transformContent(array $contentRequest,
                                      ContentServiceRequest $contentServiceRequest,
                                      TimeZoneRepository $timeZoneRepository)
     {
@@ -42,7 +39,7 @@ trait Content
             $zone = session('timezone');
         }
 
-        $timeZoneData = $container->call([$timeZoneRepository, 'getByName'], ['name' => $zone]);
+        $timeZoneData = app()->call([$timeZoneRepository, 'getByName'], ['name' => $zone]);
         $contentRequest['code'] = Str::slug($contentRequest['title']);
         $contentRequest['og_title'] = $contentRequest['title'] . ' - ' . env('APP_NAME');
         $contentRequest['keyword'] = isset($contentRequest['keyword']) ? $contentRequest['keyword'] : $contentRequest['title'];

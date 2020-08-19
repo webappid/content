@@ -68,14 +68,14 @@ class ContentRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->contentRepository = $this->container->make(ContentRepository::class);
-            $this->userRepositoryTest = $this->container->make(UserRepositoryTest::class);
-            $this->contentStatusRepositoryTest = $this->container->make(ContentStatusRepositoryTest::class);
-            $this->languageRepositoryTest = $this->container->make(LanguageRepositoryTest::class);
-            $this->timezoneRepositoryTest = $this->container->make(TimeZoneRepositoryTest::class);
-            $this->fileRepositoryTest = $this->container->make(FileRepositoryTest::class);
-            $this->contentCategoryRepository = $this->container->make(ContentCategoryRepository::class);
-            $this->categoryRepositoryTest = $this->container->make(CategoryRepositoryTest::class);
+            $this->contentRepository = app()->make(ContentRepository::class);
+            $this->userRepositoryTest = app()->make(UserRepositoryTest::class);
+            $this->contentStatusRepositoryTest = app()->make(ContentStatusRepositoryTest::class);
+            $this->languageRepositoryTest = app()->make(LanguageRepositoryTest::class);
+            $this->timezoneRepositoryTest = app()->make(TimeZoneRepositoryTest::class);
+            $this->fileRepositoryTest = app()->make(FileRepositoryTest::class);
+            $this->contentCategoryRepository = app()->make(ContentCategoryRepository::class);
+            $this->categoryRepositoryTest = app()->make(CategoryRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -85,12 +85,12 @@ class ContentRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(ContentRepositoryRequest::class);
-            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
-            $contentStatus = $this->container->call([$this->contentStatusRepositoryTest, 'testStore']);
-            $language = $this->container->call([$this->languageRepositoryTest, 'testStore']);
-            $timeZone = $this->container->call([$this->timezoneRepositoryTest, 'testStore']);
-            $user = $this->container->call([$this->userRepositoryTest, 'testStore']);
+            $dummy = app()->make(ContentRepositoryRequest::class);
+            $file = app()->call([$this->fileRepositoryTest, 'testStore']);
+            $contentStatus = app()->call([$this->contentStatusRepositoryTest, 'testStore']);
+            $language = app()->call([$this->languageRepositoryTest, 'testStore']);
+            $timeZone = app()->call([$this->timezoneRepositoryTest, 'testStore']);
+            $user = app()->call([$this->userRepositoryTest, 'testStore']);
 
             $dummy->title = $this->getFaker()->text(100);
             $dummy->code = Str::slug($dummy->title);
@@ -118,13 +118,13 @@ class ContentRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?Content
     {
         $contentRepositoryRequest = $this->getDummy($no);
-        $content = $this->container->call([$this->contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
-        $category = $this->container->call([$this->categoryRepositoryTest, 'testStore']);
-        $contentCategoryRepositoryRequest = $this->container->make(ContentCategoryRepositoryRequest::class);
+        $content = app()->call([$this->contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
+        $category = app()->call([$this->categoryRepositoryTest, 'testStore']);
+        $contentCategoryRepositoryRequest = app()->make(ContentCategoryRepositoryRequest::class);
         $contentCategoryRepositoryRequest->content_id = $content->id;
         $contentCategoryRepositoryRequest->category_id = $category->id;
         $contentCategoryRepositoryRequest->user_id = $contentRepositoryRequest->user_id;
-        $this->container->call([$this->contentCategoryRepository, 'store'], compact('contentCategoryRepositoryRequest'));
+        app()->call([$this->contentCategoryRepository, 'store'], compact('contentCategoryRepositoryRequest'));
         self::assertNotEquals(null, $content);
         return $content;
     }
@@ -132,21 +132,21 @@ class ContentRepositoryTest extends TestCase
     public function testGetById()
     {
         $content = $this->testStore();
-        $result = $this->container->call([$this->contentRepository, 'getById'], ['id' => $content->id]);
+        $result = app()->call([$this->contentRepository, 'getById'], ['id' => $content->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testGetByCode()
     {
         $content = $this->testStore();
-        $result = $this->container->call([$this->contentRepository, 'getByCode'], ['code' => $content->code]);
+        $result = app()->call([$this->contentRepository, 'getByCode'], ['code' => $content->code]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $content = $this->testStore();
-        $result = $this->container->call([$this->contentRepository, 'delete'], ['code' => $content->code]);
+        $result = app()->call([$this->contentRepository, 'delete'], ['code' => $content->code]);
         self::assertTrue($result);
     }
 
@@ -156,7 +156,7 @@ class ContentRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->contentRepository, 'get']);
+        $resultList = app()->call([$this->contentRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -166,7 +166,7 @@ class ContentRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->contentRepository, 'getCount']);
+        $result = app()->call([$this->contentRepository, 'getCount']);
 
         self::assertGreaterThanOrEqual(1, $result);
     }
@@ -175,7 +175,7 @@ class ContentRepositoryTest extends TestCase
     {
         $content = $this->testStore();
         $contentRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->contentRepository, 'update'], ['code' => $content->code, 'contentRepositoryRequest' => $contentRepositoryRequest]);
+        $result = app()->call([$this->contentRepository, 'update'], ['code' => $content->code, 'contentRepositoryRequest' => $contentRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -186,7 +186,7 @@ class ContentRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->contentRepository, 'get'], ['q' => $q]);
+        $result = app()->call([$this->contentRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -198,7 +198,7 @@ class ContentRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->contentRepository, 'getCount'], ['q' => $q]);
+        $result = app()->call([$this->contentRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -208,14 +208,14 @@ class ContentRepositoryTest extends TestCase
         $contentRepositoryRequest = $this->getDummy();
         $contentRepositoryRequest->code = $q;
 
-        $this->container->call([$this->contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
+        app()->call([$this->contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
 
         $contentRepositoryRequest = $this->getDummy();
         $contentRepositoryRequest->code = $q . $this->getFaker()->numberBetween(1, 50);
 
-        $this->container->call([$this->contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
+        app()->call([$this->contentRepository, 'store'], ['contentRepositoryRequest' => $contentRepositoryRequest]);
 
-        $result = $this->container->call([$this->contentRepository, 'getDuplicateTitle'], ['q' => $q]);
+        $result = app()->call([$this->contentRepository, 'getDuplicateTitle'], ['q' => $q]);
 
         self::assertEquals(2, $result);
     }

@@ -11,7 +11,6 @@ use WebAppId\Content\Services\Contracts\TagServiceContract;
 use WebAppId\Content\Services\Requests\TagServiceRequest;
 use WebAppId\Content\Services\Responses\TagServiceResponse;
 use WebAppId\Content\Services\Responses\TagServiceResponseList;
-use WebAppId\DDD\Services\BaseService;
 use WebAppId\DDD\Tools\Lazy;
 
 /**
@@ -21,7 +20,7 @@ use WebAppId\DDD\Tools\Lazy;
  * Class TagService
  * @package App\Services
  */
-class TagService extends BaseService implements TagServiceContract
+class TagService implements TagServiceContract
 {
 
     /**
@@ -31,7 +30,7 @@ class TagService extends BaseService implements TagServiceContract
     {
         $tagRepositoryRequest = Lazy::copy($tagServiceRequest, $tagRepositoryRequest, Lazy::AUTOCAST);
 
-        $result = $this->container->call([$tagRepository, 'store'], ['tagRepositoryRequest' => $tagRepositoryRequest]);
+        $result = app()->call([$tagRepository, 'store'], ['tagRepositoryRequest' => $tagRepositoryRequest]);
         if ($result != null) {
             $tagServiceResponse->status = true;
             $tagServiceResponse->message = 'Store Data Success';
@@ -51,7 +50,7 @@ class TagService extends BaseService implements TagServiceContract
     {
         $tagRepositoryRequest = Lazy::copy($tagServiceRequest, $tagRepositoryRequest, Lazy::AUTOCAST);
 
-        $result = $this->container->call([$tagRepository, 'update'], ['id' => $id, 'tagRepositoryRequest' => $tagRepositoryRequest]);
+        $result = app()->call([$tagRepository, 'update'], ['id' => $id, 'tagRepositoryRequest' => $tagRepositoryRequest]);
         if ($result != null) {
             $tagServiceResponse->status = true;
             $tagServiceResponse->message = 'Update Data Success';
@@ -69,7 +68,7 @@ class TagService extends BaseService implements TagServiceContract
      */
     public function getById(int $id, TagRepository $tagRepository, TagServiceResponse $tagServiceResponse): TagServiceResponse
     {
-        $result = $this->container->call([$tagRepository, 'getById'], ['id' => $id]);
+        $result = app()->call([$tagRepository, 'getById'], ['id' => $id]);
         if ($result != null) {
             $tagServiceResponse->status = true;
             $tagServiceResponse->message = 'Data Found';
@@ -87,7 +86,7 @@ class TagService extends BaseService implements TagServiceContract
      */
     public function delete(int $id, TagRepository $tagRepository): bool
     {
-        return $this->container->call([$tagRepository, 'delete'], ['id' => $id]);
+        return app()->call([$tagRepository, 'delete'], ['id' => $id]);
     }
 
     /**
@@ -95,13 +94,13 @@ class TagService extends BaseService implements TagServiceContract
      */
     public function get(TagRepository $tagRepository, TagServiceResponseList $tagServiceResponseList, int $length = 12, string $q = null): TagServiceResponseList
     {
-        $result = $this->container->call([$tagRepository, 'get'], ['q' => $q]);
+        $result = app()->call([$tagRepository, 'get'], ['q' => $q]);
         if (count($result) > 0) {
             $tagServiceResponseList->status = true;
             $tagServiceResponseList->message = 'Data Found';
             $tagServiceResponseList->tagList = $result;
-            $tagServiceResponseList->count = $this->container->call([$tagRepository, 'getCount']);
-            $tagServiceResponseList->countFiltered = $this->container->call([$tagRepository, 'getCount'], ['q' => $q]);
+            $tagServiceResponseList->count = app()->call([$tagRepository, 'getCount']);
+            $tagServiceResponseList->countFiltered = app()->call([$tagRepository, 'getCount'], ['q' => $q]);
         } else {
             $tagServiceResponseList->status = false;
             $tagServiceResponseList->message = 'Data Not Found';
@@ -114,6 +113,6 @@ class TagService extends BaseService implements TagServiceContract
      */
     public function getCount(TagRepository $tagRepository, string $q = null): int
     {
-        return $this->container->call([$tagRepository, 'getCount'], ['q' => $q]);
+        return app()->call([$tagRepository, 'getCount'], ['q' => $q]);
     }
 }

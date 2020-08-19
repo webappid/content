@@ -10,13 +10,12 @@ namespace WebAppId\Content\Controllers;
 
 
 use WebAppId\Content\Services\FileService;
-use WebAppId\DDD\Controllers\BaseController;
 
 /**
  * Class FileOriController
  * @package WebAppId\Content\Controllers
  */
-class FileOriController extends BaseController
+class FileOriController
 {
     /**
      * @param string $name
@@ -26,6 +25,6 @@ class FileOriController extends BaseController
     public function __invoke(string $name,
                              FileService $fileService)
     {
-        return $this->container->call([$fileService, 'index'], ['name' => $name]);
+        return app()->call([$fileService, 'index'], ['name' => $name]);
     }
 }

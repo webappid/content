@@ -50,13 +50,13 @@ class ContentStatusTableSeeder extends Seeder
 
         foreach ($data as $key) {
 
-            $contentStatusRepositoryRequest = $this->container->make(ContentStatusRepositoryRequest::class);
+            $contentStatusRepositoryRequest = app()->make(ContentStatusRepositoryRequest::class);
 
             $contentStatusRepositoryRequest->name = $key['name'];
             $contentStatusRepositoryRequest->user_id = 1;
 
-            if ($this->container->call([$contentStatusRepository, 'getByName'], ['name' => $contentStatusRepositoryRequest->name]) == null) {
-                $this->container->call([$contentStatusRepository, 'store'], compact('contentStatusRepositoryRequest'));
+            if (app()->call([$contentStatusRepository, 'getByName'], ['name' => $contentStatusRepositoryRequest->name]) == null) {
+                app()->call([$contentStatusRepository, 'store'], compact('contentStatusRepositoryRequest'));
             }
         }
     }

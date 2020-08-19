@@ -36,8 +36,8 @@ class TagServiceTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->tagService = $this->container->make(TagService::class);
-            $this->tagRepositoryTest = $this->container->make(TagRepositoryTest::class);
+            $this->tagService = app()->make(TagService::class);
+            $this->tagRepositoryTest = app()->make(TagRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -47,16 +47,16 @@ class TagServiceTest extends TestCase
     public function testGetById()
     {
         $contentServiceResponse = $this->testStore();
-        $result = $this->container->call([$this->tagService, 'getById'], ['id' => $contentServiceResponse->tag->id]);
+        $result = app()->call([$this->tagService, 'getById'], ['id' => $contentServiceResponse->tag->id]);
         self::assertTrue($result->status);
     }
 
     private function getDummy(int $number = 0): TagServiceRequest
     {
-        $tagRepositoryRequest = $this->container->call([$this->tagRepositoryTest, 'getDummy'], ['no' => $number]);
+        $tagRepositoryRequest = app()->call([$this->tagRepositoryTest, 'getDummy'], ['no' => $number]);
         $tagServiceRequest = null;
         try {
-            $tagServiceRequest = $this->container->make(TagServiceRequest::class);
+            $tagServiceRequest = app()->make(TagServiceRequest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -66,7 +66,7 @@ class TagServiceTest extends TestCase
     public function testStore(int $number = 0)
     {
         $tagServiceRequest = $this->getDummy($number);
-        $result = $this->container->call([$this->tagService, 'store'], ['tagServiceRequest' => $tagServiceRequest]);
+        $result = app()->call([$this->tagService, 'store'], ['tagServiceRequest' => $tagServiceRequest]);
         self::assertTrue($result->status);
         return $result;
     }
@@ -76,7 +76,7 @@ class TagServiceTest extends TestCase
         for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++) {
             $this->testStore($i);
         }
-        $result = $this->container->call([$this->tagService, 'get']);
+        $result = app()->call([$this->tagService, 'get']);
         self::assertTrue($result->status);
     }
 
@@ -85,7 +85,7 @@ class TagServiceTest extends TestCase
         for ($i = 0; $i < $this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++) {
             $this->testStore($i);
         }
-        $result = $this->container->call([$this->tagService, 'getCount']);
+        $result = app()->call([$this->tagService, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -93,14 +93,14 @@ class TagServiceTest extends TestCase
     {
         $contentServiceResponse = $this->testStore();
         $tagServiceRequest = $this->getDummy();
-        $result = $this->container->call([$this->tagService, 'update'], ['id' => $contentServiceResponse->tag->id, 'tagServiceRequest' => $tagServiceRequest]);
+        $result = app()->call([$this->tagService, 'update'], ['id' => $contentServiceResponse->tag->id, 'tagServiceRequest' => $tagServiceRequest]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $contentServiceResponse = $this->testStore();
-        $result = $this->container->call([$this->tagService, 'delete'], ['id' => $contentServiceResponse->tag->id]);
+        $result = app()->call([$this->tagService, 'delete'], ['id' => $contentServiceResponse->tag->id]);
         self::assertTrue($result);
     }
 
@@ -111,7 +111,7 @@ class TagServiceTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->tagService, 'get'], ['q' => $q]);
+        $result = app()->call([$this->tagService, 'get'], ['q' => $q]);
         self::assertTrue($result->status);
     }
 
@@ -122,7 +122,7 @@ class TagServiceTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->tagService, 'getCount'], ['q' => $q]);
+        $result = app()->call([$this->tagService, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

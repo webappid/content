@@ -30,7 +30,7 @@ class CategoryStatusRepositoryTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->categoryStatusRepository = $this->container->make(CategoryStatusRepository::class);
+            $this->categoryStatusRepository = app()->make(CategoryStatusRepository::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -40,7 +40,7 @@ class CategoryStatusRepositoryTest extends TestCase
     {
         $dummy = null;
         try {
-            $dummy = $this->container->make(CategoryStatusRepositoryRequest::class);
+            $dummy = app()->make(CategoryStatusRepositoryRequest::class);
             $dummy->name = $this->getFaker()->text(255);
 
         } catch (BindingResolutionException $e) {
@@ -52,7 +52,7 @@ class CategoryStatusRepositoryTest extends TestCase
     public function testStore(int $no = 0): ?CategoryStatus
     {
         $categoryStatusRepositoryRequest = $this->getDummy($no);
-        $result = $this->container->call([$this->categoryStatusRepository, 'store'], ['categoryStatusRepositoryRequest' => $categoryStatusRepositoryRequest]);
+        $result = app()->call([$this->categoryStatusRepository, 'store'], ['categoryStatusRepositoryRequest' => $categoryStatusRepositoryRequest]);
         self::assertNotEquals(null, $result);
         return $result;
     }
@@ -60,14 +60,14 @@ class CategoryStatusRepositoryTest extends TestCase
     public function testGetById()
     {
         $categoryStatus = $this->testStore();
-        $result = $this->container->call([$this->categoryStatusRepository, 'getById'], ['id' => $categoryStatus->id]);
+        $result = app()->call([$this->categoryStatusRepository, 'getById'], ['id' => $categoryStatus->id]);
         self::assertNotEquals(null, $result);
     }
 
     public function testDelete()
     {
         $categoryStatus = $this->testStore();
-        $result = $this->container->call([$this->categoryStatusRepository, 'delete'], ['id' => $categoryStatus->id]);
+        $result = app()->call([$this->categoryStatusRepository, 'delete'], ['id' => $categoryStatus->id]);
         self::assertTrue($result);
     }
 
@@ -77,7 +77,7 @@ class CategoryStatusRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $resultList = $this->container->call([$this->categoryStatusRepository, 'get']);
+        $resultList = app()->call([$this->categoryStatusRepository, 'get']);
         self::assertGreaterThanOrEqual(1, count($resultList));
     }
 
@@ -87,7 +87,7 @@ class CategoryStatusRepositoryTest extends TestCase
             $this->testStore($i);
         }
 
-        $result = $this->container->call([$this->categoryStatusRepository, 'getCount']);
+        $result = app()->call([$this->categoryStatusRepository, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -95,7 +95,7 @@ class CategoryStatusRepositoryTest extends TestCase
     {
         $categoryStatus = $this->testStore();
         $categoryStatusRepositoryRequest = $this->getDummy(1);
-        $result = $this->container->call([$this->categoryStatusRepository, 'update'], ['id' => $categoryStatus->id, 'categoryStatusRepositoryRequest' => $categoryStatusRepositoryRequest]);
+        $result = app()->call([$this->categoryStatusRepository, 'update'], ['id' => $categoryStatus->id, 'categoryStatusRepositoryRequest' => $categoryStatusRepositoryRequest]);
         self::assertNotEquals(null, $result);
     }
 
@@ -106,7 +106,7 @@ class CategoryStatusRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->categoryStatusRepository, 'get'], ['q' => $q]);
+        $result = app()->call([$this->categoryStatusRepository, 'get'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, count($result));
     }
 
@@ -117,7 +117,7 @@ class CategoryStatusRepositoryTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->categoryStatusRepository, 'getCount'], ['q' => $q]);
+        $result = app()->call([$this->categoryStatusRepository, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

@@ -33,8 +33,8 @@ class CategoryServiceTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->categoryService = $this->container->make(CategoryService::class);
-            $this->categoryRepositoryTest = $this->container->make(CategoryRepositoryTest::class);
+            $this->categoryService = app()->make(CategoryService::class);
+            $this->categoryRepositoryTest = app()->make(CategoryRepositoryTest::class);
         } catch (BindingResolutionException $e) {
         }
 
@@ -43,16 +43,16 @@ class CategoryServiceTest extends TestCase
     public function testGetById()
     {
         $contentServiceResponse = $this->testStore();
-        $result = $this->container->call([$this->categoryService, 'getById'], ['id' => $contentServiceResponse->id]);
+        $result = app()->call([$this->categoryService, 'getById'], ['id' => $contentServiceResponse->id]);
         self::assertTrue($result->status);
     }
 
     private function getDummy(int $number = 0): CategoryServiceRequest
     {
-        $categoryRepositoryRequest = $this->container->call([$this->categoryRepositoryTest, 'getDummy'], ['no' => $number]);
+        $categoryRepositoryRequest = app()->call([$this->categoryRepositoryTest, 'getDummy'], ['no' => $number]);
         $categoryServiceRequest = null;
         try {
-            $categoryServiceRequest = $this->container->make(CategoryServiceRequest::class);
+            $categoryServiceRequest = app()->make(CategoryServiceRequest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -61,8 +61,8 @@ class CategoryServiceTest extends TestCase
 
     public function testStore(int $number = 0)
     {
-        $result = $this->container->call([$this->categoryRepositoryTest, 'testStore']);
-        self::assertNotEquals(null,$result);
+        $result = app()->call([$this->categoryRepositoryTest, 'testStore']);
+        self::assertNotEquals(null, $result);
         return $result;
     }
 
@@ -71,7 +71,7 @@ class CategoryServiceTest extends TestCase
         for ($i=0; $i<$this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++){
             $this->testStore($i);
         }
-        $result = $this->container->call([$this->categoryService, 'get']);
+        $result = app()->call([$this->categoryService, 'get']);
         self::assertTrue($result->status);
     }
 
@@ -80,7 +80,7 @@ class CategoryServiceTest extends TestCase
         for ($i=0; $i<$this->getFaker()->numberBetween(10, $this->getFaker()->numberBetween(10, 30)); $i++){
             $this->testStore($i);
         }
-        $result = $this->container->call([$this->categoryService, 'getCount']);
+        $result = app()->call([$this->categoryService, 'getCount']);
         self::assertGreaterThanOrEqual(1, $result);
     }
 
@@ -91,7 +91,7 @@ class CategoryServiceTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->categoryService, 'get'], ['q' => $q]);
+        $result = app()->call([$this->categoryService, 'get'], ['q' => $q]);
         self::assertTrue($result->status);
     }
 
@@ -102,7 +102,7 @@ class CategoryServiceTest extends TestCase
         }
         $string = 'aiueo';
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
-        $result = $this->container->call([$this->categoryService, 'getCount'], ['q' => $q]);
+        $result = app()->call([$this->categoryService, 'getCount'], ['q' => $q]);
         self::assertGreaterThanOrEqual(1, $result);
     }
 }

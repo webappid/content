@@ -58,11 +58,11 @@ class ContentServiceTest extends TestCase
     {
         parent::__construct($name, $data, $dataName);
         try {
-            $this->contentService = $this->container->make(ContentService::class);
-            $this->fileRepositoryTest = $this->container->make(FileRepositoryTest::class);
-            $this->contentRepositoryTest = $this->container->make(ContentRepositoryTest::class);
-            $this->contentCategoryRepositoryTest = $this->container->make(ContentCategoryRepositoryTest::class);
-            $this->categoryRepositoryTest = $this->container->make(CategoryRepositoryTest::class);
+            $this->contentService = app()->make(ContentService::class);
+            $this->fileRepositoryTest = app()->make(FileRepositoryTest::class);
+            $this->contentRepositoryTest = app()->make(ContentRepositoryTest::class);
+            $this->contentCategoryRepositoryTest = app()->make(ContentCategoryRepositoryTest::class);
+            $this->categoryRepositoryTest = app()->make(CategoryRepositoryTest::class);
         } catch (BindingResolutionException $e) {
             report($e);
         }
@@ -70,16 +70,16 @@ class ContentServiceTest extends TestCase
 
     public function testStore()
     {
-        $content = $this->container->call([$this->contentRepositoryTest, 'getDummy']);
+        $content = app()->call([$this->contentRepositoryTest, 'getDummy']);
         $contentServiceResponse = null;
         try {
-            $contentServiceRequest = $this->container->make(ContentServiceRequest::class);
-            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
-            $categories = $this->container->call([$this->contentCategoryRepositoryTest, 'testStore']);
+            $contentServiceRequest = app()->make(ContentServiceRequest::class);
+            $file = app()->call([$this->fileRepositoryTest, 'testStore']);
+            $categories = app()->call([$this->contentCategoryRepositoryTest, 'testStore']);
             $contentServiceRequest = Lazy::copy($content, $contentServiceRequest);
             $contentServiceRequest->galleries = [$file->id];
             $contentServiceRequest->categories = [$categories->id];
-            $contentServiceResponse = $this->container->call([$this->contentService, 'store'], compact('contentServiceRequest'));
+            $contentServiceResponse = app()->call([$this->contentService, 'store'], compact('contentServiceRequest'));
             self::assertTrue($contentServiceResponse->status);
         } catch (BindingResolutionException $e) {
             report($e);
@@ -89,29 +89,29 @@ class ContentServiceTest extends TestCase
 
     public function testStoreDuplicateTitle()
     {
-        $content = $this->container->call([$this->contentRepositoryTest, 'getDummy']);
+        $content = app()->call([$this->contentRepositoryTest, 'getDummy']);
         $contentServiceResponse = null;
         try {
-            $contentServiceRequest = $this->container->make(ContentServiceRequest::class);
-            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
-            $categories = $this->container->call([$this->contentCategoryRepositoryTest, 'testStore']);
+            $contentServiceRequest = app()->make(ContentServiceRequest::class);
+            $file = app()->call([$this->fileRepositoryTest, 'testStore']);
+            $categories = app()->call([$this->contentCategoryRepositoryTest, 'testStore']);
             $contentServiceRequest = Lazy::copy($content, $contentServiceRequest);
             $contentServiceRequest->galleries = [$file->id];
             $contentServiceRequest->categories = [$categories->id];
-            $contentServiceResponse = $this->container->call([$this->contentService, 'store'], compact('contentServiceRequest'));
+            $contentServiceResponse = app()->call([$this->contentService, 'store'], compact('contentServiceRequest'));
 
             self::assertTrue($contentServiceResponse->status);
 
-            $newContent = $this->container->call([$this->contentRepositoryTest, 'getDummy']);
-            $newContentServiceRequest = $this->container->make(ContentServiceRequest::class);
-            $newFile = $this->container->call([$this->fileRepositoryTest, 'testStore']);
-            $newCategories = $this->container->call([$this->contentCategoryRepositoryTest, 'testStore']);
+            $newContent = app()->call([$this->contentRepositoryTest, 'getDummy']);
+            $newContentServiceRequest = app()->make(ContentServiceRequest::class);
+            $newFile = app()->call([$this->fileRepositoryTest, 'testStore']);
+            $newCategories = app()->call([$this->contentCategoryRepositoryTest, 'testStore']);
             $newContent->code = $content->code;
             $newContentServiceRequest = Lazy::copy($newContent, $newContentServiceRequest);
             $newContentServiceRequest->galleries = [$newFile->id];
             $newContentServiceRequest->categories = [$newCategories->id];
 
-            $contentServiceResponse = $this->container->call([$this->contentService, 'store'], compact('contentServiceRequest'));
+            $contentServiceResponse = app()->call([$this->contentService, 'store'], compact('contentServiceRequest'));
             self::assertTrue($contentServiceResponse->status);
         } catch (BindingResolutionException $e) {
             report($e);
@@ -133,10 +133,10 @@ class ContentServiceTest extends TestCase
         }
 
         try {
-            $contentServiceSearchRequest = $this->container->make(ContentServiceSearchRequest::class);
+            $contentServiceSearchRequest = app()->make(ContentServiceSearchRequest::class);
             $contentServiceSearchRequest->q = $content->content->title;
 
-            $result = $this->container->call([$this->contentService, 'get'], compact('contentServiceSearchRequest'));
+            $result = app()->call([$this->contentService, 'get'], compact('contentServiceSearchRequest'));
             self::assertTrue($result->status);
         } catch (BindingResolutionException $e) {
             report($e);
@@ -160,12 +160,12 @@ class ContentServiceTest extends TestCase
         $q = $string[$this->getFaker()->numberBetween(0, strlen($string) - 1)];
 
         try {
-            $contentServiceSearchRequest = $this->container->make(ContentServiceSearchRequest::class);
+            $contentServiceSearchRequest = app()->make(ContentServiceSearchRequest::class);
             $contentServiceSearchRequest->q = $q;
 
             $contentServiceSearchRequest->categories = $categories;
 
-            $result = $this->container->call([$this->contentService, 'get'], compact('contentServiceSearchRequest'));
+            $result = app()->call([$this->contentService, 'get'], compact('contentServiceSearchRequest'));
             self::assertTrue($result->status);
         } catch (BindingResolutionException $e) {
             report($e);
@@ -175,23 +175,23 @@ class ContentServiceTest extends TestCase
     public function testDetail()
     {
         $content = $this->testStore();
-        $contentResult = $this->container->call([$this->contentService, 'detail'], ['code' => $content->content->code]);
+        $contentResult = app()->call([$this->contentService, 'detail'], ['code' => $content->content->code]);
         self::assertTrue($contentResult->status);
     }
 
     public function testUpdate()
     {
         $contentResponse = $this->testStore();
-        $newContent = $this->container->call([$this->contentRepositoryTest, 'getDummy']);
+        $newContent = app()->call([$this->contentRepositoryTest, 'getDummy']);
         try {
-            $contentServiceRequest = $this->container->make(ContentServiceRequest::class);
+            $contentServiceRequest = app()->make(ContentServiceRequest::class);
             $contentServiceRequest = Lazy::copy($newContent, $contentServiceRequest);
-            $file = $this->container->call([$this->fileRepositoryTest, 'testStore']);
-            $categories = $this->container->call([$this->contentCategoryRepositoryTest, 'testStore']);
+            $file = app()->call([$this->fileRepositoryTest, 'testStore']);
+            $categories = app()->call([$this->contentCategoryRepositoryTest, 'testStore']);
             $contentServiceRequest->galleries = [$file->id];
             $contentServiceRequest->categories = [$categories->id];
             $contentServiceRequest->code = $contentResponse->content->code;
-            $result = $this->container->call([$this->contentService, 'update'], ['code' => $contentResponse->content->code, 'contentServiceRequest' => $contentServiceRequest]);
+            $result = app()->call([$this->contentService, 'update'], ['code' => $contentResponse->content->code, 'contentServiceRequest' => $contentServiceRequest]);
             self::assertTrue($result->status);
         } catch (BindingResolutionException $e) {
             report($e);
@@ -203,9 +203,9 @@ class ContentServiceTest extends TestCase
     {
         $contentResponse = $this->testStore();
         try {
-            $contentStatusRepositoryTest = $this->container->make(ContentStatusRepositoryTest::class);
-            $contentStatus = $this->container->call([$contentStatusRepositoryTest, 'testStore']);
-            $result = $this->container->call([$this->contentService, 'updateStatusByCode'], ['code' => $contentResponse->content->code, 'status' => $contentStatus->id]);
+            $contentStatusRepositoryTest = app()->make(ContentStatusRepositoryTest::class);
+            $contentStatus = app()->call([$contentStatusRepositoryTest, 'testStore']);
+            $result = app()->call([$this->contentService, 'updateStatusByCode'], ['code' => $contentResponse->content->code, 'status' => $contentStatus->id]);
             self::assertTrue($result->status);
         } catch (BindingResolutionException $e) {
             report($e);

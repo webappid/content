@@ -34,15 +34,15 @@ class CategoryTableSeeder extends Seeder
         $categories[] = array('name' => 'page', 'code' => 'page', 'status_id' => '1', 'user_id' => '1');
 
         foreach ($categories as $category) {
-            $result = $this->container->call([$categoryRepository, 'getByCode'], ['code' => $category['code']]);
+            $result = app()->call([$categoryRepository, 'getByCode'], ['code' => $category['code']]);
             if ($result === null) {
-                $categoryRepositoryRequest = $this->container->make(CategoryRepositoryRequest::class);
+                $categoryRepositoryRequest = app()->make(CategoryRepositoryRequest::class);
 
                 $categoryRepositoryRequest->name = $category['name'];
                 $categoryRepositoryRequest->code = $category['code'];
                 $categoryRepositoryRequest->status_id = $category['status_id'];
                 $categoryRepositoryRequest->user_id = $category['user_id'];
-                $this->container->call([$categoryRepository, 'store'], compact('categoryRepositoryRequest'));
+                app()->call([$categoryRepository, 'store'], compact('categoryRepositoryRequest'));
             }
         }
     }
