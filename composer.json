@@ -28,6 +28,7 @@
     "nesbot/carbon": "^2.0",
     "webappid/laravel-ddd": "^1.0",
     "webappid/laravel-user": "^4.0",
+    "webappid/lazy": "^1.0@dev",
     "webappid/smartresponse": "^1.0"
   },
   "require-dev": {

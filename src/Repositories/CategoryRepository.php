@@ -6,14 +6,10 @@
 
 namespace WebAppId\Content\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\QueryException;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
-use WebAppId\Content\Models\Category;
+use WebAppId\Content\Models\CategoryStatus;
 use WebAppId\Content\Repositories\Contracts\CategoryRepositoryContract;
-use WebAppId\Content\Repositories\Requests\CategoryRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Models\Join;
+use WebAppId\User\Models\User;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
@@ -24,153 +20,22 @@ use WebAppId\DDD\Tools\Lazy;
  */
 class CategoryRepository implements CategoryRepositoryContract
 {
-    /**
-     * @inheritDoc
-     */
-    public function store(CategoryRepositoryRequest $categoryRepositoryRequest, Category $category): ?Category
-    {
-        try {
-            $category = Lazy::copy($categoryRepositoryRequest, $category);
-            $category->save();
-            if ($category->parent != null) {
-                $this->cleanCache($category->parent);
-            }
-            return $category;
-        } catch (QueryException $queryException) {
-            report($queryException);
-            return null;
-        }
-    }
+    use CategoryRepositoryTrait;
 
-    /**
-     * @param Category $category
-     * @return Builder
-     */
-    protected function getJoin(Category $category): Builder
+    public function __construct()
     {
-        return $category
-            ->join('category_statuses as category_statuses', 'categories.status_id', 'category_statuses.id')
-            ->join('users as users', 'categories.user_id', 'users.id');
-    }
+        $category_statuses = app()->make(Join::class);
+        $category_statuses->class = CategoryStatus::class;
+        $category_statuses->foreign = 'status_id';
+        $category_statuses->type = 'inner';
+        $category_statuses->primary = 'category_statuses.id';
+        $this->joinTable['category_statuses'] = $category_statuses;
 
-    /**
-     * @return array|string[]
-     */
-    protected function getColumn(): array
-    {
-        return [
-            'categories.id',
-            'categories.code',
-            'categories.name',
-            'categories.user_id',
-            'categories.status_id',
-            'categories.parent_id',
-            'category_statuses.id AS status_id',
-            'category_statuses.name AS status_name',
-            'users.name AS user_name',
-            'users.email AS user_email'];
+        $users = app()->make(Join::class);
+        $users->class = User::class;
+        $users->foreign = 'user_id';
+        $users->type = 'inner';
+        $users->primary = 'users.id';
+        $this->joinTable['users'] = $users;
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function update(int $id, CategoryRepositoryRequest $categoryRepositoryRequest, Category $category): ?Category
-    {
-        $category = $category->find($id);
-        if ($category != null) {
-            try {
-                $category = Lazy::copy($categoryRepositoryRequest, $category);
-                if ($category->parent != null) {
-                    $this->cleanCache($category->parent);
-                }
-                $category->save();
-                return $category;
-            } catch (QueryException $queryException) {
-                report($queryException);
-            }
-        }
-        return $category;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getById(int $id, Category $category): ?Category
-    {
-        return $this->getJoin($category)->find($id, $this->getColumn());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getByCode(string $code, Category $category): ?Category
-    {
-        return $this->getJoin($category)->where('categories.code', $code)->first($this->getColumn());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getByName(string $name, Category $category): ?Category
-    {
-        return $this->getJoin($category)->where('categories.name', $name)->first($this->getColumn());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getWhereInName(array $names, Category $category, $length = 12): ?LengthAwarePaginator
-    {
-        return $this->getJoin($category)->whereIn('categories.name', $names)->paginate($length, $this->getColumn());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function delete(int $id, Category $category): bool
-    {
-        $category = $category->find($id);
-        if ($category != null) {
-            if ($category->parent != null) {
-                $this->cleanCache($category->parent);
-            }
-            return $category->delete();
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function get(Category $category, int $length = 12, string $q = null): LengthAwarePaginator
-    {
-        return $this->getJoin($category)
-            ->orderBy('categories.name', 'asc')
-            ->when($q != null, function ($query) use ($q) {
-                return $query->where('categories.code', 'LIKE', '%' . $q . '%');
-            })
-            ->paginate($length, $this->getColumn());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCount(Category $category, string $q = null): int
-    {
-        return $category
-            ->when($q != null, function ($query) use ($q) {
-                return $query->where('categories.code', 'LIKE', '%' . $q . '%');
-            })
-            ->count();
-    }
-
-    /**
-     * @param Category $category
-     */
-    private function cleanCache(Category $category): void
-    {
-        Cache::forget('category-' . $category['code']);
-    }
-
 }
