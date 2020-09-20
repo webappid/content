@@ -8,6 +8,7 @@
 namespace WebAppId\Content\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use WebAppId\Lazy\Traits\ModelTrait;
 use WebAppId\User\Models\User;
 
 /**
@@ -19,11 +20,28 @@ use WebAppId\User\Models\User;
  */
 class Category extends Model
 {
+    use ModelTrait;
+
     protected $table = 'categories';
 
     protected $hidden = ['created_at', 'updated_at'];
 
     protected $fillable = ['id', 'code', 'name', 'user_id', 'parent_id'];
+
+    public function getColumns(bool $isFresh = false)
+    {
+        $columns = $this->getAllColumn($isFresh);
+
+        $forbiddenField = [
+            "created_at",
+            "updated_at"
+        ];
+        foreach ($forbiddenField as $item) {
+            unset($columns[$item]);
+        }
+
+        return $columns;
+    }
 
     public function contents()
     {

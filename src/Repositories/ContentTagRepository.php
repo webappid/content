@@ -6,12 +6,11 @@
 
 namespace WebAppId\Content\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\QueryException;
-use WebAppId\Content\Models\ContentTag;
+use WebAppId\Content\Models\Content;
+use WebAppId\Content\Models\Tag;
 use WebAppId\Content\Repositories\Contracts\ContentTagRepositoryContract;
-use WebAppId\Content\Repositories\Requests\ContentTagRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Models\Join;
+use WebAppId\User\Models\User;
 
 /**
  * Class ContentTagRepository
@@ -19,66 +18,30 @@ use WebAppId\DDD\Tools\Lazy;
  */
 class ContentTagRepository implements ContentTagRepositoryContract
 {
-    /**
-     * @inheritDoc
-     */
-    public function store(ContentTagRepositoryRequest $contentTagRepositoryRequest, ContentTag $contentTag): ?ContentTag
+    use ContentTagRepositoryTrait;
+
+    public function __construct()
     {
-        try {
-            $contentTag = Lazy::copy($contentTagRepositoryRequest, $contentTag);
-            $contentTag->save();
-            return $contentTag;
-        } catch (QueryException $queryException) {
-            report($queryException);
-            return null;
-        }
+        $users = app()->make(Join::class);
+        $users->class = User::class;
+        $users->foreign = 'user_id';
+        $users->type = 'inner';
+        $users->primary = 'users.id';
+        $this->joinTable['users'] = $users;
+
+        $contents = app()->make(Join::class);
+        $contents->class = Content::class;
+        $contents->foreign = 'content_id';
+        $contents->type = 'inner';
+        $contents->primary = 'contents.id';
+        $this->joinTable['contents'] = $contents;
+
+        $tags = app()->make(Join::class);
+        $tags->class = Tag::class;
+        $tags->foreign = 'tag_id';
+        $tags->type = 'inner';
+        $tags->primary = 'tags.id';
+        $this->joinTable['tags'] = $tags;
     }
 
-    /**
-     * @param ContentTag $contentTag
-     * @return Builder
-     */
-    protected function getJoin(ContentTag $contentTag): Builder
-    {
-        return $contentTag
-            ->join('contents as contents', 'content_tags.content_id', 'contents.id')
-            ->join('tags as tags', 'content_tags.tag_id', 'tags.id')
-            ->join('users as users', 'content_tags.user_id', 'users.id');
-    }
-
-    /**
-     * @return array|string[]
-     */
-    protected function getColumn(): array
-    {
-        return [
-            'content_tags.id',
-            'content_tags.content_id',
-            'content_tags.tag_id',
-            'content_tags.user_id',
-            'contents.title',
-            'contents.code',
-            'contents.description',
-            'contents.keyword',
-            'tags.name AS tag_name',
-            'users.name AS user_name',
-            'users.email'
-        ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getByContentId(int $content_id, ContentTag $contentTag): ?ContentTag
-    {
-        return $this->getJoin($contentTag)->where('content_id', $content_id)->first($this->getColumn());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function deleteByContentId(int $content_id, ContentTag $contentTag): bool
-    {
-        return $contentTag->where('content_id', $content_id)->delete();
-    }
 }
