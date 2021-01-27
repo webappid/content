@@ -39,7 +39,7 @@ class File extends Model
             unset($columns[$item]);
         }
 
-        $columns['file_uri'] = DB::raw('REPLACE("' . route('file.ori', 'file_name') . '", "file_name" , files.name) AS file_uri');
+        $columns['file_uri'] = DB::raw('CONCAT(REPLACE("' . route('file.ori', 'file_name') . '", "file_name" , files.name),"/") AS file_uri');
 
         return $columns;
     }
