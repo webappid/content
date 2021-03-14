@@ -29,9 +29,10 @@ trait Content
      * @return object|ContentServiceRequest
      */
     public function transformContent(array $contentRequest,
-                                     ContentServiceRequest $contentServiceRequest,
-                                     TimeZoneRepository $timeZoneRepository)
+                                     ContentServiceRequest $contentServiceRequest)
     {
+
+        $timeZoneRepository = app()->make(TimeZoneRepository::class);
 
         if (session('timezone') == null) {
             $zone = "Asia/Jakarta";
