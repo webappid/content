@@ -39,7 +39,11 @@ class File extends Model
             unset($columns[$item]);
         }
 
-        $columns['file_uri'] = DB::raw('CONCAT(REPLACE("' . route('file.ori', 'file_name') . '", "file_name" , files.name),"/") AS file_uri');
+        if (config('coreui.upload_token') == null) {
+            $columns['file_uri'] = DB::raw('CONCAT(REPLACE("' . route('file.ori', 'file_name') . '", "file_name" , files.name),"/") AS file_uri');
+        } else {
+            $columns['file_uri'] = DB::raw("files.path AS file_uri");
+        }
 
         return $columns;
     }
