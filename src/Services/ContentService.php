@@ -37,24 +37,6 @@ use WebAppId\DDD\Tools\Lazy;
 class ContentService implements ContentServiceContract
 {
     /**
-     * @param ContentServiceRequest $contentServiceRequest
-     * @param ContentRepositoryRequest $contentRepositoryRequest
-     * @return ContentRepositoryRequest
-     */
-    protected function transformContent(ContentServiceRequest $contentServiceRequest, ContentRepositoryRequest $contentRepositoryRequest): ContentRepositoryRequest
-    {
-        $contentRepositoryRequest = Lazy::copy($contentServiceRequest, $contentRepositoryRequest);
-
-        unset($contentRepositoryRequest->categories);
-
-        unset($contentRepositoryRequest->parent_id);
-
-        unset($contentRepositoryRequest->galleries);
-
-        return $contentRepositoryRequest;
-    }
-
-    /**
      * @inheritDoc
      * @throws BindingResolutionException
      */
@@ -114,6 +96,24 @@ class ContentService implements ContentServiceContract
     }
 
     /**
+     * @param ContentServiceRequest $contentServiceRequest
+     * @param ContentRepositoryRequest $contentRepositoryRequest
+     * @return ContentRepositoryRequest
+     */
+    protected function transformContent(ContentServiceRequest $contentServiceRequest, ContentRepositoryRequest $contentRepositoryRequest): ContentRepositoryRequest
+    {
+        $contentRepositoryRequest = Lazy::copy($contentServiceRequest, $contentRepositoryRequest);
+
+        unset($contentRepositoryRequest->categories);
+
+        unset($contentRepositoryRequest->parent_id);
+
+        unset($contentRepositoryRequest->galleries);
+
+        return $contentRepositoryRequest;
+    }
+
+    /**
      * @param ContentServiceResponse $contentServiceResponse
      * @param ContentGalleryRepository $contentGalleryRepository
      * @param ContentCategoryRepository $contentCategoryRepository
@@ -150,6 +150,49 @@ class ContentService implements ContentServiceContract
     }
 
     /**
+     * @param array $galleries
+     * @param Content $content
+     * @param ContentServiceRequest $contentServiceRequest
+     * @param ContentGalleryRepository $contentGalleryRepository
+     * @return array
+     * @throws BindingResolutionException
+     */
+    private function storeGalleries(array $galleries, Content $content, ContentServiceRequest $contentServiceRequest, ContentGalleryRepository $contentGalleryRepository): array
+    {
+        foreach ($galleries as $gallery) {
+            $contentGalleryRepositoryRequest = app()->make(ContentGalleryRepositoryRequest::class);
+            $contentGalleryRepositoryRequest->content_id = $content->id;
+            $contentGalleryRepositoryRequest->user_id = $contentServiceRequest->user_id;
+            $contentGalleryRepositoryRequest->file_id = $gallery;
+            $contentGalleryRepositoryRequest->description = '';
+            $galleries[] = app()->call([$contentGalleryRepository, 'store'], compact('contentGalleryRepositoryRequest'));
+        }
+        return $galleries;
+    }
+
+    /**
+     * @param array $categories
+     * @param Content $content
+     * @param ContentServiceRequest $contentServiceRequest
+     * @param ContentCategoryRepository $contentCategoryRepository
+     * @return array
+     * @throws BindingResolutionException
+     */
+    private function storeCategories(array $categories, Content $content,
+                                     ContentServiceRequest $contentServiceRequest,
+                                     ContentCategoryRepository $contentCategoryRepository): array
+    {
+        foreach ($categories as $category) {
+            $contentCategoryRepositoryRequest = app()->make(ContentCategoryRepositoryRequest::class);
+            $contentCategoryRepositoryRequest->user_id = $contentServiceRequest->user_id;
+            $contentCategoryRepositoryRequest->content_id = $content->id;
+            $contentCategoryRepositoryRequest->category_id = $category;
+            $categories[] = app()->call([$contentCategoryRepository, 'store'], compact('contentCategoryRepositoryRequest'));
+        }
+        return $categories;
+    }
+
+    /**
      * @inheritDoc
      * @throws BindingResolutionException
      */
@@ -178,10 +221,12 @@ class ContentService implements ContentServiceContract
             return $contentServiceResponse;
         }
 
-        $duplicateCode = app()->call([$contentRepository, 'getDuplicateTitle'], ['q' => $contentRepositoryRequest->code, 'id' => $content->id]);
+        if ($contentRepositoryRequest->code != $code) {
+            $duplicateCode = app()->call([$contentRepository, 'getDuplicateTitle'], ['q' => $contentRepositoryRequest->code, 'id' => $content->id]);
 
-        if ($duplicateCode > 0) {
-            $contentRepositoryRequest->code .= $duplicateCode;
+            if ($duplicateCode > 0) {
+                $contentRepositoryRequest->code .= $duplicateCode + 1;
+            }
         }
 
         $content = app()->call([$contentRepository, 'update'], compact('contentRepositoryRequest', 'code'));
@@ -201,49 +246,6 @@ class ContentService implements ContentServiceContract
         }
 
         return $contentServiceResponse;
-    }
-
-    /**
-     * @param array $categories
-     * @param Content $content
-     * @param ContentServiceRequest $contentServiceRequest
-     * @param ContentCategoryRepository $contentCategoryRepository
-     * @return array
-     * @throws BindingResolutionException
-     */
-    private function storeCategories(array $categories, Content $content,
-                                     ContentServiceRequest $contentServiceRequest,
-                                     ContentCategoryRepository $contentCategoryRepository): array
-    {
-        foreach ($categories as $category) {
-            $contentCategoryRepositoryRequest = app()->make(ContentCategoryRepositoryRequest::class);
-            $contentCategoryRepositoryRequest->user_id = $contentServiceRequest->user_id;
-            $contentCategoryRepositoryRequest->content_id = $content->id;
-            $contentCategoryRepositoryRequest->category_id = $category;
-            $categories[] = app()->call([$contentCategoryRepository, 'store'], compact('contentCategoryRepositoryRequest'));
-        }
-        return $categories;
-    }
-
-    /**
-     * @param array $galleries
-     * @param Content $content
-     * @param ContentServiceRequest $contentServiceRequest
-     * @param ContentGalleryRepository $contentGalleryRepository
-     * @return array
-     * @throws BindingResolutionException
-     */
-    private function storeGalleries(array $galleries, Content $content, ContentServiceRequest $contentServiceRequest, ContentGalleryRepository $contentGalleryRepository): array
-    {
-        foreach ($galleries as $gallery) {
-            $contentGalleryRepositoryRequest = app()->make(ContentGalleryRepositoryRequest::class);
-            $contentGalleryRepositoryRequest->content_id = $content->id;
-            $contentGalleryRepositoryRequest->user_id = $contentServiceRequest->user_id;
-            $contentGalleryRepositoryRequest->file_id = $gallery;
-            $contentGalleryRepositoryRequest->description = '';
-            $galleries[] = app()->call([$contentGalleryRepository, 'store'], compact('contentGalleryRepositoryRequest'));
-        }
-        return $galleries;
     }
 
     /**
