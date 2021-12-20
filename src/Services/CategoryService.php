@@ -3,7 +3,6 @@
 namespace WebAppId\Content\Services;
 
 use WebAppId\Content\Repositories\CategoryRepository;
-use WebAppId\Content\Services\Contracts\CategoryServiceContract;
 use WebAppId\Content\Services\Responses\CategoryServiceResponse;
 use WebAppId\Content\Services\Responses\CategoryServiceResponseList;
 
@@ -14,7 +13,7 @@ use WebAppId\Content\Services\Responses\CategoryServiceResponseList;
  * Class CategoryService
  * @package WebAppId\Content\Services
  */
-class CategoryService implements CategoryServiceContract
+class CategoryService
 {
 
     /**

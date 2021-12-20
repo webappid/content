@@ -7,7 +7,6 @@
 namespace WebAppId\Content\Repositories;
 
 use WebAppId\Content\Models\CategoryStatus;
-use WebAppId\Content\Repositories\Contracts\CategoryRepositoryContract;
 use WebAppId\Lazy\Models\Join;
 use WebAppId\User\Models\User;
 
@@ -18,7 +17,7 @@ use WebAppId\User\Models\User;
  * Class CategoryRepository
  * @package WebAppId\Content\Repositories
  */
-class CategoryRepository implements CategoryRepositoryContract
+class CategoryRepository
 {
     use CategoryRepositoryTrait;
 

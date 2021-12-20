@@ -7,7 +7,6 @@
 namespace WebAppId\Content\Repositories;
 
 use WebAppId\Content\Models\Content;
-use WebAppId\Content\Repositories\Contracts\ContentChildRepositoryContract;
 use WebAppId\Lazy\Models\Join;
 use WebAppId\User\Models\User;
 
@@ -18,7 +17,7 @@ use WebAppId\User\Models\User;
  * Class ContentChildRepository
  * @package WebAppId\Content\Repositories
  */
-class ContentChildRepository implements ContentChildRepositoryContract
+class ContentChildRepository
 {
     use ContentChildRepositoryTrait;
 

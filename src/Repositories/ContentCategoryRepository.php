@@ -8,7 +8,6 @@ namespace WebAppId\Content\Repositories;
 
 use WebAppId\Content\Models\Category;
 use WebAppId\Content\Models\Content;
-use WebAppId\Content\Repositories\Contracts\ContentCategoryRepositoryContract;
 use WebAppId\Lazy\Models\Join;
 use WebAppId\User\Models\User;
 
@@ -16,7 +15,7 @@ use WebAppId\User\Models\User;
  * Class ContentCategoryRepository
  * @package WebAppId\Content\Repositories
  */
-class ContentCategoryRepository implements ContentCategoryRepositoryContract
+class ContentCategoryRepository
 {
     use ContentCategoryRepositoryTrait;
 

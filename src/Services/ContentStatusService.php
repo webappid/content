@@ -12,7 +12,6 @@ namespace WebAppId\Content\Services;
 use Illuminate\Database\Eloquent\Collection;
 use WebAppId\Content\Models\ContentStatus;
 use WebAppId\Content\Repositories\ContentStatusRepository;
-use WebAppId\Content\Services\Contracts\ContentStatusServiceContract;
 use WebAppId\Content\Services\Responses\ContentStatusServiceResponse;
 use WebAppId\Content\Services\Responses\ContentStatusServiceResponseList;
 
@@ -23,7 +22,7 @@ use WebAppId\Content\Services\Responses\ContentStatusServiceResponseList;
  * Class ContentStatusService
  * @package WebAppId\Content\Services
  */
-class ContentStatusService implements ContentStatusServiceContract
+class ContentStatusService
 {
     /**
      * @inheritDoc

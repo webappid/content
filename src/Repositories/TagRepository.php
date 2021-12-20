@@ -6,7 +6,6 @@
 
 namespace WebAppId\Content\Repositories;
 
-use WebAppId\Content\Repositories\Contracts\TagRepositoryContract;
 use WebAppId\Lazy\Models\Join;
 use WebAppId\User\Models\User;
 
@@ -14,7 +13,7 @@ use WebAppId\User\Models\User;
  * Class TagRepository
  * @package WebAppId\Content\Repositories
  */
-class TagRepository implements TagRepositoryContract
+class TagRepository
 {
     use TagRepositoryTrait;
 
