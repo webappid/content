@@ -7,7 +7,6 @@
 namespace WebAppId\Content\Repositories;
 
 use WebAppId\Content\Models\File;
-use WebAppId\Content\Repositories\Contracts\LanguageRepositoryContract;
 use WebAppId\Lazy\Models\Join;
 use WebAppId\User\Models\User;
 
@@ -18,7 +17,7 @@ use WebAppId\User\Models\User;
  * Class LanguageRepository
  * @package WebAppId\Content\Repositories
  */
-class LanguageRepository implements LanguageRepositoryContract
+class LanguageRepository
 {
     use LanguageRepositoryTrait;
 

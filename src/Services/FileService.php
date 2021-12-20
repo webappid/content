@@ -16,7 +16,6 @@ use WebAppId\Content\Repositories\FileRepository;
 use WebAppId\Content\Repositories\MimeTypeRepository;
 use WebAppId\Content\Repositories\Requests\FileRepositoryRequest;
 use WebAppId\Content\Repositories\Requests\MimeTypeRepositoryRequest;
-use WebAppId\Content\Services\Contracts\FileServiceContract;
 use WebAppId\Content\Tools\ImageResize;
 use WebAppId\Content\Tools\SmartReadFile;
 
@@ -27,7 +26,7 @@ use WebAppId\Content\Tools\SmartReadFile;
  * Class FileService
  * @package WebAppId\Content\Services
  */
-class FileService implements FileServiceContract
+class FileService 
 {
 
     /**

@@ -7,7 +7,6 @@
 namespace WebAppId\Content\Repositories;
 
 use WebAppId\Content\Models\MimeType;
-use WebAppId\Content\Repositories\Contracts\FileRepositoryContract;
 use WebAppId\Lazy\Models\Join;
 use WebAppId\User\Models\User;
 
@@ -18,7 +17,7 @@ use WebAppId\User\Models\User;
  * Class FileRepository
  * @package WebAppId\Content\Repositories
  */
-class FileRepository implements FileRepositoryContract
+class FileRepository
 {
     use FileRepositoryTrait;
 

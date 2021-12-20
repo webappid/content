@@ -8,7 +8,6 @@ namespace WebAppId\Content\Repositories;
 
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Models\Tag;
-use WebAppId\Content\Repositories\Contracts\ContentTagRepositoryContract;
 use WebAppId\Lazy\Models\Join;
 use WebAppId\User\Models\User;
 
@@ -16,7 +15,7 @@ use WebAppId\User\Models\User;
  * Class ContentTagRepository
  * @package WebAppId\Content\Repositories
  */
-class ContentTagRepository implements ContentTagRepositoryContract
+class ContentTagRepository
 {
     use ContentTagRepositoryTrait;
 

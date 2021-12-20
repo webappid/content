@@ -8,7 +8,6 @@ namespace WebAppId\Content\Repositories;
 
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Models\File;
-use WebAppId\Content\Repositories\Contracts\ContentGalleryRepositoryContract;
 use WebAppId\Lazy\Models\Join;
 use WebAppId\User\Models\User;
 
@@ -19,7 +18,7 @@ use WebAppId\User\Models\User;
  * Class ContentGalleryRepository
  * @package WebAppId\Content\Repositories
  */
-class ContentGalleryRepository implements ContentGalleryRepositoryContract
+class ContentGalleryRepository
 {
     use ContentGalleryRepositoryTrait;
 

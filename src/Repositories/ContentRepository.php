@@ -10,7 +10,6 @@ use WebAppId\Content\Models\ContentStatus;
 use WebAppId\Content\Models\File;
 use WebAppId\Content\Models\Language;
 use WebAppId\Content\Models\TimeZone;
-use WebAppId\Content\Repositories\Contracts\ContentRepositoryContract;
 use WebAppId\Lazy\Models\Join;
 use WebAppId\User\Models\User;
 
@@ -18,7 +17,7 @@ use WebAppId\User\Models\User;
  * Class ContentRepository
  * @package WebAppId\Content\Repositories
  */
-class ContentRepository implements ContentRepositoryContract
+class ContentRepository
 {
     use ContentRepositoryTrait;
 

@@ -7,7 +7,6 @@
 
 namespace WebAppId\Content\Repositories;
 
-use WebAppId\Content\Repositories\Contracts\MimeTypeRepositoryContract;
 use WebAppId\Lazy\Models\Join;
 use WebAppId\User\Models\User;
 
@@ -18,7 +17,7 @@ use WebAppId\User\Models\User;
  * Class MimeTypeRepository
  * @package WebAppId\Content\Repositories
  */
-class MimeTypeRepository implements MimeTypeRepositoryContract
+class MimeTypeRepository
 {
     use MimeTypeRepositoryTrait;
 

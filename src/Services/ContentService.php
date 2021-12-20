@@ -19,7 +19,6 @@ use WebAppId\Content\Repositories\Requests\ContentCategoryRepositoryRequest;
 use WebAppId\Content\Repositories\Requests\ContentGalleryRepositoryRequest;
 use WebAppId\Content\Repositories\Requests\ContentRepositoryRequest;
 use WebAppId\Content\Repositories\TimeZoneRepository;
-use WebAppId\Content\Services\Contracts\ContentServiceContract;
 use WebAppId\Content\Services\Requests\ContentChildServiceRequest;
 use WebAppId\Content\Services\Requests\ContentServiceRequest;
 use WebAppId\Content\Services\Requests\ContentServiceSearchRequest;
@@ -34,7 +33,7 @@ use WebAppId\DDD\Tools\Lazy;
  * Class ContentService
  * @package WebAppId\Content\Services
  */
-class ContentService implements ContentServiceContract
+class ContentService
 {
     /**
      * @inheritDoc

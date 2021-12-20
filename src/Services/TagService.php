@@ -7,7 +7,6 @@ namespace WebAppId\Content\Services;
 
 use WebAppId\Content\Repositories\Requests\TagRepositoryRequest;
 use WebAppId\Content\Repositories\TagRepository;
-use WebAppId\Content\Services\Contracts\TagServiceContract;
 use WebAppId\Content\Services\Requests\TagServiceRequest;
 use WebAppId\Content\Services\Responses\TagServiceResponse;
 use WebAppId\Content\Services\Responses\TagServiceResponseList;
@@ -20,7 +19,7 @@ use WebAppId\DDD\Tools\Lazy;
  * Class TagService
  * @package App\Services
  */
-class TagService implements TagServiceContract
+class TagService
 {
 
     /**
