@@ -1,21 +1,19 @@
 <?php
-
 /**
- * @author @DyanGalih
- * @copyright @2018
+ * Created by PhpStorm.
  */
 
 namespace WebAppId\Content\Requests;
 
-use WebAppId\SmartResponse\Requests\AbstractFormRequest;
-
 /**
+ * @author: Dyan Galih<dyan.galih@gmail.com>
+ * Date: 10/05/2020
+ * Time: 15.29
  * Class ContentRequest
  * @package WebAppId\Content\Requests
  */
-class ContentRequest extends AbstractFormRequest
+class ContentRequest
 {
-    
     /**
      * @return array
      */
@@ -27,9 +25,6 @@ class ContentRequest extends AbstractFormRequest
         ];
     }
 
-    /**
-     * @return array
-     */
     function rules(): array
     {
         return [

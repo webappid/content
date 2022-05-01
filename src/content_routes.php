@@ -30,3 +30,16 @@ Route::group(['prefix' => 'file'], function () {
     Route::get('{name}/{size}', WebAppId\Content\Controllers\FileShowController::class)->name($routeCode . '.resize');
     Route::post('upload/{path}', WebAppId\Content\Controllers\FileStoreController::class)->name($routeCode . '.store');
 });
+
+Route::group(['middleware' => 'api'], function () {
+    Route::name('api.')->prefix('api')->group(function () {
+        Route::group(['middleware' => ['auth:sanctum', 'auth.role']], function () {
+            Route::name('content.')->prefix('content')->group(function () {
+                Route::get('/list', \WebAppId\Content\Controllers\Content\ListController::class)->name('list');
+                Route::post('/', \WebAppId\Content\Controllers\Content\StoreController::class)->name('store');
+                Route::get('/{slug}', \WebAppId\Content\Controllers\Content\DetailController::class)->name('detail');
+                Route::put('/{slug}', \WebAppId\Content\Controllers\Content\UpdateController::class)->name('update');
+            });
+        });
+    });
+});
