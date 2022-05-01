@@ -5,6 +5,8 @@
 
 namespace WebAppId\Content\Requests;
 
+use WebAppId\SmartResponse\Requests\AbstractFormRequest;
+
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
  * Date: 10/05/2020
@@ -12,7 +14,7 @@ namespace WebAppId\Content\Requests;
  * Class ContentRequest
  * @package WebAppId\Content\Requests
  */
-class ContentRequest
+class ContentRequest extends AbstractFormRequest
 {
     /**
      * @return array

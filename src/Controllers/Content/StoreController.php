@@ -38,7 +38,7 @@ class StoreController
                              ContentService        $contentService,
                              ContentServiceRequest $contentServiceRequest,
                              SmartResponse         $smartResponse,
-                             Response              $response): \Illuminate\Http\Response|string
+                             Response              $response)
     {
         $request = $contentRequest->validated();
 
