@@ -10,7 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\ContentStatus;
 use WebAppId\Content\Repositories\Requests\ContentStatusRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -25,7 +25,9 @@ trait ContentStatusRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param ContentStatusRepositoryRequest $contentStatusRepositoryRequest
+     * @param ContentStatus $contentStatus
+     * @return ContentStatus|null
      */
     public function store(ContentStatusRepositoryRequest $contentStatusRepositoryRequest, ContentStatus $contentStatus): ?ContentStatus
     {
@@ -40,7 +42,10 @@ trait ContentStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param ContentStatusRepositoryRequest $contentStatusRepositoryRequest
+     * @param ContentStatus $contentStatus
+     * @return ContentStatus|null
      */
     public function update(int $id, ContentStatusRepositoryRequest $contentStatusRepositoryRequest, ContentStatus $contentStatus): ?ContentStatus
     {
@@ -58,7 +63,9 @@ trait ContentStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param ContentStatus $contentStatus
+     * @return ContentStatus|null
      */
     public function getById(int $id, ContentStatus $contentStatus): ?ContentStatus
     {
@@ -66,7 +73,9 @@ trait ContentStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param ContentStatus $contentStatus
+     * @return bool
      */
     public function delete(int $id, ContentStatus $contentStatus): bool
     {
@@ -79,7 +88,10 @@ trait ContentStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param ContentStatus $contentStatus
+     * @param int $length
+     * @param string|null $q
+     * @return LengthAwarePaginator
      */
     public function get(ContentStatus $contentStatus, int $length = 12, string $q = null): LengthAwarePaginator
     {
@@ -91,7 +103,9 @@ trait ContentStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param ContentStatus $contentStatus
+     * @param string|null $q
+     * @return int
      */
     public function getCount(ContentStatus $contentStatus, string $q = null): int
     {

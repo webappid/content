@@ -10,7 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\MimeType;
 use WebAppId\Content\Repositories\Requests\MimeTypeRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -25,7 +25,9 @@ trait MimeTypeRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param MimeTypeRepositoryRequest $mimeTypeRepositoryRequest
+     * @param MimeType $mimeType
+     * @return MimeType|null
      */
     public function store(MimeTypeRepositoryRequest $mimeTypeRepositoryRequest, MimeType $mimeType): ?MimeType
     {
@@ -41,7 +43,10 @@ trait MimeTypeRepositoryTrait
 
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param MimeTypeRepositoryRequest $mimeTypeRepositoryRequest
+     * @param MimeType $mimeType
+     * @return MimeType|null
      */
     public function update(int $id, MimeTypeRepositoryRequest $mimeTypeRepositoryRequest, MimeType $mimeType): ?MimeType
     {
@@ -59,7 +64,9 @@ trait MimeTypeRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param MimeType $mimeType
+     * @return MimeType|null
      */
     public function getById(int $id, MimeType $mimeType): ?MimeType
     {
@@ -67,7 +74,9 @@ trait MimeTypeRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param MimeType $mimeType
+     * @return bool
      */
     public function delete(int $id, MimeType $mimeType): bool
     {
@@ -80,7 +89,10 @@ trait MimeTypeRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param MimeType $mimeType
+     * @param int $length
+     * @param string|null $q
+     * @return LengthAwarePaginator
      */
     public function get(MimeType $mimeType, int $length = 12, string $q = null): LengthAwarePaginator
     {
@@ -93,7 +105,9 @@ trait MimeTypeRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param MimeType $mimeType
+     * @param string|null $q
+     * @return int
      */
     public function getCount(MimeType $mimeType, string $q = null): int
     {
@@ -105,7 +119,9 @@ trait MimeTypeRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @param MimeType $mimeType
+     * @return MimeType|null
      */
     public function getByName(string $name, MimeType $mimeType): ?MimeType
     {

@@ -7,7 +7,7 @@
 
 namespace WebAppId\Content\Requests;
 
-use WebAppId\DDD\Requests\AbstractFormRequest;
+use WebAppId\SmartResponse\Requests\AbstractFormRequest;
 
 /**
  * Class ContentGalleryRequest

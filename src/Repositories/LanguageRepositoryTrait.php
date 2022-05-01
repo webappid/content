@@ -10,7 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\Language;
 use WebAppId\Content\Repositories\Requests\LanguageRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -25,7 +25,9 @@ trait LanguageRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param LanguageRepositoryRequest $languageRepositoryRequest
+     * @param Language $language
+     * @return Language|null
      */
     public function store(LanguageRepositoryRequest $languageRepositoryRequest, Language $language): ?Language
     {
@@ -40,7 +42,10 @@ trait LanguageRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param LanguageRepositoryRequest $languageRepositoryRequest
+     * @param Language $language
+     * @return Language|null
      */
     public function update(int $id, LanguageRepositoryRequest $languageRepositoryRequest, Language $language): ?Language
     {
@@ -58,7 +63,9 @@ trait LanguageRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param Language $language
+     * @return Language|null
      */
     public function getById(int $id, Language $language): ?Language
     {
@@ -66,7 +73,9 @@ trait LanguageRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param Language $language
+     * @return bool
      */
     public function delete(int $id, Language $language): bool
     {
@@ -79,7 +88,10 @@ trait LanguageRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param Language $language
+     * @param int $length
+     * @param string|null $q
+     * @return LengthAwarePaginator
      */
     public function get(Language $language, int $length = 12, string $q = null): LengthAwarePaginator
     {
@@ -92,7 +104,9 @@ trait LanguageRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param Language $language
+     * @param string|null $q
+     * @return int
      */
     public function getCount(Language $language, string $q = null): int
     {
@@ -104,7 +118,9 @@ trait LanguageRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param $name
+     * @param Language $language
+     * @return Language|null
      */
     public function getByName($name, Language $language): ?Language
     {

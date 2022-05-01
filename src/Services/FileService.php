@@ -30,7 +30,12 @@ class FileService
 {
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @param FileRepository $file
+     * @param SmartReadFile $smartReadFile
+     * @param bool $download
+     * @return ResponseFactory|Response|void|null
+     * @throws ImageResizeException
      */
     public function index(string $name, FileRepository $file, SmartReadFile $smartReadFile, bool $download = false)
     {
@@ -89,7 +94,13 @@ class FileService
     }
 
     /**
-     * @inheritDoc
+     * @param string $path
+     * @param $upload
+     * @param MimeTypeRepositoryRequest $mimeTypeRepositoryRequest
+     * @param MimeTypeRepository $mimeTypeRepository
+     * @param FileRepositoryRequest $fileRepositoryRequest
+     * @param FileRepository $fileRepository
+     * @return array
      */
     public function store(string $path,
                           $upload,
@@ -103,7 +114,13 @@ class FileService
     }
 
     /**
-     * @inheritDoc
+     * @param string $path
+     * @param $upload
+     * @param MimeTypeRepositoryRequest $mimeTypeRepositoryRequest
+     * @param MimeTypeRepository $mimeTypeRepository
+     * @param FileRepositoryRequest $fileRepositoryRequest
+     * @param FileRepository $fileRepository
+     * @return void
      */
     public function storeMulti(string $path,
                                $upload,
@@ -175,7 +192,12 @@ class FileService
     }
 
     /**
-     * @inheritDoc
+     * @param $name
+     * @param $size
+     * @param FileRepository $file
+     * @param SmartReadFile $smartReadFile
+     * @return ResponseFactory|Response|void|null
+     * @throws ImageResizeException
      */
     public function get($name, $size, FileRepository $file, SmartReadFile $smartReadFile)
     {

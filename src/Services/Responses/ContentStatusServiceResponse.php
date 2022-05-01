@@ -6,7 +6,7 @@
 namespace WebAppId\Content\Services\Responses;
 
 use WebAppId\Content\Models\ContentStatus;
-use WebAppId\DDD\Responses\AbstractResponse;
+use WebAppId\SmartResponse\Responses\AbstractResponse;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>

@@ -10,7 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\Tag;
 use WebAppId\Content\Repositories\Requests\TagRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -25,7 +25,9 @@ trait TagRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param TagRepositoryRequest $tagRepositoryRequest
+     * @param Tag $tag
+     * @return Tag|null
      */
     public function store(TagRepositoryRequest $tagRepositoryRequest, Tag $tag): ?Tag
     {
@@ -40,7 +42,10 @@ trait TagRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param TagRepositoryRequest $tagRepositoryRequest
+     * @param Tag $tag
+     * @return Tag|null
      */
     public function update(int $id, TagRepositoryRequest $tagRepositoryRequest, Tag $tag): ?Tag
     {
@@ -58,7 +63,9 @@ trait TagRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param Tag $tag
+     * @return Tag|null
      */
     public function getById(int $id, Tag $tag): ?Tag
     {
@@ -66,7 +73,9 @@ trait TagRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param Tag $tag
+     * @return bool
      */
     public function delete(int $id, Tag $tag): bool
     {
@@ -79,7 +88,10 @@ trait TagRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param Tag $tag
+     * @param int $length
+     * @param string|null $q
+     * @return LengthAwarePaginator
      */
     public function get(Tag $tag, int $length = 12, string $q = null): LengthAwarePaginator
     {
@@ -92,7 +104,9 @@ trait TagRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param Tag $tag
+     * @param string|null $q
+     * @return int
      */
     public function getCount(Tag $tag, string $q = null): int
     {
@@ -104,7 +118,9 @@ trait TagRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @param Tag $tag
+     * @return Tag|null
      */
     public function getByName(string $name, Tag $tag): ?Tag
     {

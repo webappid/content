@@ -9,7 +9,7 @@ namespace WebAppId\Content\Repositories;
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\ContentTag;
 use WebAppId\Content\Repositories\Requests\ContentTagRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -24,7 +24,9 @@ trait ContentTagRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param ContentTagRepositoryRequest $contentTagRepositoryRequest
+     * @param ContentTag $contentTag
+     * @return ContentTag|null
      */
     public function store(ContentTagRepositoryRequest $contentTagRepositoryRequest, ContentTag $contentTag): ?ContentTag
     {
@@ -39,7 +41,9 @@ trait ContentTagRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $content_id
+     * @param ContentTag $contentTag
+     * @return ContentTag|null
      */
     public function getByContentId(int $content_id, ContentTag $contentTag): ?ContentTag
     {
@@ -47,7 +51,9 @@ trait ContentTagRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $content_id
+     * @param ContentTag $contentTag
+     * @return bool
      */
     public function deleteByContentId(int $content_id, ContentTag $contentTag): bool
     {

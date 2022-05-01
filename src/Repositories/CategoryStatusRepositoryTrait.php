@@ -25,7 +25,9 @@ trait CategoryStatusRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param CategoryStatusRepositoryRequest $categoryStatusRepositoryRequest
+     * @param CategoryStatus $categoryStatus
+     * @return CategoryStatus|null
      */
     public function store(CategoryStatusRepositoryRequest $categoryStatusRepositoryRequest, CategoryStatus $categoryStatus): ?CategoryStatus
     {
@@ -40,7 +42,10 @@ trait CategoryStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param CategoryStatusRepositoryRequest $categoryStatusRepositoryRequest
+     * @param CategoryStatus $categoryStatus
+     * @return CategoryStatus|null
      */
     public function update(int $id, CategoryStatusRepositoryRequest $categoryStatusRepositoryRequest, CategoryStatus $categoryStatus): ?CategoryStatus
     {
@@ -58,7 +63,9 @@ trait CategoryStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param CategoryStatus $categoryStatus
+     * @return CategoryStatus|null
      */
     public function getById(int $id, CategoryStatus $categoryStatus): ?CategoryStatus
     {
@@ -66,7 +73,9 @@ trait CategoryStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param CategoryStatus $categoryStatus
+     * @return bool
      */
     public function delete(int $id, CategoryStatus $categoryStatus): bool
     {
@@ -79,7 +88,10 @@ trait CategoryStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param CategoryStatus $categoryStatus
+     * @param int $length
+     * @param string|null $q
+     * @return LengthAwarePaginator
      */
     public function get(CategoryStatus $categoryStatus, int $length = 12, string $q = null): LengthAwarePaginator
     {
@@ -92,7 +104,9 @@ trait CategoryStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param CategoryStatus $categoryStatus
+     * @param string|null $q
+     * @return int
      */
     public function getCount(CategoryStatus $categoryStatus, string $q = null): int
     {
@@ -104,7 +118,9 @@ trait CategoryStatusRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @param CategoryStatus $categoryStatus
+     * @return CategoryStatus|null
      */
     public function getByName(string $name, CategoryStatus $categoryStatus): ?CategoryStatus
     {

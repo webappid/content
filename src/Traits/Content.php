@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use WebAppId\Content\Repositories\TimeZoneRepository;
 use WebAppId\Content\Services\Requests\ContentServiceRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>

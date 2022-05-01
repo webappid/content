@@ -13,7 +13,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use WebAppId\Content\Models\Content;
 use WebAppId\Content\Repositories\Requests\ContentRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -28,7 +28,9 @@ trait ContentRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param ContentRepositoryRequest $contentRepositoryRequest
+     * @param Content $content
+     * @return Content|null
      */
     public function store(ContentRepositoryRequest $contentRepositoryRequest, Content $content): ?Content
     {
@@ -45,7 +47,10 @@ trait ContentRepositoryTrait
 
 
     /**
-     * @inheritDoc
+     * @param string $code
+     * @param ContentRepositoryRequest $contentRepositoryRequest
+     * @param Content $content
+     * @return Content|null
      */
     public function update(string $code, ContentRepositoryRequest $contentRepositoryRequest, Content $content): ?Content
     {
@@ -64,7 +69,9 @@ trait ContentRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param Content $content
+     * @return Content|null
      */
     public function getById(int $id, Content $content): ?Content
     {
@@ -72,7 +79,9 @@ trait ContentRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param string $code
+     * @param Content $content
+     * @return bool
      */
     public function delete(string $code, Content $content): bool
     {
@@ -116,7 +125,12 @@ trait ContentRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param Content $content
+     * @param int $length
+     * @param int|null $category_id
+     * @param array $categories
+     * @param string|null $q
+     * @return LengthAwarePaginator
      */
     public function get(Content $content,
                         int $length = 12,
@@ -130,7 +144,11 @@ trait ContentRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param Content $content
+     * @param int|null $category_id
+     * @param array $categories
+     * @param string|null $q
+     * @return int
      */
     public function getCount(Content $content,
                              int $category_id = null,
@@ -143,7 +161,9 @@ trait ContentRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param string $code
+     * @param Content $content
+     * @return Content|null
      */
     public function getByCode(string $code, Content $content): ?Content
     {
@@ -153,7 +173,10 @@ trait ContentRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param string $code
+     * @param int $status_id
+     * @param Content $content
+     * @return Content|null
      */
     public function updateStatusByCode(string $code, int $status_id, Content $content): ?Content
     {
@@ -180,7 +203,10 @@ trait ContentRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param Content $content
+     * @param string|null $q
+     * @param int|null $id
+     * @return int
      */
     public function getDuplicateTitle(Content $content, string $q = null, int $id = null): int
     {

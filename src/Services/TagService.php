@@ -10,7 +10,7 @@ use WebAppId\Content\Repositories\TagRepository;
 use WebAppId\Content\Services\Requests\TagServiceRequest;
 use WebAppId\Content\Services\Responses\TagServiceResponse;
 use WebAppId\Content\Services\Responses\TagServiceResponseList;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>
@@ -23,7 +23,11 @@ class TagService
 {
 
     /**
-     * @inheritDoc
+     * @param TagServiceRequest $tagServiceRequest
+     * @param TagRepositoryRequest $tagRepositoryRequest
+     * @param TagRepository $tagRepository
+     * @param TagServiceResponse $tagServiceResponse
+     * @return TagServiceResponse
      */
     public function store(TagServiceRequest $tagServiceRequest, TagRepositoryRequest $tagRepositoryRequest, TagRepository $tagRepository, TagServiceResponse $tagServiceResponse): TagServiceResponse
     {
@@ -43,7 +47,12 @@ class TagService
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param TagServiceRequest $tagServiceRequest
+     * @param TagRepositoryRequest $tagRepositoryRequest
+     * @param TagRepository $tagRepository
+     * @param TagServiceResponse $tagServiceResponse
+     * @return TagServiceResponse
      */
     public function update(int $id, TagServiceRequest $tagServiceRequest, TagRepositoryRequest $tagRepositoryRequest, TagRepository $tagRepository, TagServiceResponse $tagServiceResponse): TagServiceResponse
     {
@@ -63,7 +72,10 @@ class TagService
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param TagRepository $tagRepository
+     * @param TagServiceResponse $tagServiceResponse
+     * @return TagServiceResponse
      */
     public function getById(int $id, TagRepository $tagRepository, TagServiceResponse $tagServiceResponse): TagServiceResponse
     {
@@ -81,7 +93,9 @@ class TagService
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param TagRepository $tagRepository
+     * @return bool
      */
     public function delete(int $id, TagRepository $tagRepository): bool
     {
@@ -89,7 +103,11 @@ class TagService
     }
 
     /**
-     * @inheritDoc
+     * @param TagRepository $tagRepository
+     * @param TagServiceResponseList $tagServiceResponseList
+     * @param int $length
+     * @param string|null $q
+     * @return TagServiceResponseList
      */
     public function get(TagRepository $tagRepository, TagServiceResponseList $tagServiceResponseList, int $length = 12, string $q = null): TagServiceResponseList
     {
@@ -108,7 +126,9 @@ class TagService
     }
 
     /**
-     * @inheritDoc
+     * @param TagRepository $tagRepository
+     * @param string|null $q
+     * @return int
      */
     public function getCount(TagRepository $tagRepository, string $q = null): int
     {

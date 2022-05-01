@@ -10,7 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\File;
 use WebAppId\Content\Repositories\Requests\FileRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -25,7 +25,9 @@ trait FileRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param FileRepositoryRequest $fileRepositoryRequest
+     * @param File $file
+     * @return File|null
      */
     public function store(FileRepositoryRequest $fileRepositoryRequest, File $file): ?File
     {
@@ -40,7 +42,10 @@ trait FileRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param FileRepositoryRequest $fileRepositoryRequest
+     * @param File $file
+     * @return File|null
      */
     public function update(int $id, FileRepositoryRequest $fileRepositoryRequest, File $file): ?File
     {
@@ -58,7 +63,9 @@ trait FileRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param File $file
+     * @return File|null
      */
     public function getById(int $id, File $file): ?File
     {
@@ -68,7 +75,9 @@ trait FileRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param File $file
+     * @return bool
      */
     public function delete(int $id, File $file): bool
     {
@@ -81,7 +90,10 @@ trait FileRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param File $file
+     * @param int $length
+     * @param string|null $q
+     * @return LengthAwarePaginator
      */
     public function get(File $file, int $length = 12, string $q = null): LengthAwarePaginator
     {
@@ -94,7 +106,9 @@ trait FileRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param File $file
+     * @param string|null $q
+     * @return int
      */
     public function getCount(File $file, string $q = null): int
     {
@@ -106,7 +120,9 @@ trait FileRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @param File $file
+     * @return File|null
      */
     public function getByName(string $name, File $file): ?File
     {

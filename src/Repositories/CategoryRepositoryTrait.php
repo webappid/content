@@ -11,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use WebAppId\Content\Models\Category;
 use WebAppId\Content\Repositories\Requests\CategoryRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -26,7 +26,9 @@ trait CategoryRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param CategoryRepositoryRequest $categoryRepositoryRequest
+     * @param Category $category
+     * @return Category|null
      */
     public function store(CategoryRepositoryRequest $categoryRepositoryRequest, Category $category): ?Category
     {
@@ -52,7 +54,10 @@ trait CategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param CategoryRepositoryRequest $categoryRepositoryRequest
+     * @param Category $category
+     * @return Category|null
      */
     public function update(int $id, CategoryRepositoryRequest $categoryRepositoryRequest, Category $category): ?Category
     {
@@ -73,7 +78,9 @@ trait CategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param Category $category
+     * @return Category|null
      */
     public function getById(int $id, Category $category): ?Category
     {
@@ -83,7 +90,9 @@ trait CategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param string $code
+     * @param Category $category
+     * @return Category|null
      */
     public function getByCode(string $code, Category $category): ?Category
     {
@@ -93,7 +102,9 @@ trait CategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @param Category $category
+     * @return Category|null
      */
     public function getByName(string $name, Category $category): ?Category
     {
@@ -104,7 +115,10 @@ trait CategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param array $names
+     * @param Category $category
+     * @param $length
+     * @return LengthAwarePaginator|null
      */
     public function getWhereInName(array $names, Category $category, $length = 12): ?LengthAwarePaginator
     {
@@ -115,7 +129,9 @@ trait CategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param Category $category
+     * @return bool
      */
     public function delete(int $id, Category $category): bool
     {
@@ -131,7 +147,10 @@ trait CategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param Category $category
+     * @param int $length
+     * @param string|null $q
+     * @return LengthAwarePaginator
      */
     public function get(Category $category, int $length = 12, string $q = null): LengthAwarePaginator
     {
@@ -145,7 +164,9 @@ trait CategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param Category $category
+     * @param string|null $q
+     * @return int
      */
     public function getCount(Category $category, string $q = null): int
     {
