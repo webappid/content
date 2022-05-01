@@ -25,7 +25,10 @@ use WebAppId\Content\Services\Responses\ContentStatusServiceResponseList;
 class ContentStatusService
 {
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param ContentStatusRepository $contentStatusRepository
+     * @param ContentStatusServiceResponse $contentStatusServiceResponse
+     * @return ContentStatusServiceResponse
      */
     public function getById(int $id, ContentStatusRepository $contentStatusRepository, ContentStatusServiceResponse $contentStatusServiceResponse): ContentStatusServiceResponse
     {
@@ -43,7 +46,10 @@ class ContentStatusService
     }
 
     /**
-     * @inheritDoc
+     * @param ContentStatusRepository $contentStatusRepository
+     * @param ContentStatusServiceResponseList $contentStatusServiceResponseList
+     * @param int $length
+     * @return ContentStatusServiceResponseList
      */
     public function get(ContentStatusRepository $contentStatusRepository, ContentStatusServiceResponseList $contentStatusServiceResponseList, int $length = 12): ContentStatusServiceResponseList
     {
@@ -63,7 +69,8 @@ class ContentStatusService
     }
 
     /**
-     * @inheritDoc
+     * @param ContentStatusRepository $contentStatusRepository
+     * @return int
      */
     public function getCount(ContentStatusRepository $contentStatusRepository): int
     {
@@ -71,7 +78,11 @@ class ContentStatusService
     }
 
     /**
-     * @inheritDoc
+     * @param string $q
+     * @param ContentStatusRepository $contentStatusRepository
+     * @param ContentStatusServiceResponseList $contentStatusServiceResponseList
+     * @param int $length
+     * @return ContentStatusServiceResponseList
      */
     public function getWhere(string $q, ContentStatusRepository $contentStatusRepository, ContentStatusServiceResponseList $contentStatusServiceResponseList, int $length = 12): ContentStatusServiceResponseList
     {
@@ -90,7 +101,9 @@ class ContentStatusService
     }
 
     /**
-     * @inheritDoc
+     * @param string $q
+     * @param ContentStatusRepository $contentStatusRepository
+     * @return int
      */
     public function getWhereCount(string $q, ContentStatusRepository $contentStatusRepository): int
     {

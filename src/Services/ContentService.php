@@ -24,7 +24,7 @@ use WebAppId\Content\Services\Requests\ContentServiceRequest;
 use WebAppId\Content\Services\Requests\ContentServiceSearchRequest;
 use WebAppId\Content\Services\Responses\ContentServiceResponse;
 use WebAppId\Content\Services\Responses\ContentServiceResponseList;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 
 /**
  * @author: Dyan Galih<dyan.galih@gmail.com>

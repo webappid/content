@@ -10,7 +10,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\ContentCategory;
 use WebAppId\Content\Repositories\Requests\ContentCategoryRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -25,7 +25,9 @@ trait ContentCategoryRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param ContentCategoryRepositoryRequest $contentCategoryRepositoryRequest
+     * @param ContentCategory $contentCategory
+     * @return ContentCategory|null
      */
     public function store(ContentCategoryRepositoryRequest $contentCategoryRepositoryRequest, ContentCategory $contentCategory): ?ContentCategory
     {
@@ -40,7 +42,10 @@ trait ContentCategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param ContentCategoryRepositoryRequest $contentCategoryRepositoryRequest
+     * @param ContentCategory $contentCategory
+     * @return ContentCategory|null
      */
     public function update(int $id, ContentCategoryRepositoryRequest $contentCategoryRepositoryRequest, ContentCategory $contentCategory): ?ContentCategory
     {
@@ -58,7 +63,9 @@ trait ContentCategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param ContentCategory $contentCategory
+     * @return ContentCategory|null
      */
     public function getById(int $id, ContentCategory $contentCategory): ?ContentCategory
     {
@@ -68,7 +75,9 @@ trait ContentCategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param ContentCategory $contentCategory
+     * @return bool
      */
     public function delete(int $id, ContentCategory $contentCategory): bool
     {
@@ -81,7 +90,10 @@ trait ContentCategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param ContentCategory $contentCategory
+     * @param int $length
+     * @param string|null $q
+     * @return LengthAwarePaginator
      */
     public function get(ContentCategory $contentCategory, int $length = 12, string $q = null): LengthAwarePaginator
     {
@@ -94,7 +106,9 @@ trait ContentCategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param ContentCategory $contentCategory
+     * @param string|null $q
+     * @return int
      */
     public function getCount(ContentCategory $contentCategory, string $q = null): int
     {
@@ -106,7 +120,9 @@ trait ContentCategoryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $contentId
+     * @param ContentCategory $contentCategory
+     * @return bool|null
      */
     public function deleteByContentId(int $contentId, ContentCategory $contentCategory): ?bool
     {

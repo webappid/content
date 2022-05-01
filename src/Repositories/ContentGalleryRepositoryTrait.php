@@ -11,7 +11,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use WebAppId\Content\Models\ContentGallery;
 use WebAppId\Content\Repositories\Requests\ContentGalleryRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -26,7 +26,9 @@ trait ContentGalleryRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param ContentGalleryRepositoryRequest $contentGalleryRepositoryRequest
+     * @param ContentGallery $contentGallery
+     * @return ContentGallery|null
      */
     public function store(ContentGalleryRepositoryRequest $contentGalleryRepositoryRequest, ContentGallery $contentGallery): ?ContentGallery
     {
@@ -41,7 +43,9 @@ trait ContentGalleryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $contentId
+     * @param ContentGallery $contentGallery
+     * @return Collection
      */
     public function getByContentId(int $contentId, ContentGallery $contentGallery): Collection
     {
@@ -52,7 +56,9 @@ trait ContentGalleryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $contentId
+     * @param ContentGallery $contentGallery
+     * @return bool
      */
     public function deleteByContentId(int $contentId, ContentGallery $contentGallery): bool
     {
@@ -62,7 +68,10 @@ trait ContentGalleryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param ContentGallery $contentGallery
+     * @param int $length
+     * @param string|null $q
+     * @return LengthAwarePaginator
      */
     public function get(ContentGallery $contentGallery, int $length = 12, string $q = null): LengthAwarePaginator
     {
@@ -75,7 +84,9 @@ trait ContentGalleryRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param ContentGallery $contentGallery
+     * @param string|null $q
+     * @return int
      */
     public function getCount(ContentGallery $contentGallery, string $q = null): int
     {

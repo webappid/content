@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use WebAppId\Content\Models\ContentChild;
 use WebAppId\Content\Repositories\Requests\ContentChildRepositoryRequest;
-use WebAppId\DDD\Tools\Lazy;
+use WebAppId\Lazy\Tools\Lazy;
 use WebAppId\Lazy\Traits\RepositoryTrait;
 
 /**
@@ -25,7 +25,9 @@ trait ContentChildRepositoryTrait
     use RepositoryTrait;
 
     /**
-     * @inheritDoc
+     * @param ContentChildRepositoryRequest $contentChildRepositoryRequest
+     * @param ContentChild $contentChild
+     * @return ContentChild|null
      */
     public function store(ContentChildRepositoryRequest $contentChildRepositoryRequest, ContentChild $contentChild): ?ContentChild
     {
@@ -40,7 +42,9 @@ trait ContentChildRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param ContentChild $contentChild
+     * @return ContentChild|null
      */
     public function getById(int $id, ContentChild $contentChild): ?ContentChild
     {
@@ -50,7 +54,9 @@ trait ContentChildRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $parentId
+     * @param ContentChild $contentChild
+     * @return Collection|null
      */
     public function getByParentId(int $parentId, ContentChild $contentChild): ?Collection
     {
@@ -61,7 +67,9 @@ trait ContentChildRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $parentId
+     * @param ContentChild $contentChild
+     * @return bool
      */
     public function deleteByParentId(int $parentId, ContentChild $contentChild): bool
     {
@@ -71,7 +79,9 @@ trait ContentChildRepositoryTrait
     }
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param ContentChild $contentChild
+     * @return bool
      */
     public function delete(int $id, ContentChild $contentChild): bool
     {

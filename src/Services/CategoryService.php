@@ -17,7 +17,10 @@ class CategoryService
 {
 
     /**
-     * @inheritDoc
+     * @param int $id
+     * @param CategoryRepository $categoryRepository
+     * @param CategoryServiceResponse $categoryServiceResponse
+     * @return CategoryServiceResponse
      */
     public function getById(int $id, CategoryRepository $categoryRepository, CategoryServiceResponse $categoryServiceResponse): CategoryServiceResponse
     {
@@ -35,7 +38,11 @@ class CategoryService
     }
 
     /**
-     * @inheritDoc
+     * @param CategoryRepository $categoryRepository
+     * @param CategoryServiceResponseList $categoryServiceResponseList
+     * @param int $length
+     * @param string|null $q
+     * @return CategoryServiceResponseList
      */
     public function get(CategoryRepository $categoryRepository, CategoryServiceResponseList $categoryServiceResponseList, int $length = 12, string $q = null): CategoryServiceResponseList
     {
@@ -54,7 +61,9 @@ class CategoryService
     }
 
     /**
-     * @inheritDoc
+     * @param CategoryRepository $categoryRepository
+     * @param string|null $q
+     * @return int
      */
     public function getCount(CategoryRepository $categoryRepository, string $q = null): int
     {
