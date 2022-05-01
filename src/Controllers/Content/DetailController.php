@@ -16,9 +16,8 @@ class DetailController
 
         $result = app()->call([$contentService, 'detail'], ['code' => $slug]);
 
-        $data = [];
-        $data['content'] = $result->content;
-        $data['files'] = $result->galleries;
+        $data = $result->content;
+        $data['galleries'] = $result->galleries;
         if ($result->status) {
             $response->setData($data);
             return $smartResponse->success($response);
